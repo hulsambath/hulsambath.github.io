@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://hulsambath.github.io/note">
+  <meta property="og:title" content="Open Note in NoteMyMinds">
+  <meta property="og:description" content="Open this note in the NoteMyMinds app">
+  <meta property="og:image" content="https://hulsambath.github.io/favicon.png">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://hulsambath.github.io/note">
+  <meta property="twitter:title" content="Open Note in NoteMyMinds">
+  <meta property="twitter:description" content="Open this note in the NoteMyMinds app">
+  <meta property="twitter:image" content="https://hulsambath.github.io/favicon.png">
+
+  <!-- App Links -->
+  <meta property="al:android:url" content="notemyminds://open/note">
+  <meta property="al:android:package" content="com.notemyminds.app">
+  <meta property="al:android:app_name" content="NoteMyMinds">
+  <meta property="al:web:url" content="https://hulsambath.github.io/note">
+
+  <title>Open Note in NoteMyMinds</title>
+
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    }
+
+    h1 {
+      margin: 0 0 20px 0;
+      font-size: 28px;
+    }
+
+    p {
+      margin: 10px 0;
+      font-size: 16px;
+      opacity: 0.9;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 16px 32px;
+      background: white;
+      color: #667eea;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 18px;
+      transition: transform 0.2s;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .button:hover {
+      transform: scale(1.05);
+    }
+
+    .button:active {
+      transform: scale(0.95);
+    }
+
+    /* Dialog/Modal for Facebook webview */
+    .dialog {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .dialog.show {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .dialog-content {
+      background: white;
+      border-radius: 20px;
+      padding: 35px;
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+      color: #333;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .dialog-content h2 {
+      margin: 0 0 15px 0;
+      color: #667eea;
+      font-size: 24px;
+    }
+
+    .dialog-content p {
+      margin: 15px 0;
+      color: #666;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .dialog-button {
+      display: block;
+      margin-top: 20px;
+      padding: 16px 32px;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      font-weight: bold;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transition: all 0.2s;
+    }
+
+    .dialog-button:hover {
+      background: #5568d3;
+      transform: scale(1.02);
+    }
+
+    .dialog-button:active {
+      transform: scale(0.98);
+    }
+
+    .dialog-link {
+      display: block;
+      margin-top: 15px;
+      font-size: 12px;
+      color: #999;
+    }
+
+    .dialog-link a {
+      color: #667eea;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>📝 NoteMyMinds</h1>
+    <div class="spinner"></div>
+    <p>Opening note in app...</p>
+    <p style="font-size: 14px; opacity: 0.7;">If the app doesn't open automatically, tap the button below.</p>
+    <a href="#" id="openApp" class="button">Open in App</a>
+  </div>
+
+  <!-- Dialog for Facebook webview -->
+  <div class="dialog" id="appDialog">
+    <div class="dialog-content">
+      <h2>📱 Open in NoteMyMinds</h2>
+      <p>Tap the button below to open this note in the NoteMyMinds app.</p>
+      <button class="dialog-button" id="dialogOpenApp">Open in App</button>
+      <div class="dialog-link">
+        Don't have the app? <a href="https://play.google.com/store/apps/details?id=com.notemyminds.app"
+          target="_blank">Get it from Play Store</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Detect if we're in Facebook's in-app browser/webview
+    const isFacebookBrowser = /FBAN|FBAV/i.test(navigator.userAgent) ||
+      window.location.href.includes('facebook.com') ||
+      document.referrer.includes('facebook.com') ||
+      /FB_IAB|FBAN/i.test(navigator.userAgent);
+
+    console.log('Facebook browser detected:', isFacebookBrowser);
+    console.log('User Agent:', navigator.userAgent);
+
+    // Get query parameters from URL (filter out Facebook tracking params)
+    const urlParams = new URLSearchParams(window.location.search);
+    const title = urlParams.get('title') || '';
+
+    // Extract title from Facebook wrapped URLs if needed
+    let actualTitle = title;
+    const fbUrl = urlParams.get('u');
+    if (fbUrl && !actualTitle) {
+      try {
+        const decodedUrl = decodeURIComponent(fbUrl);
+        const fbUrlParams = new URLSearchParams(decodedUrl.split('?')[1] || '');
+        actualTitle = fbUrlParams.get('title') || actualTitle;
+      } catch (e) {
+        console.log('Could not parse Facebook URL:', e);
+      }
+    }
+
+    // Build deep link URLs
+    const customScheme = actualTitle
+      ? `notemyminds://open/note?title=${encodeURIComponent(actualTitle)}`
+      : 'notemyminds://open/note';
+    const httpsLink = actualTitle
+      ? `https://hulsambath.github.io/note?title=${encodeURIComponent(actualTitle)}`
+      : 'https://hulsambath.github.io/note';
+
+    // Android Intent URL (shows system dialog in webviews)
+    // This is the most reliable method for Facebook webview
+    const intentUrl = actualTitle
+      ? `intent://open/note?title=${encodeURIComponent(actualTitle)}#Intent;scheme=notemyminds;package=com.notemyminds.app;S.browser_fallback_url=${encodeURIComponent(httpsLink)};end`
+      : `intent://open/note#Intent;scheme=notemyminds;package=com.notemyminds.app;S.browser_fallback_url=${encodeURIComponent(httpsLink)};end`;
+
+    // Function to try opening the app with multiple methods
+    function openApp() {
+      console.log('Opening app...');
+
+      if (isFacebookBrowser) {
+        // In Facebook's webview, use Android Intent URL first (shows system dialog)
+        console.log('Using Intent URL for Facebook webview');
+        try {
+          window.location.href = intentUrl;
+        } catch (e) {
+          console.log('Intent URL failed:', e);
+          // Fallback to HTTPS app link
+          window.location.href = httpsLink;
+        }
+
+        // Fallback: try HTTPS app link after delay
+        setTimeout(function () {
+          if (document.hasFocus()) {
+            console.log('Fallback: trying HTTPS app link');
+            window.location.href = httpsLink;
+          }
+        }, 500);
+
+        // Final fallback: custom scheme
+        setTimeout(function () {
+          if (document.hasFocus()) {
+            console.log('Final fallback: trying custom scheme');
+            window.location.href = customScheme;
+          }
+        }, 1000);
+      } else {
+        // Try custom scheme first (works on all devices)
+        window.location.href = customScheme;
+
+        // Fallback: try HTTPS app link after a short delay
+        setTimeout(function () {
+          if (document.hasFocus()) {
+            window.location.href = httpsLink;
+          }
+        }, 500);
+      }
+    }
+
+    // Show dialog in Facebook webview
+    function showDialog() {
+      const dialog = document.getElementById('appDialog');
+      if (dialog) {
+        dialog.classList.add('show');
+        console.log('Dialog shown');
+      }
+    }
+
+    // Hide dialog
+    function hideDialog() {
+      const dialog = document.getElementById('appDialog');
+      if (dialog) {
+        dialog.classList.remove('show');
+      }
+    }
+
+    // Set button hrefs
+    const openAppButton = document.getElementById('openApp');
+    if (openAppButton) {
+      openAppButton.href = customScheme;
+      openAppButton.onclick = function (e) {
+        e.preventDefault();
+        openApp();
+      };
+    }
+
+    // Dialog button
+    const dialogButton = document.getElementById('dialogOpenApp');
+    if (dialogButton) {
+      dialogButton.onclick = function (e) {
+        e.preventDefault();
+        openApp();
+        // Keep dialog visible for a moment to show it was clicked
+        setTimeout(function () {
+          hideDialog();
+        }, 300);
+      };
+    }
+
+    // Close dialog when clicking outside
+    const dialog = document.getElementById('appDialog');
+    if (dialog) {
+      dialog.onclick = function (e) {
+        if (e.target === dialog) {
+          hideDialog();
+        }
+      };
+    }
+
+    // Auto-open on mobile devices
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      if (isFacebookBrowser) {
+        // In Facebook webview, show dialog immediately
+        console.log('Facebook webview detected on mobile - showing dialog');
+
+        // Show dialog immediately (this ensures user sees it)
+        setTimeout(function () {
+          showDialog();
+          document.querySelector('.spinner').style.display = 'none';
+        }, 300);
+
+        // Try to open app automatically using Intent URL (shows system dialog)
+        setTimeout(function () {
+          console.log('Attempting automatic app open with Intent URL');
+          openApp();
+        }, 600);
+
+        // Ensure dialog stays visible if app doesn't open
+        setTimeout(function () {
+          if (document.hasFocus()) {
+            console.log('App did not open, ensuring dialog is visible');
+            showDialog();
+          }
+        }, 2000);
+      } else {
+        // Regular browser - try to open immediately
+        setTimeout(function () {
+          openApp();
+
+          // If still on page after 2 seconds, show manual option
+          setTimeout(function () {
+            if (document.hasFocus()) {
+              document.querySelector('.spinner').style.display = 'none';
+              document.querySelector('p').textContent = 'Tap the button below to open in app';
+            }
+          }, 2000);
+        }, 300);
+      }
+    } else {
+      // On desktop, just show the button
+      document.querySelector('.spinner').style.display = 'none';
+      document.querySelector('p').textContent = 'Click the button below to open in app (mobile only)';
+    }
+  </script>
+</body>
+
+</html>

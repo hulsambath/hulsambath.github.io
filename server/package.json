@@ -1,0 +1,23 @@
+{
+  "name": "portfolio-oauth-backend",
+  "version": "1.0.0",
+  "description": "OAuth backend server for NoteMyMinds cross-platform authentication",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["oauth", "express", "google-auth"],
+  "author": "Sambath Hul",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "googleapis": "^129.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
+    "crypto": "^1.0.1"
+  }
+}
