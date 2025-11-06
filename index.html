@@ -11,19 +11,19 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://hulsambath.github.io/portfolio/" />
+    <meta property="og:url" content="https://hulsambath.github.io/my-portfolio/" />
     <meta property="og:title" content="Sambath - Software Engineer" />
     <meta property="og:description" content="Software Engineer specializing in Flutter and React development" />
     <meta property="og:image" content="https://hulsambath.github.io/portfolio/og-image.jpg" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://hulsambath.github.io/portfolio/" />
+    <meta property="twitter:url" content="https://hulsambath.github.io/my-portfolio/" />
     <meta property="twitter:title" content="Sambath - Software Engineer" />
     <meta property="twitter:description" content="Software Engineer specializing in Flutter and React development" />
     <meta property="twitter:image" content="https://hulsambath.github.io/portfolio/og-image.jpg" />
     
-    <link rel="canonical" href="https://hulsambath.github.io/portfolio/" />
+    <link rel="canonical" href="https://hulsambath.github.io/my-portfolio/" />
     
     <!-- JSON-LD Schema -->
     <script type="application/ld+json">
@@ -32,7 +32,7 @@
       "@type": "Person",
       "name": "Sambath",
       "jobTitle": "Software Engineer",
-      "url": "https://hulsambath.github.io/portfolio/",
+      "url": "https://hulsambath.github.io/my-portfolio/",
       "email": "mailto:hulsambath14@gmail.com",
       "address": {
         "@type": "PostalAddress",
@@ -56,5 +56,13 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      (function() {
+        const stored = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = stored ? stored === 'dark' : prefersDark;
+        document.documentElement.classList.toggle('dark', isDark);
+      })();
+    </script>
   </body>
 </html>

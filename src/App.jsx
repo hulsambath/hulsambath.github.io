@@ -6,7 +6,7 @@ export default function App() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'contact'];
+      const sections = ['home', 'about', 'skills', 'projects', 'testimonials', 'experience', 'contact'];
       const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {
@@ -27,6 +27,11 @@ export default function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const toggleTheme = () => {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  };
+
   const scrollToSection = (sectionId) => {
     document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
   };
@@ -46,8 +51,8 @@ export default function App() {
           <div className="container-max px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="text-xl font-bold gradient-text" aria-label="Brand name">{site.author.name}</div>
-              <div className="hidden md:flex space-x-8">
-                {['home', 'about', 'skills', 'projects', 'experience', 'contact'].map((section) => (
+              <div className="hidden md:flex space-x-8 items-center">
+                {['home', 'about', 'skills', 'projects', 'testimonials', 'experience', 'contact'].map((section) => (
                   <button
                     key={section}
                     onClick={() => scrollToSection(section)}
@@ -60,6 +65,28 @@ export default function App() {
                     {section}
                   </button>
                 ))}
+                <button onClick={toggleTheme} className="btn-secondary py-1 px-3 text-sm" aria-label="Toggle theme">Theme</button>
+              </div>
+              <div className="md:hidden">
+                <details>
+                  <summary className="btn-secondary py-2 px-3 text-sm cursor-pointer">Menu</summary>
+                  <div className="mt-2 flex flex-col gap-2 bg-surface-900/80 border border-surface-700 rounded-lg p-3">
+                    {['home', 'about', 'skills', 'projects', 'testimonials', 'experience', 'contact'].map((section) => (
+                      <button
+                        key={section}
+                        onClick={() => scrollToSection(section)}
+                        className={`text-left capitalize transition-colors duration-200 ${
+                          activeSection === section
+                            ? 'text-primary-500 font-medium'
+                            : 'text-text-secondary-dark hover:text-primary-400'
+                        }`}
+                      >
+                        {section}
+                      </button>
+                    ))}
+                    <button onClick={toggleTheme} className="btn-secondary py-1 px-3 text-sm">Theme</button>
+                  </div>
+                </details>
               </div>
             </div>
           </div>
@@ -232,6 +259,29 @@ export default function App() {
         </section>
 
         {/* Separator 4 */}
+        <div className="section-separator">
+          <div className="separator-glow"></div>
+          <div className="separator-line"></div>
+          <div className="separator-icon">💬</div>
+        </div>
+
+        {/* Testimonials Section */}
+        <section id="testimonials" className="section-padding glass-bg section-with-separator">
+          <div className="container-max">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 m3-text-primary">Testimonials</h2>
+            <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+              {site.testimonials.map((t, idx) => (
+                <div key={idx} className="glass-card p-6 rounded-xl border border-surface-700">
+                  <p className="text-lg mb-4 text-text-secondary-dark">“{t.quote}”</p>
+                  <p className="font-semibold m3-text-primary">{t.author}</p>
+                  <p className="text-sm text-text-secondary-dark">{t.role}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Separator 5 */}
         <div className="section-separator">
           <div className="separator-glow"></div>
           <div className="separator-line"></div>

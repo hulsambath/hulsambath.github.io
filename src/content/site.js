@@ -97,10 +97,21 @@ export const site = {
       ]
     }
   ],
+  testimonials: [
+    {
+      quote: 'Sambath delivered our app on time with outstanding quality. Highly recommend.',
+      author: 'Chan Sophea',
+      role: 'Product Manager, TechCorp Solutions'
+    },
+    {
+      quote: 'Great collaborator and problem solver. Elevated our codebase and release cadence.',
+      author: 'Kim Dara',
+      role: 'Engineering Lead, MobileFirst Inc'
+    }
+  ],
   resume: {
     href: '/resume.pdf',
     filename: 'Sambath-Resume.pdf'
   }
 };
-
 
