@@ -1,8 +1,8 @@
 import express from "express";
 import {
-    generateAuthUrl,
-    getTokensFromCode,
-    refreshAccessToken,
+  generateAuthUrl,
+  getTokensFromCode,
+  refreshAccessToken,
 } from "../config/oauth.js";
 import { decrypt, encrypt, validateState } from "../middleware/auth.js";
 
@@ -36,6 +36,13 @@ router.get("/callback", async (req, res) => {
     console.error("OAuth error:", error);
     return res.redirect(
       `${process.env.MOBILE_CALLBACK_SCHEME}?error=${encodeURIComponent(error)}`,
+    );
+  }
+
+  // Also handle error if tokens are missing but no explicit error param
+  if (!code && !error) {
+    return res.redirect(
+      `${process.env.MOBILE_CALLBACK_SCHEME}?error=authorization_code_missing`,
     );
   }
 
