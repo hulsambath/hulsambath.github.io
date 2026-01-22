@@ -73,7 +73,11 @@ router.get("/callback", async (req, res) => {
     const encryptedToken = encrypt(tokenData);
 
     // Redirect to mobile app with encrypted token
-    const callbackUrl = `${process.env.MOBILE_CALLBACK_SCHEME}?token=${encodeURIComponent(encryptedToken)}`;
+    // Primary: HTTPS Universal Link (more reliable on iOS)
+    const primaryUrl = `https://hulsambath.github.io/auth?token=${encodeURIComponent(encryptedToken)}`;
+    // Fallback: Custom Scheme (reliable for manual clicks)
+    const fallbackUrl = `${process.env.MOBILE_CALLBACK_SCHEME}?token=${encodeURIComponent(encryptedToken)}`;
+
     console.log("Authentication successful, redirecting to mobile app...");
 
     res.send(`
@@ -129,6 +133,34 @@ router.get("/callback", async (req, res) => {
             .redirect-note {
               font-size: 0.875rem;
               color: #9ca3af;
+              margin-bottom: 20px;
+            }
+            .button {
+              display: block;
+              width: 100%;
+              background-color: #7C4DFF;
+              color: white;
+              padding: 12px 0;
+              border-radius: 8px;
+              text-decoration: none;
+              font-weight: bold;
+              margin-top: 10px;
+              transition: background-color 0.2s;
+              border: none;
+              cursor: pointer;
+              font-size: 16px;
+            }
+            .button:hover {
+              background-color: #651FFF;
+            }
+            .button-secondary {
+              background-color: transparent;
+              color: #7C4DFF;
+              border: 1px solid #7C4DFF;
+              margin-top: 10px;
+            }
+            .button-secondary:hover {
+              background-color: #f3f0ff;
             }
           </style>
         </head>
@@ -139,30 +171,30 @@ router.get("/callback", async (req, res) => {
             </div>
             <h1>Authentication Successful!</h1>
             <p>You're now signed in to <span class="app-name">NoteMyMinds</span></p>
-            <p class="redirect-note">Redirecting to the app...</p>
+            <p class="redirect-note" id="status-text">Opening app...</p>
 
-            <a href="${callbackUrl}" class="button">Open App</a>
+            <a href="${fallbackUrl}" class="button" id="primary-btn">Open App</a>
+            <a href="${primaryUrl}" class="button button-secondary" id="fallback-btn">Try Universal Link</a>
           </div>
-          <style>
-            .button {
-              display: inline-block;
-              background-color: #7C4DFF;
-              color: white;
-              padding: 12px 24px;
-              border-radius: 8px;
-              text-decoration: none;
-              font-weight: bold;
-              margin-top: 10px;
-              transition: background-color 0.2s;
+
+          <script>
+            const primaryUrl = '${primaryUrl}';
+
+            // Function to try redirect
+            function tryRedirect() {
+              document.getElementById('status-text').innerText = 'Opening app...';
+
+              // Try primary URL first (Universal Link)
+              window.location.href = primaryUrl;
+
+              // If page is still visible after a delay, update text
+              setTimeout(() => {
+                document.getElementById('status-text').innerText = 'If app didn\\'t open, tap the button below.';
+              }, 2000);
             }
-            .button:hover {
-              background-color: #651FFF;
-            }
-          </style>
-            // Attempt to redirect to mobile app
-            setTimeout(() => {
-              window.location.href = '${callbackUrl}';
-            }, 1000);
+
+            // Start redirect process automatically
+            setTimeout(tryRedirect, 100);
           </script>
         </body>
       </html>
