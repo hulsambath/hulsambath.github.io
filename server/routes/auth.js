@@ -1,6 +1,10 @@
-import express from 'express';
-import { generateAuthUrl, getTokensFromCode, refreshAccessToken } from '../config/oauth.js';
-import { decrypt, encrypt, validateState } from '../middleware/auth.js';
+import express from "express";
+import {
+    generateAuthUrl,
+    getTokensFromCode,
+    refreshAccessToken,
+} from "../config/oauth.js";
+import { decrypt, encrypt, validateState } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -8,14 +12,14 @@ const router = express.Router();
  * GET /auth/google
  * Initiates OAuth flow by redirecting to Google consent screen
  */
-router.get('/google', (req, res) => {
+router.get("/google", (req, res) => {
   try {
     const authUrl = generateAuthUrl();
-    console.log('Generated OAuth URL, redirecting to Google...');
+    console.log("Generated OAuth URL, redirecting to Google...");
     res.redirect(authUrl);
   } catch (error) {
-    console.error('Error generating auth URL:', error);
-    res.status(500).json({ error: 'Failed to initiate authentication' });
+    console.error("Error generating auth URL:", error);
+    res.status(500).json({ error: "Failed to initiate authentication" });
   }
 });
 
@@ -24,30 +28,30 @@ router.get('/google', (req, res) => {
  * Handles OAuth callback from Google
  * Exchanges code for tokens and redirects to mobile app
  */
-router.get('/callback', async (req, res) => {
+router.get("/callback", async (req, res) => {
   const { code, state, error } = req.query;
 
   // Handle OAuth errors
   if (error) {
-    console.error('OAuth error:', error);
+    console.error("OAuth error:", error);
     return res.redirect(
-      `${process.env.MOBILE_CALLBACK_SCHEME}?error=${encodeURIComponent(error)}`
+      `${process.env.MOBILE_CALLBACK_SCHEME}?error=${encodeURIComponent(error)}`,
     );
   }
 
   // Validate required parameters
   if (!code) {
-    return res.status(400).json({ error: 'Authorization code missing' });
+    return res.status(400).json({ error: "Authorization code missing" });
   }
 
   // Validate state (CSRF protection)
   if (!validateState(state)) {
-    return res.status(400).json({ error: 'Invalid state parameter' });
+    return res.status(400).json({ error: "Invalid state parameter" });
   }
 
   try {
     // Exchange authorization code for tokens
-    console.log('Exchanging code for tokens...');
+    console.log("Exchanging code for tokens...");
     const tokens = await getTokensFromCode(code);
 
     // Encrypt tokens before sending to mobile app
@@ -56,14 +60,14 @@ router.get('/callback', async (req, res) => {
       refresh_token: tokens.refresh_token,
       expiry_date: tokens.expiry_date,
       token_type: tokens.token_type,
-      scope: tokens.scope
+      scope: tokens.scope,
     });
 
     const encryptedToken = encrypt(tokenData);
 
     // Redirect to mobile app with encrypted token
     const callbackUrl = `${process.env.MOBILE_CALLBACK_SCHEME}?token=${encodeURIComponent(encryptedToken)}`;
-    console.log('Authentication successful, redirecting to mobile app...');
+    console.log("Authentication successful, redirecting to mobile app...");
 
     res.send(`
       <!DOCTYPE html>
@@ -129,27 +133,38 @@ router.get('/callback', async (req, res) => {
             <h1>Authentication Successful!</h1>
             <p>You're now signed in to <span class="app-name">NoteMyMinds</span></p>
             <p class="redirect-note">Redirecting to the app...</p>
+
+            <a href="${callbackUrl}" class="button">Open App</a>
           </div>
-          <script>
+          <style>
+            .button {
+              display: inline-block;
+              background-color: #7C4DFF;
+              color: white;
+              padding: 12px 24px;
+              border-radius: 8px;
+              text-decoration: none;
+              font-weight: bold;
+              margin-top: 10px;
+              transition: background-color 0.2s;
+            }
+            .button:hover {
+              background-color: #651FFF;
+            }
+          </style>
             // Attempt to redirect to mobile app
             setTimeout(() => {
               window.location.href = '${callbackUrl}';
-
-              // Fallback message if redirect doesn't work
-              setTimeout(() => {
-                document.querySelector('.redirect-note').innerHTML =
-                  'If the app doesn\\'t open automatically, please return to the app manually.';
-              }, 2000);
             }, 1000);
           </script>
         </body>
       </html>
     `);
   } catch (error) {
-    console.error('Error exchanging code for tokens:', error);
+    console.error("Error exchanging code for tokens:", error);
     res.status(500).json({
-      error: 'Failed to complete authentication',
-      details: error.message
+      error: "Failed to complete authentication",
+      details: error.message,
     });
   }
 });
@@ -158,11 +173,11 @@ router.get('/callback', async (req, res) => {
  * POST /auth/refresh
  * Refreshes access token using refresh token
  */
-router.post('/refresh', async (req, res) => {
+router.post("/refresh", async (req, res) => {
   const { refresh_token } = req.body;
 
   if (!refresh_token) {
-    return res.status(400).json({ error: 'Refresh token required' });
+    return res.status(400).json({ error: "Refresh token required" });
   }
 
   try {
@@ -180,13 +195,13 @@ router.post('/refresh', async (req, res) => {
     res.json({
       access_token: tokens.access_token,
       expiry_date: tokens.expiry_date,
-      token_type: tokens.token_type
+      token_type: tokens.token_type,
     });
   } catch (error) {
-    console.error('Error refreshing token:', error);
+    console.error("Error refreshing token:", error);
     res.status(401).json({
-      error: 'Failed to refresh token',
-      details: error.message
+      error: "Failed to refresh token",
+      details: error.message,
     });
   }
 });
@@ -195,11 +210,11 @@ router.post('/refresh', async (req, res) => {
  * GET /auth/status
  * Health check endpoint
  */
-router.get('/status', (req, res) => {
+router.get("/status", (req, res) => {
   res.json({
-    status: 'ok',
-    service: 'NoteMyMinds OAuth Server',
-    timestamp: new Date().toISOString()
+    status: "ok",
+    service: "NoteMyMinds OAuth Server",
+    timestamp: new Date().toISOString(),
   });
 });
 
