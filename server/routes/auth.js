@@ -179,13 +179,14 @@ router.get("/callback", async (req, res) => {
 
           <script>
             const primaryUrl = '${primaryUrl}';
+            const fallbackUrl = '${fallbackUrl}';
 
             // Function to try redirect
             function tryRedirect() {
               document.getElementById('status-text').innerText = 'Opening app...';
 
-              // Try primary URL first (Universal Link)
-              window.location.href = primaryUrl;
+              // Use Custom Scheme for auto-redirect (most reliable without Universal Links)
+              window.location.href = fallbackUrl;
 
               // If page is still visible after a delay, update text
               setTimeout(() => {
