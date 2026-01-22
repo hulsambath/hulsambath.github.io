@@ -102,6 +102,10 @@ app.listen(PORT, () => {
   console.log(`   - Refresh:      http://localhost:${PORT}/auth/refresh`);
   console.log(`   - Status:       http://localhost:${PORT}/auth/status`);
   console.log('');
+  console.log('🌐 Network access:');
+  console.log(`   - Local IP:     http://192.168.1.220:${PORT}/`);
+  console.log(`   - Mobile app:   http://192.168.1.220:${PORT}/auth/google`);
+  console.log('');
   console.log('✅ Server ready to accept requests');
   console.log('');
 });
