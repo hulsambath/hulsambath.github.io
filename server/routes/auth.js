@@ -70,17 +70,14 @@ router.get("/callback", async (req, res) => {
       scope: tokens.scope,
     });
 
-    // Send JSON token data directly (encryption removed as per fix for deep link parsing)
-    // The mobile app cannot decrypt server-side encryption without the key
-    // We rely on the security of the redirect channel (HTTPS/Custom Scheme)
-    // and verify the state parameter for security.
-    const tokenPayload = tokenData;
+    // Encrypt tokens before sending to mobile app
+    const encryptedToken = encrypt(tokenData);
 
-    // Redirect to mobile app with token payload
+    // Redirect to mobile app with encrypted token
     // Primary: HTTPS Universal Link (more reliable on iOS)
-    const primaryUrl = `https://hulsambath.github.io/auth?token=${encodeURIComponent(tokenPayload)}`;
+    const primaryUrl = `https://hulsambath.github.io/auth?token=${encodeURIComponent(encryptedToken)}`;
     // Fallback: Custom Scheme (reliable for manual clicks)
-    const fallbackUrl = `${process.env.MOBILE_CALLBACK_SCHEME}?token=${encodeURIComponent(tokenPayload)}`;
+    const fallbackUrl = `${process.env.MOBILE_CALLBACK_SCHEME}?token=${encodeURIComponent(encryptedToken)}`;
 
     console.log("Authentication successful, redirecting to mobile app...");
 
@@ -205,7 +202,18 @@ router.get("/callback", async (req, res) => {
       </html>
     `);
   } catch (error) {
-    console.error("Error exchanging code for tokens:", error);
+    // Improved error logging for debugging
+    console.error(
+      "Error exchanging code for tokens (Full):",
+      JSON.stringify(error, Object.getOwnPropertyNames(error), 2),
+    );
+    if (error.response) {
+      console.error(
+        "Error response data:",
+        JSON.stringify(error.response.data, null, 2),
+      );
+    }
+
     res.status(500).json({
       error: "Failed to complete authentication",
       details: error.message,
