@@ -4,7 +4,7 @@ import {
   getTokensFromCode,
   refreshAccessToken,
 } from "../config/oauth.js";
-import { decrypt, encrypt, validateState } from "../middleware/auth.js";
+import { decrypt, validateState } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -70,13 +70,17 @@ router.get("/callback", async (req, res) => {
       scope: tokens.scope,
     });
 
-    const encryptedToken = encrypt(tokenData);
+    // Send JSON token data directly (encryption removed as per fix for deep link parsing)
+    // The mobile app cannot decrypt server-side encryption without the key
+    // We rely on the security of the redirect channel (HTTPS/Custom Scheme)
+    // and verify the state parameter for security.
+    const tokenPayload = tokenData;
 
-    // Redirect to mobile app with encrypted token
+    // Redirect to mobile app with token payload
     // Primary: HTTPS Universal Link (more reliable on iOS)
-    const primaryUrl = `https://hulsambath.github.io/auth?token=${encodeURIComponent(encryptedToken)}`;
+    const primaryUrl = `https://hulsambath.github.io/auth?token=${encodeURIComponent(tokenPayload)}`;
     // Fallback: Custom Scheme (reliable for manual clicks)
-    const fallbackUrl = `${process.env.MOBILE_CALLBACK_SCHEME}?token=${encodeURIComponent(encryptedToken)}`;
+    const fallbackUrl = `${process.env.MOBILE_CALLBACK_SCHEME}?token=${encodeURIComponent(tokenPayload)}`;
 
     console.log("Authentication successful, redirecting to mobile app...");
 
