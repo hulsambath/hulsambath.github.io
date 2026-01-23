@@ -4,7 +4,7 @@ import {
   getTokensFromCode,
   refreshAccessToken,
 } from "../config/oauth.js";
-import { decrypt, validateState } from "../middleware/auth.js";
+import { decrypt, encrypt, validateState } from "../middleware/auth.js";
 
 const router = express.Router();
 
