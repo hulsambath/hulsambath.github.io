@@ -29,12 +29,12 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Ensure trip images are in dist
+      - name: Ensure trip images are in out
         run: |
           if [ -d "public/trip-images" ]; then
-            rm -rf dist/trip-images
-            mkdir -p dist/trip-images
-            cp -R public/trip-images/. dist/trip-images/
+            rm -rf out/trip-images
+            mkdir -p out/trip-images
+            cp -R public/trip-images/. out/trip-images/
           else
             echo "public/trip-images not found; skipping copy"
           fi
@@ -42,7 +42,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: out
 
   deploy:
     needs: build

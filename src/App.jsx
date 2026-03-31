@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import notemymindsIcon from "./assets/1024x1024.png";
-import hangmeasLogo from "./assets/hangmeas_logo.png";
-import logo from "./assets/logo.png";
-import mcpLogo from "./assets/mcp_logo.png";
-import resumePdf from "./assets/Sambath_HUL_CV.pdf";
+import { Button } from "../components/ui/button";
+import { Card, CardContent } from "../components/ui/card";
 import { site } from "./content/site.js";
+
+const notemymindsIcon = "/assets/1024x1024.png";
+const hangmeasLogo = "/assets/hangmeas_logo.png";
+const logo = "/assets/logo.png";
+const mcpLogo = "/assets/mcp_logo.png";
 
 export default function App() {
   const [activeSection, setActiveSection] = useState("home");
@@ -47,9 +49,10 @@ export default function App() {
   };
 
   const handleDownloadResume = async () => {
+    const resumePdfUrl = "/Sambath_HUL_CV.pdf";
     try {
       // Fetch the PDF file as a blob
-      const response = await fetch(resumePdf);
+      const response = await fetch(resumePdfUrl);
       const blob = await response.blob();
 
       // Create a blob URL
@@ -69,7 +72,7 @@ export default function App() {
       console.error("Error downloading resume:", error);
       // Fallback: try direct download
       const link = document.createElement("a");
-      link.href = resumePdf;
+      link.href = resumePdfUrl;
       link.download = "Sambath_HUL_CV.pdf";
       link.target = "_blank";
       document.body.appendChild(link);
@@ -79,200 +82,179 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen text-text-primary-dark relative overflow-hidden">
-      {/* Animated Background Circles */}
-      <div className="animated-circles">
-        <div className="circle circle-1"></div>
-        <div className="circle circle-2"></div>
-      </div>
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="relative">
+        <nav className="fixed top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+            <div className="flex items-center gap-3">
+              <img src={logo} alt="<HS> Logo" className="h-10 w-10" />
+              <div className="text-xl font-semibold">{site.author.name}</div>
+            </div>
 
-      {/* Content Container */}
-      <div className="relative z-10">
-        {/* Navigation */}
-        <nav className="fixed top-0 w-full backdrop-blur-xl border-b border-outline-variant/30 z-50 shadow-m3-1">
-          <div className="container-max px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center gap-3">
-                <img src={logo} alt="<HS> Logo" className="w-16 h-16" />
-                <div
-                  className="text-xl font-bold gradient-text"
-                  aria-label="Brand name"
+            <div className="hidden items-center gap-6 md:flex">
+              {[
+                "home",
+                "about",
+                "skills",
+                "projects",
+                "experience",
+                "contact",
+              ].map((section) => (
+                <button
+                  key={section}
+                  onClick={() => scrollToSection(section)}
+                  className={`capitalize text-sm transition-colors ${
+                    activeSection === section
+                      ? "text-primary font-medium"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
-                  {site.author.name}
-                </div>
-              </div>
-              <div className="hidden md:flex space-x-8">
-                {[
-                  "home",
-                  "about",
-                  "skills",
-                  "projects",
-                  "experience",
-                  "contact",
-                ].map((section) => (
-                  <button
-                    key={section}
-                    onClick={() => scrollToSection(section)}
-                    className={`capitalize transition-colors duration-200 ${
-                      activeSection === section
-                        ? "text-primary-500 font-medium"
-                        : "text-text-secondary-dark hover:text-primary-400"
-                    }`}
-                  >
-                    {section}
-                  </button>
-                ))}
-              </div>
+                  {section}
+                </button>
+              ))}
             </div>
           </div>
         </nav>
 
         {/* Hero Section */}
-        <section
-          id="home"
-          className="section-padding pt-24 section-with-separator"
-        >
-          <div className="container-max text-center">
+        <section id="home" className="px-4 pt-24 pb-16">
+          <div className="mx-auto max-w-5xl text-center">
             <div className="max-w-4xl mx-auto">
-              <div className="m3-card bg-surface-container-highest/30 p-12">
-                <h1 className="text-5xl md:text-7xl font-bold mb-6">
-                  Hi, I'm{" "}
-                  <span className="gradient-text">{site.author.name}</span> 👋
-                </h1>
-                <p className="text-xl md:text-2xl text-text-secondary-dark mb-8 max-w-3xl mx-auto">
-                  {site.author.title} passionate about creating exceptional
-                  mobile and web experiences
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <button
-                    className="btn-primary"
-                    onClick={() => scrollToSection("projects")}
-                    aria-label="View my work"
-                  >
-                    View My Work
-                  </button>
-                  <button
-                    className="btn-secondary text-center"
-                    onClick={handleDownloadResume}
-                    aria-label="Download resume"
-                  >
-                    Download Resume
-                  </button>
-                </div>
-              </div>
+              <Card className="shadow-md">
+                <CardContent className="p-10">
+                  <h1 className="text-5xl md:text-7xl font-bold mb-6">
+                    Hi, I'm{" "}
+                    <span className="text-primary">{site.author.name}</span>
+                  </h1>
+                  <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+                    {site.author.title} passionate about creating exceptional
+                    mobile and web experiences
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Button
+                      onClick={() => scrollToSection("projects")}
+                      aria-label="View my work"
+                    >
+                      View My Work
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={handleDownloadResume}
+                      aria-label="Download resume"
+                    >
+                      Download Resume
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
 
-        {/* Separator 1 */}
-        <div className="section-separator">
-          <div className="separator-glow"></div>
-          <div className="separator-line"></div>
-          <div className="separator-icon">👨‍💻</div>
-        </div>
-
         {/* About Section */}
-        <section id="about" className="section-padding section-with-separator">
-          <div className="container-max">
+        <section id="about" className="px-4 py-16">
+          <div className="mx-auto max-w-5xl">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 m3-text-primary">
+              <h2 className="text-3xl font-semibold text-center mb-12">
                 About Me
               </h2>
               <div className="grid md:grid-cols-2 gap-12 items-center">
-                <div className="m3-card bg-surface-container-highest/30 p-8">
-                  <p className="text-lg text-text-secondary-dark mb-6 leading-relaxed">
-                    I'm{" "}
-                    <strong className="text-primary-400">Sambath HUL</strong>, a{" "}
-                    <strong className="text-primary-400">
-                      Flutter Developer
-                    </strong>{" "}
-                    and a recent graduate from the{" "}
-                    <strong className="text-primary-400">
-                      Cambodia Academy of Digital Technology (CADT)
-                    </strong>
-                    , specialized in{" "}
-                    <strong className="text-primary-400">
-                      Software Engineering
-                    </strong>
-                    .
-                  </p>
-                  <p className="text-lg text-text-secondary-dark mb-6 leading-relaxed">
-                    I have nearly{" "}
-                    <strong className="text-primary-400">
-                      two years of hands-on experience
-                    </strong>{" "}
-                    building mobile applications using Flutter and Firebase,
-                    including publishing apps on the{" "}
-                    <strong className="text-primary-400">
-                      Google Play Store
-                    </strong>
-                    .
-                  </p>
-                  <p className="text-lg text-text-secondary-dark mb-6 leading-relaxed">
-                    I'm passionate about crafting seamless user experiences,
-                    clean architecture, and scalable mobile solutions. I'm eager
-                    to contribute to a forward-thinking team and continue
-                    growing as a professional mobile developer.
-                  </p>
-                  <div className="flex gap-4">
-                    {site.stats.map((s) => (
-                      <div key={s.label} className="text-center">
-                        <div className="text-2xl font-bold text-primary-500">
-                          {s.value}
-                        </div>
-                        <div className="text-sm text-text-secondary-dark">
-                          {s.label}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="m3-card p-8 bg-primary-500/20 border-primary-500/20">
-                  <h3 className="text-xl font-semibold mb-4 m3-text-primary">
-                    Education
-                  </h3>
-                  <div className="mb-6">
-                    <p className="font-medium text-text-primary-dark mb-1">
-                      Bachelor of Computer Science (Software Engineering)
-                    </p>
-                    <p className="text-primary-500 text-sm mb-2">
-                      <a
-                        href="https://cadt.edu.kh/about/"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="hover:text-primary-400 underline underline-offset-2 transition-colors"
-                      >
+                <Card>
+                  <CardContent className="p-8">
+                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                      I'm <strong className="text-primary">Sambath HUL</strong>,
+                      a{" "}
+                      <strong className="text-primary">
+                        Flutter Developer
+                      </strong>{" "}
+                      and a recent graduate from the{" "}
+                      <strong className="text-primary">
                         Cambodia Academy of Digital Technology (CADT)
-                      </a>
+                      </strong>
+                      , specialized in{" "}
+                      <strong className="text-primary">
+                        Software Engineering
+                      </strong>
+                      .
                     </p>
-                    <p className="text-text-secondary-dark text-sm">
-                      Gained strong foundations in software architecture, mobile
-                      app development, and collaborative project work using
-                      modern technologies.
+                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                      I have nearly{" "}
+                      <strong className="text-primary">
+                        two years of hands-on experience
+                      </strong>{" "}
+                      building mobile applications using Flutter and Firebase,
+                      including publishing apps on the{" "}
+                      <strong className="text-primary">
+                        Google Play Store
+                      </strong>
+                      .
                     </p>
-                  </div>
-                  <h3 className="text-xl font-semibold mb-4 m3-text-primary mt-6">
-                    What I Do
-                  </h3>
-                  <ul className="space-y-3">
-                    <li className="flex items-center text-text-secondary-dark">
-                      <span className="w-2 h-2 bg-primary-500 rounded-full mr-3"></span>
-                      Mobile App Development (Flutter)
-                    </li>
-                    <li className="flex items-center text-text-secondary-dark">
-                      <span className="w-2 h-2 bg-primary-500 rounded-full mr-3"></span>
-                      Web Development (React)
-                    </li>
-                    <li className="flex items-center text-text-secondary-dark">
-                      <span className="w-2 h-2 bg-primary-500 rounded-full mr-3"></span>
-                      UI/UX Design
-                    </li>
-                    <li className="flex items-center text-text-secondary-dark">
-                      <span className="w-2 h-2 bg-primary-500 rounded-full mr-3"></span>
-                      Testing & QA
-                    </li>
-                  </ul>
-                </div>
+                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
+                      I'm passionate about crafting seamless user experiences,
+                      clean architecture, and scalable mobile solutions. I'm
+                      eager to contribute to a forward-thinking team and
+                      continue growing as a professional mobile developer.
+                    </p>
+                    <div className="flex gap-4">
+                      {site.stats.map((s) => (
+                        <div key={s.label} className="text-center">
+                          <div className="text-2xl font-bold text-primary">
+                            {s.value}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {s.label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-primary/20 bg-primary/10">
+                  <CardContent className="p-8">
+                    <h3 className="text-xl font-semibold mb-4">Education</h3>
+                    <div className="mb-6">
+                      <p className="font-medium mb-1">
+                        Bachelor of Computer Science (Software Engineering)
+                      </p>
+                      <p className="text-primary text-sm mb-2">
+                        <a
+                          href="https://cadt.edu.kh/about/"
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:opacity-90 underline underline-offset-2 transition-colors"
+                        >
+                          Cambodia Academy of Digital Technology (CADT)
+                        </a>
+                      </p>
+                      <p className="text-muted-foreground text-sm">
+                        Gained strong foundations in software architecture,
+                        mobile app development, and collaborative project work
+                        using modern technologies.
+                      </p>
+                    </div>
+                    <h3 className="text-xl font-semibold mb-4 mt-6">
+                      What I Do
+                    </h3>
+                    <ul className="space-y-3">
+                      <li className="flex items-center text-muted-foreground">
+                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        Mobile App Development (Flutter)
+                      </li>
+                      <li className="flex items-center text-muted-foreground">
+                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        Web Development (React)
+                      </li>
+                      <li className="flex items-center text-muted-foreground">
+                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        UI/UX Design
+                      </li>
+                      <li className="flex items-center text-muted-foreground">
+                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        Testing & QA
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>
@@ -291,10 +273,10 @@ export default function App() {
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 m3-text-primary">
               Skills & Technologies
             </h2>
-            <div className="m3-card-elevated bg-surface-container-highest/30 p-8">
+            <div className="rounded-2xl border border-border bg-background p-8 shadow-sm">
               <div className="grid md:grid-cols-3 gap-8">
-                <div className="m3-card-elevated bg-surface-container-highest/30 p-6 card-hover">
-                  <h3 className="text-xl font-semibold mb-4 text-primary-500">
+                <div className="rounded-2xl border border-border bg-background p-6 shadow-sm transition-shadow hover:shadow-md">
+                  <h3 className="text-xl font-semibold mb-4 text-primary">
                     Mobile Development
                   </h3>
                   <div className="space-y-3">
@@ -311,16 +293,16 @@ export default function App() {
                               className="w-5 h-5"
                             />
                           )}
-                          <span className="text-text-secondary-dark">
+                          <span className="text-muted-foreground">
                             {sk.name}
                           </span>
                         </div>
                         <div
-                          className="w-24 bg-surface-container-high rounded-m3-2xl h-2"
+                          className="w-24 bg-muted rounded-full h-2"
                           aria-hidden="true"
                         >
                           <div
-                            className="bg-primary-500 h-2 rounded-m3-2xl transition-all duration-500"
+                            className="bg-primary h-2 rounded-full transition-all duration-500"
                             style={{ width: `${sk.levelPct}%` }}
                           ></div>
                         </div>
@@ -329,8 +311,8 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="m3-card-elevated bg-surface-container-highest/30 p-6 card-hover">
-                  <h3 className="text-xl font-semibold mb-4 text-primary-500">
+                <div className="rounded-2xl border border-border bg-background p-6 shadow-sm transition-shadow hover:shadow-md">
+                  <h3 className="text-xl font-semibold mb-4 text-primary">
                     Web Development
                   </h3>
                   <div className="space-y-3">
@@ -347,16 +329,16 @@ export default function App() {
                               className="w-5 h-5"
                             />
                           )}
-                          <span className="text-text-secondary-dark">
+                          <span className="text-muted-foreground">
                             {sk.name}
                           </span>
                         </div>
                         <div
-                          className="w-24 bg-surface-container-high rounded-m3-2xl h-2"
+                          className="w-24 bg-muted rounded-full h-2"
                           aria-hidden="true"
                         >
                           <div
-                            className="bg-primary-500 h-2 rounded-m3-2xl transition-all duration-500"
+                            className="bg-primary h-2 rounded-full transition-all duration-500"
                             style={{ width: `${sk.levelPct}%` }}
                           ></div>
                         </div>
@@ -365,8 +347,8 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="m3-card-elevated bg-surface-container-highest/30 p-6 card-hover">
-                  <h3 className="text-xl font-semibold mb-4 text-primary-500">
+                <div className="rounded-2xl border border-border bg-background p-6 shadow-sm transition-shadow hover:shadow-md">
+                  <h3 className="text-xl font-semibold mb-4 text-primary">
                     Tools & Others
                   </h3>
                   <div className="space-y-3">
@@ -383,16 +365,16 @@ export default function App() {
                               className="w-5 h-5"
                             />
                           )}
-                          <span className="text-text-secondary-dark">
+                          <span className="text-muted-foreground">
                             {sk.name}
                           </span>
                         </div>
                         <div
-                          className="w-24 bg-surface-container-high rounded-m3-2xl h-2"
+                          className="w-24 bg-muted rounded-full h-2"
                           aria-hidden="true"
                         >
                           <div
-                            className="bg-primary-500 h-2 rounded-m3-2xl transition-all duration-500"
+                            className="bg-primary h-2 rounded-full transition-all duration-500"
                             style={{ width: `${sk.levelPct}%` }}
                           ></div>
                         </div>
@@ -406,40 +388,33 @@ export default function App() {
         </section>
 
         {/* Separator 2.5 */}
-        <div className="section-separator">
-          <div className="separator-glow"></div>
-          <div className="separator-line"></div>
-          <div className="separator-icon">🛠️</div>
-        </div>
+        <div className="h-10" aria-hidden="true" />
 
         {/* Technology & Tools Section */}
-        <section
-          id="technologies"
-          className="section-padding section-with-separator"
-        >
-          <div className="container-max">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 m3-text-primary">
+        <section id="technologies" className="px-4 py-16">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="text-3xl font-semibold text-center mb-12">
               Technology & Tools
             </h2>
-            <div className="m3-card bg-surface-container-highest/30 p-8">
+            <div className="rounded-2xl border border-border bg-background p-8 shadow-sm">
               <div className="space-y-12">
                 {/* Languages */}
                 <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary-500">
+                  <h3 className="text-2xl font-semibold mb-6 text-primary">
                     Languages
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {site.technologies.languages.map((tech) => (
                       <div
                         key={tech.name}
-                        className="m3-card-elevated bg-surface-container-highest/30 p-4 card-hover flex flex-col items-center justify-center text-center"
+                        className="flex flex-col items-center justify-center rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition-shadow hover:shadow-md"
                       >
                         <img
                           src={tech.icon}
                           alt={tech.name}
                           className="w-12 h-12 mb-3"
                         />
-                        <span className="text-sm text-text-secondary-dark font-medium">
+                        <span className="text-sm text-muted-foreground font-medium">
                           {tech.name}
                         </span>
                       </div>
@@ -449,21 +424,21 @@ export default function App() {
 
                 {/* Frameworks */}
                 <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary-500">
+                  <h3 className="text-2xl font-semibold mb-6 text-primary">
                     Frameworks & Libraries
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {site.technologies.frameworks.map((tech) => (
                       <div
                         key={tech.name}
-                        className="m3-card-elevated bg-surface-container-highest/30 p-4 card-hover flex flex-col items-center justify-center text-center"
+                        className="flex flex-col items-center justify-center rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition-shadow hover:shadow-md"
                       >
                         <img
                           src={tech.icon}
                           alt={tech.name}
                           className="w-12 h-12 mb-3"
                         />
-                        <span className="text-sm text-text-secondary-dark font-medium">
+                        <span className="text-sm text-muted-foreground font-medium">
                           {tech.name}
                         </span>
                       </div>
@@ -473,21 +448,21 @@ export default function App() {
 
                 {/* Backend & Cloud */}
                 <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary-500">
+                  <h3 className="text-2xl font-semibold mb-6 text-primary">
                     Backend & Cloud
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {site.technologies.backend.map((tech) => (
                       <div
                         key={tech.name}
-                        className="m3-card-elevated bg-surface-container-highest/30 p-4 card-hover flex flex-col items-center justify-center text-center"
+                        className="flex flex-col items-center justify-center rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition-shadow hover:shadow-md"
                       >
                         <img
                           src={tech.icon}
                           alt={tech.name}
                           className="w-12 h-12 mb-3"
                         />
-                        <span className="text-sm text-text-secondary-dark font-medium">
+                        <span className="text-sm text-muted-foreground font-medium">
                           {tech.name}
                         </span>
                       </div>
@@ -497,21 +472,21 @@ export default function App() {
 
                 {/* Architecture & Patterns */}
                 <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary-500">
+                  <h3 className="text-2xl font-semibold mb-6 text-primary">
                     Architecture & Patterns
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {site.technologies.architecture.map((tech) => (
                       <div
                         key={tech.name}
-                        className="m3-card-elevated bg-surface-container-highest/30 p-4 card-hover flex flex-col items-center justify-center text-center"
+                        className="flex flex-col items-center justify-center rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition-shadow hover:shadow-md"
                       >
                         <img
                           src={tech.icon}
                           alt={tech.name}
                           className="w-12 h-12 mb-3"
                         />
-                        <span className="text-sm text-text-secondary-dark font-medium">
+                        <span className="text-sm text-muted-foreground font-medium">
                           {tech.name}
                         </span>
                       </div>
@@ -521,14 +496,14 @@ export default function App() {
 
                 {/* Tools */}
                 <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary-500">
+                  <h3 className="text-2xl font-semibold mb-6 text-primary">
                     Development Tools
                   </h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {site.technologies.tools.map((tech) => (
                       <div
                         key={tech.name}
-                        className="m3-card-elevated bg-surface-container-highest/30 p-4 card-hover flex flex-col items-center justify-center text-center"
+                        className="flex flex-col items-center justify-center rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition-shadow hover:shadow-md"
                       >
                         {tech.icon ? (
                           <img
@@ -546,7 +521,7 @@ export default function App() {
                             </span>
                           </div>
                         )}
-                        <span className="text-sm text-text-secondary-dark font-medium">
+                        <span className="text-sm text-muted-foreground font-medium">
                           {tech.name}
                         </span>
                       </div>
@@ -627,10 +602,10 @@ export default function App() {
                         p.title === "notemyminds"
                           ? "bg-gradient-to-br from-primary-500/10 via-primary-400/5 to-primary-600/10"
                           : p.title === "Portfolio Website"
-                          ? "bg-gradient-to-br from-orange-500/10 via-orange-400/5 to-orange-600/10"
-                          : p.title === "HangMeas App"
-                          ? "bg-gradient-to-br from-red-500/10 via-orange-400/5 to-yellow-500/10"
-                          : "bg-primary-500/20"
+                            ? "bg-gradient-to-br from-orange-500/10 via-orange-400/5 to-orange-600/10"
+                            : p.title === "HangMeas App"
+                              ? "bg-gradient-to-br from-red-500/10 via-orange-400/5 to-yellow-500/10"
+                              : "bg-primary-500/20"
                       }`}
                     >
                       {p.title === "notemyminds" ? (
