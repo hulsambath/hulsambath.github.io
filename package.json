@@ -4,7 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "node setup_kp_trip_images.mjs",
     "dev": "vite",
+    "prebuild": "node setup_kp_trip_images.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Kampot Trip Plan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      line-height: 1.6;
+      background: #f9f9f9;
+    }
+
+    h1,
+    h2 {
+      color: #2c3e50;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    /* Constrain media width to 600px and center it */
+    .media {
+      max-width: 600px;
+      margin: 12px auto 0;
+    }
+
+    .image-grid img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="trip-images-error" style="color: #c0392b; font-weight: 600;"></div>
+
+  <h1>🛵 2D1N Motorbike Trip Plan: Phnom Penh → Kampot → Bokor → Kep</h1>
+
+  <div class="section card">
+    <h2>🏨 Stay: Kampot Sunny Hotel</h2>
+    <p>Budget-friendly, good for sharing, central location in Kampot.</p>
+    <div class="image-grid media" data-images="kampot"></div>
+  </div>
+
+  <div class="section card">
+    <h2>📅 Day 1: Phnom Penh → Kampot → Bokor → Kep</h2>
+
+    <p><b>6:00 AM:</b> Depart Phnom Penh (direct). Arrive Kampot 9:30-10:00 AM.</p>
+    <div class="image-grid media" data-images="kampot"></div>
+
+    <p>☕ Breakfast/coffee in Kampot or Bokor.</p>
+    <div class="image-grid media" data-images="kampot"></div>
+
+    <p>⛰️ Visit Bokor Mountain: Lok Yeay Mao, old church, viewpoints.</p>
+    <div class="image-grid media" data-images="bokor"></div>
+
+    <p>😴 Afternoon check-in and rest.</p>
+
+    <p>🌅 Evening: Kep beach sunset and seafood dinner.</p>
+    <div class="image-grid media" data-images="kep"></div>
+  </div>
+
+  <div class="section card">
+    <h2>📅 Day 2: Kampot → Phnom Penh</h2>
+
+    <p>🌄 Morning coffee and chill in Kampot.</p>
+    <div class="image-grid media" data-images="kampot"></div>
+
+    <p><b>10-11 AM:</b> Depart Kampot, arrive Phnom Penh 2-3 PM.</p>
+  </div>
+
+  <div class="section card">
+    <h2>💰 Budget (per person)</h2>
+    <p>
+      Fuel: $6-$8<br>
+      Hotel: $3-$6<br>
+      Food: $10-$16<br>
+      Snacks: $3-$5<br>
+      <b>Total: $22-$35</b>
+    </p>
+  </div>
+
+  <div class="section card">
+    <h2>⚠️ Tips</h2>
+    <p>
+      Start early, ride safely, bring raincoat, jacket, power bank, and cash.
+    </p>
+  </div>
+
+  <script>
+    // Built‑in fallback manifest so images still work even if the
+    // deployed /trip-images/manifest.json is empty or missing.
+    const FALLBACK_TRIP_IMAGES = {
+      kampot: [
+        "trip-images/kampot/telegram-cloud-photo-size-5-6221994916015967708-w.jpg",
+        "trip-images/kampot/telegram-cloud-photo-size-5-6221994916015967709-w.jpg",
+        "trip-images/kampot/telegram-cloud-photo-size-5-6221994916015967717-w.jpg",
+        "trip-images/kampot/telegram-cloud-photo-size-5-6221994916015967718-w copy.jpg",
+        "trip-images/kampot/telegram-cloud-photo-size-5-6221994916015967722-w.jpg"
+      ],
+      bokor: [
+        "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967693-w.jpg",
+        "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967694-w.jpg",
+        "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967695-w.jpg",
+        "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967696-w.jpg",
+        "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967712-w.jpg",
+        "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967714-w.jpg",
+        "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967715-w.jpg",
+        "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967716-w.jpg"
+      ],
+      kep: [
+        "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967710-y copy.jpg",
+        "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967710-y.jpg",
+        "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967719-w.jpg",
+        "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967720-w.jpg",
+        "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967721-w.jpg",
+        "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967723-w.jpg"
+      ]
+    };
+
+    async function loadTripImages() {
+      const manifestUrl = "/trip-images/manifest.json";
+      let manifest = FALLBACK_TRIP_IMAGES;
+
+      try {
+        const res = await fetch(manifestUrl);
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        const remoteManifest = await res.json();
+        const hasAnyImages =
+          remoteManifest &&
+          Object.values(remoteManifest).some(
+            (list) => Array.isArray(list) && list.length > 0
+          );
+
+        // Only use the remote manifest if it actually contains images;
+        // otherwise keep using the built‑in fallback.
+        if (hasAnyImages) {
+          manifest = remoteManifest;
+        }
+      } catch (e) {
+        console.error("Failed to load trip image manifest, using fallback:", e);
+
+        const errorEl = document.getElementById("trip-images-error");
+        if (errorEl) {
+          errorEl.textContent =
+            "Trip images are using the built‑in fallback list (manifest.json missing or empty in production).";
+        }
+      }
+
+      document.querySelectorAll("[data-images]").forEach((container) => {
+        const key = container.getAttribute("data-images");
+        const files = (manifest && manifest[key]) || [];
+
+        container.innerHTML = files
+          .map((relPath) => {
+            const cleanPath = relPath.replace(/^\//, "");
+            const src = `/${cleanPath}`;
+            return `<img src="${src}" alt="${key} photo" />`;
+          })
+          .join("");
+      });
+    }
+
+    loadTripImages();
+  </script>
+
+</body>
+
+</html>
