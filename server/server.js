@@ -11,6 +11,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Railway terminates TLS at a single proxy hop; trust exactly one hop so
+// express-rate-limit sees the real client IP but spoofed X-Forwarded-For
+// chains from clients are not honored.
+app.set("trust proxy", 1);
+app.disable("x-powered-by");
+
 // Security middleware
 app.use(helmet());
 
@@ -35,17 +41,28 @@ app.use(cors({
 }));
 
 // Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
-});
+const limiterDefaults = {
+  windowMs: 15 * 60 * 1000,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many requests, please try again later." },
+};
 
-app.use('/auth', limiter);
+// Tier 1: everything, including the root endpoint
+app.use(rateLimit({ ...limiterDefaults, max: 300 }));
+
+// Tier 2: auth surface
+app.use("/auth", rateLimit({ ...limiterDefaults, max: 100 }));
+
+// Tier 3: endpoints that call Google's API
+app.use(
+  ["/auth/refresh", "/auth/callback"],
+  rateLimit({ ...limiterDefaults, max: 20 }),
+);
 
 // Body parser
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
 
 // Request logging
 app.use((req, res, next) => {
@@ -78,15 +95,12 @@ app.use((req, res) => {
 
 // Error handler
 app.use((err, req, res, next) => {
-  console.error('Error:', err);
-  res.status(err.status || 500).json({
-    error: err.message || 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
+  console.error("Error:", err);
+  res.status(err.status || 500).json({ error: "Internal server error" });
 });
 
 // Start server
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log('╔════════════════════════════════════════════════════════════╗');
   console.log('║          NoteMyMinds OAuth Server                         ║');
   console.log('╚════════════════════════════════════════════════════════════╝');
@@ -109,5 +123,11 @@ app.listen(PORT, () => {
   console.log('✅ Server ready to accept requests');
   console.log('');
 });
+
+// Bound slow/idle connections (slowloris mitigation).
+// Required ordering: keepAliveTimeout < headersTimeout < requestTimeout.
+server.requestTimeout = 30_000;
+server.headersTimeout = 20_000;
+server.keepAliveTimeout = 10_000;
 
 export default app;
