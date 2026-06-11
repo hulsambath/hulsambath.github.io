@@ -214,10 +214,7 @@ router.get("/callback", async (req, res) => {
       );
     }
 
-    res.status(500).json({
-      error: "Failed to complete authentication",
-      details: error.message,
-    });
+    res.status(500).json({ error: "Failed to complete authentication" });
   }
 });
 
@@ -238,7 +235,12 @@ router.post("/refresh", async (req, res) => {
     try {
       decryptedRefreshToken = decrypt(refresh_token);
     } catch (e) {
-      // Token might not be encrypted, use as-is
+      // A v2 token that fails decryption is tampered or corrupted — reject it.
+      // Legacy/plain tokens may legitimately fail decrypt; use them as-is.
+      if (typeof refresh_token === "string" && refresh_token.startsWith("v2:")) {
+        console.error("Rejected tampered or corrupt v2 refresh token");
+        return res.status(401).json({ error: "Invalid refresh token" });
+      }
     }
 
     // Get new access token
@@ -251,10 +253,7 @@ router.post("/refresh", async (req, res) => {
     });
   } catch (error) {
     console.error("Error refreshing token:", error);
-    res.status(401).json({
-      error: "Failed to refresh token",
-      details: error.message,
-    });
+    res.status(401).json({ error: "Failed to refresh token" });
   }
 });
 

@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { google } from 'googleapis';
+import { generateState } from '../middleware/auth.js';
 
 dotenv.config();
 
@@ -44,14 +45,6 @@ export async function refreshAccessToken(refreshToken) {
   oauth2Client.setCredentials({ refresh_token: refreshToken });
   const { credentials } = await oauth2Client.refreshAccessToken();
   return credentials;
-}
-
-/**
- * Generate random state for CSRF protection
- */
-function generateState() {
-  return Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15);
 }
 
 export { SCOPES, oauth2Client };
