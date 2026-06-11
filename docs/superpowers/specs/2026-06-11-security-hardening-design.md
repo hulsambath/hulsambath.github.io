@@ -37,7 +37,7 @@ brokers Google OAuth for the NoteMyMinds mobile app.
   - `/auth`: keep 100 / 15 min / IP.
   - `/auth/refresh` and `/auth/callback`: 20 / 15 min / IP (these call Google's API).
 - `express.json({ limit: '10kb' })`, `express.urlencoded({ extended: true, limit: '10kb' })`.
-- HTTP server timeouts: `requestTimeout` 30s, `headersTimeout` 35s,
+- HTTP server timeouts: `requestTimeout` 30s, `headersTimeout` 20s (must be less than requestTimeout),
   `keepAliveTimeout` 10s.
 - `app.disable('x-powered-by')` (explicit, in addition to helmet).
 

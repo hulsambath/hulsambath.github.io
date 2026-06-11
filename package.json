@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "predev": "node setup_kp_trip_images.mjs",
+    "predev": "node setup_kp_trip_images.mjs && node generate_llms.mjs",
     "dev": "next dev",
     "dev:vite": "vite",
-    "prebuild": "node setup_kp_trip_images.mjs",
+    "prebuild": "node setup_kp_trip_images.mjs && node generate_llms.mjs",
     "build": "next build",
     "build:vite": "vite build",
     "start": "next start",

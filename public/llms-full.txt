@@ -1,0 +1,125 @@
+# Sambath HUL — Software Engineer
+
+> Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 2+ years of hands-on experience designing, building, and shipping production software — primarily cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. He has built and released multiple apps to the Google Play Store and Apple App Store, including white-label / multi-tenant platforms, and works with an MVVM + Repository architecture, full internationalization (English/Khmer), and CI/CD automation. This file is a structured, plain-text representation of his portfolio (https://hulsambath.github.io) for AI agents and LLMs.
+
+- Name: Sambath HUL
+- Title: Software Engineer
+- Location: Phnom Penh, Cambodia
+- Email: hulsambath14@gmail.com
+- Phone: +855 88 708 5187, +855 76 708 5187
+- Website: https://hulsambath.github.io
+- GitHub: https://github.com/hulsambath
+- LinkedIn: https://www.linkedin.com/in/hulsambath/
+- X (Twitter): https://x.com/hul_sambath
+
+## Summary
+Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 2+ years of hands-on experience designing, building, and shipping production software — primarily cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. He has built and released multiple apps to the Google Play Store and Apple App Store, including white-label / multi-tenant platforms, and works with an MVVM + Repository architecture, full internationalization (English/Khmer), and CI/CD automation.
+
+## Highlights
+- 2+ Years Experience
+- 4 Production Apps
+- 6 Platform Targets
+
+## Education
+- Bachelor of Computer Science (Software Engineering)
+- Cambodia Academy of Digital Technology (CADT) (https://cadt.edu.kh)
+- 2021 – 2025
+- Gained strong foundations in software architecture, mobile app development, and collaborative project work.
+
+## Skills
+### Mobile
+- Flutter — 3 yrs
+- Dart — 3 yrs
+- MVVM Architecture — 2 yrs
+- Firebase — 2 yrs
+
+### Web
+- React — 2 yrs
+- JavaScript — 3 yrs
+- Tailwind CSS — 1 yr
+- Vite — 1 yr
+
+### Tools
+- Git & GitHub — 3 yrs
+- CI/CD (GitHub Actions) — 2 yrs
+- Figma — 2 yrs
+- Testing & QA — 2 yrs
+
+## Technologies
+- Languages: Dart, JavaScript, Java, Kotlin
+- Frameworks: Flutter, React, Vite
+- Backend: Firebase, Google Cloud
+- Tools: Git, GitHub, GitHub Actions, Figma, Postman, ADB, asdf, VS Code, Cursor, Docker, ChatGPT, FlutterFire CLI, Google Play Console, Fastlane
+- Architecture: MVVM, Provider
+- Development Environment: Ubuntu, ADB, asdf, Cursor, Docker, MCP Server
+
+## Experience
+### Software Engineer (Mobile) — BookMeBus Co., Ltd. (https://bookmebus.com/en/about_us)
+June 2024 – Present
+- Ship and maintain BookMeBus, a multi-vertical travel super-app (bus, ferry, hotel, airport transfer, private taxi) with ABA PayWay payments, live chat, coupons, and multi-language support across 80+ screen modules
+- Built and released two branded operator apps — iBus and BS Bus Cambodia — from a single flavor-based white-label Flutter codebase, and contributed to the React Native → Flutter migration
+- Set up projects using MVVM + Repository architecture with a clean, observable, testable code structure; integrated push notifications and privacy-compliance flows
+- Delivered cross-platform apps spanning up to 6 OS targets from one Flutter codebase, with code-gen pipelines and full i18n
+- Created test cases, performed QA, and released apps to the Google Play Store
+
+### Flutter Developer Intern — CamMob Co., Ltd. (https://www.cam-mob.com/)
+January 2024 – April 2024
+- Assisted in building Flutter mobile applications in a collaborative environment
+- Worked with senior developers on state management, API integration, and UI improvements
+- Improved teamwork, debugging, and development workflows through hands-on mentorship
+
+### Software Engineer - notemyminds — Personal Project
+2023 - Present
+- Architected and developed notemyminds, a cross-platform note-taking app with MVVM pattern
+- Implemented Google Drive synchronization with conflict resolution and offline-first architecture
+- Built comprehensive tagging system with analytics and insights generation
+- Designed and implemented internationalization support (English/Khmer) with easy_localization
+- Created robust CI/CD pipeline with automated builds and credential management using SOPS
+
+## Projects
+### BookMeBus — BookMeBus Co., Ltd.
+Flagship consumer travel super-app covering five booking verticals — bus, ferry, hotel, airport transfer, and private taxi — across 80+ screen modules. Features ABA PayWay payments, live chat & customer service, coupon/promo codes, multi-language, push notifications, booking & transaction history, and privacy-compliance flows.
+  - Tech: Flutter, Dart, ABA PayWay, Firebase, Provider
+  - Play Store: https://play.google.com/store/apps/details?id=com.bookmebus.bookmebus
+  - App Store: https://apps.apple.com/in/app/bookmebus-bus-ferry-and-taxi/id1101077306
+
+### iBus — BookMeBus Co., Ltd.
+A branded bus operator app built and released to production from a shared white-label Flutter codebase with a flavor-based build system. Owns its configs, signing key, theme, and Android source set, with dedicated feature work (search-trip UI, departure-date scrolling). Built on the React Native → Flutter migration of the operator platform.
+  - Tech: Flutter, Dart, Flavors, Firebase, CI/CD
+  - Play Store: https://play.google.com/store/apps/details?id=com.bookmebus.ibus
+  - App Store: https://apps.apple.com/in/app/ibus-express/id6756961793
+
+### BS Bus Cambodia — BookMeBus Co., Ltd.
+A branded operator app (the `bstransport` flavor) released to production from the same shared white-label Flutter codebase, with its own theme, configs, and assets. Part of the operator platform’s flavor-based multi-brand build system.
+  - Tech: Flutter, Dart, Flavors, Firebase
+  - Play Store: https://play.google.com/store/apps/details?id=com.bookmebus.bstransport
+  - App Store: https://apps.apple.com/in/app/bs-bus-cambodia/id6754649294
+
+### HangMeas App — Company Project
+An all-in-one entertainment & live-voting platform — YouTube live-stream integration with real-time viewer counts, an interactive vote tap-counter for national TV shows (Got Talent, The Voice Cambodia), event & show details, ticketing, in-app vote top-up, social login, and maps. Primary author/maintainer (358 commits) across 6 platform targets on a multi-tenant MVVM monorepo.
+  - Tech: Flutter, Dart, Firebase, YouTube Live, In-App Purchase, MVVM
+  - Play Store: https://play.google.com/store/apps/details?id=com.hangmeas.app
+  - App Store: https://apps.apple.com/in/app/hang-meas-mobile/id6748306637
+  - Demo: https://youtube.com/watch?v=PtlsVe9Ljvk
+
+### Trovara
+AI-powered personal notes app with a full RAG pipeline for semantic chat over your notes — vector search, query rewriting, and multi-LLM support (Gemini / OpenAI / OpenRouter). Builds a knowledge graph linking related notes, generates quizzes from your content, and surfaces analytics in an Insights tab. Imports from Obsidian, Notion, and Storypad; bidirectional Google Drive sync; offline-first ObjectBox storage; English/Khmer i18n; and a Pro tier with Google Play billing. Built with MVVM and Shorebird OTA updates.
+  - Tech: Flutter, Dart, ObjectBox, RAG, Knowledge Graph, Google Drive API, In-App Purchase, MVVM
+
+### Oudong Express — Company Project
+A second tenant proving out the multi-tenant white-label architecture, sharing a common core package with dedicated prod/staging flavors and Firebase configs. Includes documented performance-optimization work across the shared 25K-LOC reusable core of HTTP clients, models, and services.
+  - Tech: Flutter, Dart, MVVM, Firebase, Multi-tenant
+  - Play Store: https://play.google.com/store/apps/details?id=com.oudongexpress.app
+  - App Store: https://apps.apple.com/us/app/oudong-express/id6761469150
+
+### Developer Tooling
+AI-assisted development infrastructure: a Dockerized Node.js MCP (Model Context Protocol) HTTP bridge server, a published VS Code extension for copying file references, plus custom Claude Code skills, hooks, and style-guide automation (MVVM, Repository pattern, i18n, tests) across the monorepos.
+  - Tech: Node.js, Docker, MCP, VS Code Extension
+
+### Portfolio Website
+Modern, responsive portfolio website built with React and Tailwind CSS. Features smooth animations, dark mode, mobile-first design, SEO optimization, and automated GitHub Pages deployment.
+  - Tech: React, Tailwind CSS, Vite, GitHub Actions
+  - Source: https://github.com/hulsambath/hulsambath.github.io
+
+## Contact
+Reach Sambath HUL at hulsambath14@gmail.com or via the links above.

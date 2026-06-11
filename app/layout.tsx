@@ -21,9 +21,9 @@ const csp = [
 ].join("; ");
 
 export const metadata: Metadata = {
-  title: "Sambath - Software Engineer | Flutter & React Developer",
+  title: "Sambath HUL - Software Engineer | Mobile, Web & Developer Tooling",
   description:
-    "Sambath is a Software Engineer specializing in Flutter and React development.",
+    "Sambath HUL is a Software Engineer specializing in cross-platform mobile apps (Flutter), web development (React/Next.js), and developer tooling.",
   referrer: "strict-origin-when-cross-origin",
 };
 

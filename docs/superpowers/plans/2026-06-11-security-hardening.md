@@ -21,7 +21,7 @@
 - Create: `server/test/auth.test.js`
 - Modify: `server/middleware/auth.js`
 
-- [ ] **Step 1: Add test script to server/package.json**
+- [x] **Step 1: Add test script to server/package.json**
 
 In `server/package.json`, add to `"scripts"`:
 
@@ -29,7 +29,7 @@ In `server/package.json`, add to `"scripts"`:
 "test": "node --test test/"
 ```
 
-- [ ] **Step 2: Write failing tests for state generation/validation**
+- [x] **Step 2: Write failing tests for state generation/validation**
 
 Create `server/test/auth.test.js`:
 
@@ -92,12 +92,12 @@ test("malformed states are rejected", () => {
 });
 ```
 
-- [ ] **Step 3: Run tests to verify they fail**
+- [x] **Step 3: Run tests to verify they fail**
 
 Run from `server/`: `npm test`
 Expected: FAIL — `generateState` is not exported by `../middleware/auth.js`.
 
-- [ ] **Step 4: Implement state functions in middleware/auth.js**
+- [x] **Step 4: Implement state functions in middleware/auth.js**
 
 Replace the `validateState` function at the bottom of `server/middleware/auth.js` (and add `generateState`). Keep the existing `encrypt`/`decrypt` untouched for now (Task 2 replaces them). Add at top-level (after the existing `ENCRYPTION_KEY` constant):
 
@@ -144,12 +144,12 @@ export function validateState(state) {
 
 Delete the old `validateState` (the one that only checks `state.length > 10`).
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 Run from `server/`: `npm test`
 Expected: PASS (6 tests).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add server/package.json server/test/auth.test.js server/middleware/auth.js
@@ -164,7 +164,7 @@ git commit -m "feat(server): HMAC-signed OAuth state with TTL for real CSRF prot
 - Modify: `server/test/auth.test.js`
 - Modify: `server/middleware/auth.js`
 
-- [ ] **Step 1: Write failing tests for v2 encryption**
+- [x] **Step 1: Write failing tests for v2 encryption**
 
 Append to `server/test/auth.test.js` (also add `encrypt`/`decrypt` to the existing dynamic import line):
 
@@ -204,12 +204,12 @@ test("legacy CBC tokens still decrypt", () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify the new ones fail**
+- [x] **Step 2: Run tests to verify the new ones fail**
 
 Run from `server/`: `npm test`
 Expected: the three new tests FAIL (current `encrypt` emits CBC `iv:ciphertext`, no `v2:` prefix); the 6 state tests still PASS.
 
-- [ ] **Step 3: Replace encrypt/decrypt in middleware/auth.js**
+- [x] **Step 3: Replace encrypt/decrypt in middleware/auth.js**
 
 Replace the existing `encrypt` and `decrypt` functions with:
 
@@ -265,12 +265,12 @@ export function decrypt(text) {
 
 Remove the old `const ALGORITHM = 'aes-256-cbc';` line and the duplicated key-derivation code inside the old functions.
 
-- [ ] **Step 4: Run tests to verify all pass**
+- [x] **Step 4: Run tests to verify all pass**
 
 Run from `server/`: `npm test`
 Expected: PASS (9 tests).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add server/test/auth.test.js server/middleware/auth.js
@@ -285,7 +285,7 @@ git commit -m "feat(server): AES-256-GCM token encryption with legacy CBC decryp
 - Modify: `server/middleware/auth.js`
 - Modify: `server/package.json`
 
-- [ ] **Step 1: Replace the key constant with fail-fast logic**
+- [x] **Step 1: Replace the key constant with fail-fast logic**
 
 In `server/middleware/auth.js`, replace:
 
@@ -317,7 +317,7 @@ const ENCRYPTION_KEY = (() => {
 })();
 ```
 
-- [ ] **Step 2: Verify fail-fast behavior and that tests still pass**
+- [x] **Step 2: Verify fail-fast behavior and that tests still pass**
 
 Run from `server/`:
 
@@ -328,7 +328,7 @@ npm test
 
 Expected: first command prints the FATAL message and `exit: 1`; `npm test` still PASSes (test file sets `ENCRYPTION_KEY` before import).
 
-- [ ] **Step 3: Remove the deprecated crypto npm package**
+- [x] **Step 3: Remove the deprecated crypto npm package**
 
 In `server/package.json` dependencies, delete the line `"crypto": "^1.0.1",` then run from `server/`:
 
@@ -339,7 +339,7 @@ npm test
 
 Expected: install succeeds, tests still PASS (the code uses Node's built-in `crypto`).
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add server/middleware/auth.js server/package.json server/package-lock.json
@@ -354,7 +354,7 @@ git commit -m "feat(server): fail fast on missing ENCRYPTION_KEY; drop bogus cry
 - Modify: `server/config/oauth.js`
 - Modify: `server/routes/auth.js`
 
-- [ ] **Step 1: Wire generateState into config/oauth.js**
+- [x] **Step 1: Wire generateState into config/oauth.js**
 
 In `server/config/oauth.js`:
 
@@ -363,7 +363,7 @@ In `server/config/oauth.js`:
 
 The existing call `state: generateState()` inside `generateAuthUrl()` now uses the HMAC version.
 
-- [ ] **Step 2: Remove error detail leaks in routes/auth.js**
+- [x] **Step 2: Remove error detail leaks in routes/auth.js**
 
 In `server/routes/auth.js`:
 
@@ -399,7 +399,7 @@ with:
 
 (The `console.error` logging above each stays — details remain in server logs.)
 
-- [ ] **Step 3: Verify the server boots and the auth URL carries the new state**
+- [x] **Step 3: Verify the server boots and the auth URL carries the new state**
 
 Run from `server/`:
 
@@ -416,7 +416,7 @@ console.log('state parts:', state.split('.').length);
 
 Expected: tests PASS; the script prints `state parts: 3`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add server/config/oauth.js server/routes/auth.js
@@ -430,7 +430,7 @@ git commit -m "feat(server): crypto-random signed OAuth state; stop leaking erro
 **Files:**
 - Modify: `server/server.js`
 
-- [ ] **Step 1: Apply the hardening edits**
+- [x] **Step 1: Apply the hardening edits**
 
 In `server/server.js`:
 
@@ -523,7 +523,7 @@ server.headersTimeout = 35_000;
 server.keepAliveTimeout = 10_000;
 ```
 
-- [ ] **Step 2: Verify against a running server**
+- [x] **Step 2: Verify against a running server**
 
 Run from `server/` (first command in background or a second terminal):
 
@@ -537,7 +537,7 @@ kill %1
 
 Expected: `RateLimit-Policy` / `RateLimit` headers present, **no** `X-Powered-By` header; the oversized POST returns `413`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add server/server.js
@@ -552,7 +552,7 @@ git commit -m "feat(server): trust proxy, tiered rate limits, body size limits, 
 - Modify: `app/layout.tsx`
 - Create: `docs/security.md`
 
-- [ ] **Step 1: Add CSP and referrer policy to the root layout**
+- [x] **Step 1: Add CSP and referrer policy to the root layout**
 
 Replace `app/layout.tsx` content with:
 
@@ -602,7 +602,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 }
 ```
 
-- [ ] **Step 2: Write docs/security.md**
+- [x] **Step 2: Write docs/security.md**
 
 Create `docs/security.md`:
 
@@ -640,7 +640,7 @@ Create `docs/security.md`:
 - Error responses are generic; details stay in server logs.
 ```
 
-- [ ] **Step 3: Build and verify the export**
+- [x] **Step 3: Build and verify the export**
 
 Run from the repo root:
 
@@ -652,11 +652,11 @@ grep -o 'name="referrer"' out/index.html
 
 Expected: build succeeds; both greps print a match.
 
-- [ ] **Step 4: Spot-check rendering**
+- [x] **Step 4: Spot-check rendering**
 
 Run: `npx serve out` (or `python3 -m http.server -d out 8080`) and open the page; confirm fonts load and no CSP violations appear in the browser console. Stop the server.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add app/layout.tsx docs/security.md
@@ -669,12 +669,12 @@ git commit -m "feat(site): CSP meta tag, referrer policy, security posture doc"
 
 **Files:** none (verification only)
 
-- [ ] **Step 1: Full test suite**
+- [x] **Step 1: Full test suite**
 
 Run from `server/`: `npm test`
 Expected: 9 tests PASS.
 
-- [ ] **Step 2: Forged state + error-leak checks (run BEFORE the rate-limit loop, which exhausts the bucket)**
+- [x] **Step 2: Forged state + error-leak checks (run BEFORE the rate-limit loop, which exhausts the bucket)**
 
 Run from `server/`:
 
@@ -689,7 +689,7 @@ curl -s -X POST http://localhost:3000/auth/refresh -H 'Content-Type: application
 
 Expected: callback responds `{"error":"Invalid state parameter"}`; refresh responds `{"error":"Failed to refresh token"}` with no `details` field.
 
-- [ ] **Step 3: Strict rate limit on /auth/refresh**
+- [x] **Step 3: Strict rate limit on /auth/refresh**
 
 ```bash
 # 2 requests already consumed above (callback + refresh share the 20/15min bucket
@@ -703,7 +703,7 @@ kill %1
 
 Expected: eighteen `400` followed by a final `429` (bucket of 20 exhausted by the 2 earlier requests plus these 19).
 
-- [ ] **Step 4: Final commit (plan checkboxes + any doc touch-ups)**
+- [x] **Step 4: Final commit (plan checkboxes + any doc touch-ups)**
 
 ```bash
 git add docs/superpowers/plans/2026-06-11-security-hardening.md

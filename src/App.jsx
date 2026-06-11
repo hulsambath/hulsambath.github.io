@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
-import { Card, CardContent } from "../components/ui/card";
 import { site } from "./content/site.js";
 
-const notemymindsIcon = "/assets/1024x1024.png";
-const hangmeasLogo = "/assets/hangmeas_logo.png";
-const logo = "/assets/logo.png";
 const mcpLogo = "/assets/mcp_logo.png";
 
 export default function App() {
@@ -51,26 +47,18 @@ export default function App() {
   const handleDownloadResume = async () => {
     const resumePdfUrl = "/Sambath_HUL_CV.pdf";
     try {
-      // Fetch the PDF file as a blob
       const response = await fetch(resumePdfUrl);
       const blob = await response.blob();
-
-      // Create a blob URL
       const blobUrl = window.URL.createObjectURL(blob);
-
-      // Create a temporary anchor element to trigger download
       const link = document.createElement("a");
       link.href = blobUrl;
       link.download = "Sambath_HUL_CV.pdf";
       document.body.appendChild(link);
       link.click();
-
-      // Clean up: remove the link and revoke the blob URL
       document.body.removeChild(link);
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
       console.error("Error downloading resume:", error);
-      // Fallback: try direct download
       const link = document.createElement("a");
       link.href = resumePdfUrl;
       link.download = "Sambath_HUL_CV.pdf";
@@ -82,16 +70,24 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <div className="relative">
-        <nav className="fixed top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-            <div className="flex items-center gap-3">
-              <img src={logo} alt="<HS> Logo" className="h-10 w-10" />
-              <div className="text-xl font-semibold">{site.author.name}</div>
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-primary-foreground">
+      {/* Navigation */}
+      <nav className="fixed top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+          <div
+            className="flex items-center gap-3 cursor-pointer"
+            onClick={() => scrollToSection("home")}
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold text-lg">
+              S
             </div>
+            <span className="text-lg font-semibold tracking-tight">
+              {site.author.name}
+            </span>
+          </div>
 
-            <div className="hidden items-center gap-6 md:flex">
+          <div className="flex items-center gap-4">
+            <div className="hidden items-center gap-8 md:flex">
               {[
                 "home",
                 "about",
@@ -103,9 +99,9 @@ export default function App() {
                 <button
                   key={section}
                   onClick={() => scrollToSection(section)}
-                  className={`capitalize text-sm transition-colors ${
+                  className={`text-sm font-medium capitalize transition-colors ${
                     activeSection === section
-                      ? "text-primary font-medium"
+                      ? "text-primary"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
@@ -113,821 +109,663 @@ export default function App() {
                 </button>
               ))}
             </div>
+            <Button variant="outline" size="sm" asChild>
+              <a href="/llms.txt" target="_blank" rel="noreferrer">
+                llms.txt
+              </a>
+            </Button>
           </div>
-        </nav>
+        </div>
+      </nav>
 
+      <main className="flex flex-col">
         {/* Hero Section */}
-        <section id="home" className="px-4 pt-24 pb-16">
-          <div className="mx-auto max-w-5xl text-center">
-            <div className="max-w-4xl mx-auto">
-              <Card className="shadow-md">
-                <CardContent className="p-10">
-                  <h1 className="text-5xl md:text-7xl font-bold mb-6">
-                    Hi, I'm{" "}
-                    <span className="text-primary">{site.author.name}</span>
-                  </h1>
-                  <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-                    {site.author.title} passionate about creating exceptional
-                    mobile and web experiences
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button
-                      onClick={() => scrollToSection("projects")}
-                      aria-label="View my work"
-                    >
-                      View My Work
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={handleDownloadResume}
-                      aria-label="Download resume"
-                    >
-                      Download Resume
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
+        <section
+          id="home"
+          className="relative flex min-h-[90vh] flex-col items-center justify-center px-6 pt-24 pb-16"
+        >
+          <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+          <div className="mx-auto max-w-3xl text-center space-y-8">
+            <div className="space-y-4">
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl md:text-7xl">
+                Hi, I'm <span className="text-primary">{site.author.name}</span>
+              </h1>
+              <p className="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
+                {site.author.title} passionate about building exceptional
+                software — from mobile and web apps to developer tooling — with
+                clean architecture and beautiful design.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button size="lg" onClick={() => scrollToSection("projects")}>
+                View My Work
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={handleDownloadResume}
+              >
+                Download Resume
+              </Button>
             </div>
           </div>
         </section>
+
+        {/* Divider */}
+        <div className="w-full h-px bg-border/50 max-w-6xl mx-auto"></div>
 
         {/* About Section */}
-        <section id="about" className="px-4 py-16">
+        <section id="about" className="px-6 py-24 bg-muted/30">
           <div className="mx-auto max-w-5xl">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-semibold text-center mb-12">
-                About Me
-              </h2>
-              <div className="grid md:grid-cols-2 gap-12 items-center">
-                <Card>
-                  <CardContent className="p-8">
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      I'm <strong className="text-primary">Sambath HUL</strong>,
-                      a{" "}
-                      <strong className="text-primary">
-                        Flutter Developer
-                      </strong>{" "}
-                      and a recent graduate from the{" "}
-                      <strong className="text-primary">
-                        Cambodia Academy of Digital Technology (CADT)
-                      </strong>
-                      , specialized in{" "}
-                      <strong className="text-primary">
-                        Software Engineering
-                      </strong>
-                      .
-                    </p>
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      I have nearly{" "}
-                      <strong className="text-primary">
-                        two years of hands-on experience
-                      </strong>{" "}
-                      building mobile applications using Flutter and Firebase,
-                      including publishing apps on the{" "}
-                      <strong className="text-primary">
-                        Google Play Store
-                      </strong>
-                      .
-                    </p>
-                    <p className="text-lg text-muted-foreground mb-6 leading-relaxed">
-                      I'm passionate about crafting seamless user experiences,
-                      clean architecture, and scalable mobile solutions. I'm
-                      eager to contribute to a forward-thinking team and
-                      continue growing as a professional mobile developer.
-                    </p>
-                    <div className="flex gap-4">
-                      {site.stats.map((s) => (
-                        <div key={s.label} className="text-center">
-                          <div className="text-2xl font-bold text-primary">
-                            {s.value}
-                          </div>
-                          <div className="text-sm text-muted-foreground">
-                            {s.label}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="border-primary/20 bg-primary/10">
-                  <CardContent className="p-8">
-                    <h3 className="text-xl font-semibold mb-4">Education</h3>
-                    <div className="mb-6">
-                      <p className="font-medium mb-1">
-                        Bachelor of Computer Science (Software Engineering)
-                      </p>
-                      <p className="text-primary text-sm mb-2">
-                        <a
-                          href="https://cadt.edu.kh/about/"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="hover:opacity-90 underline underline-offset-2 transition-colors"
-                        >
-                          Cambodia Academy of Digital Technology (CADT)
-                        </a>
-                      </p>
-                      <p className="text-muted-foreground text-sm">
-                        Gained strong foundations in software architecture,
-                        mobile app development, and collaborative project work
-                        using modern technologies.
-                      </p>
-                    </div>
-                    <h3 className="text-xl font-semibold mb-4 mt-6">
-                      What I Do
-                    </h3>
-                    <ul className="space-y-3">
-                      <li className="flex items-center text-muted-foreground">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                        Mobile App Development (Flutter)
-                      </li>
-                      <li className="flex items-center text-muted-foreground">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                        Web Development (React)
-                      </li>
-                      <li className="flex items-center text-muted-foreground">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                        UI/UX Design
-                      </li>
-                      <li className="flex items-center text-muted-foreground">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                        Testing & QA
-                      </li>
-                    </ul>
-                  </CardContent>
-                </Card>
-              </div>
+            <div className="space-y-4 mb-16 text-center">
+              <h2 className="text-3xl font-bold tracking-tight">About Me</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Get to know more about my background and education.
+              </p>
             </div>
-          </div>
-        </section>
 
-        {/* Separator 2 */}
-        <div className="section-separator">
-          <div className="separator-glow"></div>
-          <div className="separator-line"></div>
-          <div className="separator-icon">⚡</div>
-        </div>
-
-        {/* Skills Section */}
-        <section id="skills" className="section-padding section-with-separator">
-          <div className="container-max">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 m3-text-primary">
-              Skills & Technologies
-            </h2>
-            <div className="rounded-2xl border border-border bg-background p-8 shadow-sm">
-              <div className="grid md:grid-cols-3 gap-8">
-                <div className="rounded-2xl border border-border bg-background p-6 shadow-sm transition-shadow hover:shadow-md">
-                  <h3 className="text-xl font-semibold mb-4 text-primary">
-                    Mobile Development
-                  </h3>
-                  <div className="space-y-3">
-                    {site.skills.mobile.map((sk) => (
-                      <div
-                        key={sk.name}
-                        className="flex justify-between items-center"
-                      >
-                        <div className="flex items-center gap-2">
-                          {sk.icon && (
-                            <img
-                              src={sk.icon}
-                              alt={sk.name}
-                              className="w-5 h-5"
-                            />
-                          )}
-                          <span className="text-muted-foreground">
-                            {sk.name}
-                          </span>
-                        </div>
-                        <div
-                          className="w-24 bg-muted rounded-full h-2"
-                          aria-hidden="true"
-                        >
-                          <div
-                            className="bg-primary h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${sk.levelPct}%` }}
-                          ></div>
-                        </div>
+            <div className="grid md:grid-cols-5 gap-12 items-start">
+              <div className="md:col-span-3 space-y-6 text-lg text-muted-foreground leading-relaxed">
+                <p>
+                  I'm <strong className="text-foreground">Sambath HUL</strong>,
+                  a{" "}
+                  <strong className="text-foreground">Software Engineer</strong>{" "}
+                  and a recent graduate from the{" "}
+                  <strong className="text-foreground">
+                    Cambodia Academy of Digital Technology (CADT)
+                  </strong>
+                  , specialized in{" "}
+                  <strong className="text-foreground">
+                    Software Engineering
+                  </strong>
+                  .
+                </p>
+                <p>
+                  I have{" "}
+                  <strong className="text-foreground">
+                    2+ years of hands-on experience
+                  </strong>{" "}
+                  designing, building, and shipping production software — from
+                  cross-platform mobile apps with Flutter and Firebase to web
+                  apps and developer tooling — including releases to the{" "}
+                  <strong className="text-foreground">
+                    Google Play Store and Apple App Store
+                  </strong>
+                  .
+                </p>
+                <p>
+                  I'm passionate about clean architecture, seamless user
+                  experiences, and scalable systems. I'm eager to contribute to
+                  a forward-thinking team and continue growing as a software
+                  engineer.
+                </p>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t mt-8">
+                  {site.stats.map((s) => (
+                    <div key={s.label}>
+                      <div className="text-3xl font-bold text-primary">
+                        {s.value}
                       </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-border bg-background p-6 shadow-sm transition-shadow hover:shadow-md">
-                  <h3 className="text-xl font-semibold mb-4 text-primary">
-                    Web Development
-                  </h3>
-                  <div className="space-y-3">
-                    {site.skills.web.map((sk) => (
-                      <div
-                        key={sk.name}
-                        className="flex justify-between items-center"
-                      >
-                        <div className="flex items-center gap-2">
-                          {sk.icon && (
-                            <img
-                              src={sk.icon}
-                              alt={sk.name}
-                              className="w-5 h-5"
-                            />
-                          )}
-                          <span className="text-muted-foreground">
-                            {sk.name}
-                          </span>
-                        </div>
-                        <div
-                          className="w-24 bg-muted rounded-full h-2"
-                          aria-hidden="true"
-                        >
-                          <div
-                            className="bg-primary h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${sk.levelPct}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-border bg-background p-6 shadow-sm transition-shadow hover:shadow-md">
-                  <h3 className="text-xl font-semibold mb-4 text-primary">
-                    Tools & Others
-                  </h3>
-                  <div className="space-y-3">
-                    {site.skills.tools.map((sk) => (
-                      <div
-                        key={sk.name}
-                        className="flex justify-between items-center"
-                      >
-                        <div className="flex items-center gap-2">
-                          {sk.icon && (
-                            <img
-                              src={sk.icon}
-                              alt={sk.name}
-                              className="w-5 h-5"
-                            />
-                          )}
-                          <span className="text-muted-foreground">
-                            {sk.name}
-                          </span>
-                        </div>
-                        <div
-                          className="w-24 bg-muted rounded-full h-2"
-                          aria-hidden="true"
-                        >
-                          <div
-                            className="bg-primary h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${sk.levelPct}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Separator 2.5 */}
-        <div className="h-10" aria-hidden="true" />
-
-        {/* Technology & Tools Section */}
-        <section id="technologies" className="px-4 py-16">
-          <div className="mx-auto max-w-5xl">
-            <h2 className="text-3xl font-semibold text-center mb-12">
-              Technology & Tools
-            </h2>
-            <div className="rounded-2xl border border-border bg-background p-8 shadow-sm">
-              <div className="space-y-12">
-                {/* Languages */}
-                <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary">
-                    Languages
-                  </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {site.technologies.languages.map((tech) => (
-                      <div
-                        key={tech.name}
-                        className="flex flex-col items-center justify-center rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition-shadow hover:shadow-md"
-                      >
-                        <img
-                          src={tech.icon}
-                          alt={tech.name}
-                          className="w-12 h-12 mb-3"
-                        />
-                        <span className="text-sm text-muted-foreground font-medium">
-                          {tech.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Frameworks */}
-                <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary">
-                    Frameworks & Libraries
-                  </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {site.technologies.frameworks.map((tech) => (
-                      <div
-                        key={tech.name}
-                        className="flex flex-col items-center justify-center rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition-shadow hover:shadow-md"
-                      >
-                        <img
-                          src={tech.icon}
-                          alt={tech.name}
-                          className="w-12 h-12 mb-3"
-                        />
-                        <span className="text-sm text-muted-foreground font-medium">
-                          {tech.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Backend & Cloud */}
-                <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary">
-                    Backend & Cloud
-                  </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {site.technologies.backend.map((tech) => (
-                      <div
-                        key={tech.name}
-                        className="flex flex-col items-center justify-center rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition-shadow hover:shadow-md"
-                      >
-                        <img
-                          src={tech.icon}
-                          alt={tech.name}
-                          className="w-12 h-12 mb-3"
-                        />
-                        <span className="text-sm text-muted-foreground font-medium">
-                          {tech.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Architecture & Patterns */}
-                <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary">
-                    Architecture & Patterns
-                  </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {site.technologies.architecture.map((tech) => (
-                      <div
-                        key={tech.name}
-                        className="flex flex-col items-center justify-center rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition-shadow hover:shadow-md"
-                      >
-                        <img
-                          src={tech.icon}
-                          alt={tech.name}
-                          className="w-12 h-12 mb-3"
-                        />
-                        <span className="text-sm text-muted-foreground font-medium">
-                          {tech.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Tools */}
-                <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary">
-                    Development Tools
-                  </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {site.technologies.tools.map((tech) => (
-                      <div
-                        key={tech.name}
-                        className="flex flex-col items-center justify-center rounded-2xl border border-border bg-background p-4 text-center shadow-sm transition-shadow hover:shadow-md"
-                      >
-                        {tech.icon ? (
-                          <img
-                            src={tech.icon}
-                            alt={tech.name}
-                            className="w-12 h-12 mb-3"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 mb-3 flex items-center justify-center">
-                            <span
-                              className="text-2xl font-bold"
-                              style={{ color: tech.textColor || "#B744B8" }}
-                            >
-                              {tech.name}
-                            </span>
-                          </div>
-                        )}
-                        <span className="text-sm text-muted-foreground font-medium">
-                          {tech.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Development Environment */}
-                <div>
-                  <h3 className="text-2xl font-semibold mb-6 text-primary-500">
-                    Development Environment
-                  </h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                    {site.technologies.developmentEnvironment.map((tech) => (
-                      <div
-                        key={tech.name}
-                        className="m3-card-elevated bg-surface-container-highest/30 p-4 card-hover flex flex-col items-center justify-center text-center"
-                      >
-                        {tech.useLocalImage && tech.name === "MCP Server" ? (
-                          <img
-                            src={mcpLogo}
-                            alt={tech.name}
-                            className="w-12 h-12 mb-3"
-                          />
-                        ) : tech.icon ? (
-                          <img
-                            src={tech.icon}
-                            alt={tech.name}
-                            className="w-12 h-12 mb-3"
-                          />
-                        ) : (
-                          <div className="w-12 h-12 mb-3 flex items-center justify-center">
-                            <span
-                              className="text-2xl font-bold"
-                              style={{ color: tech.textColor || "#B744B8" }}
-                            >
-                              {tech.name}
-                            </span>
-                          </div>
-                        )}
-                        <span className="text-sm text-text-secondary-dark font-medium">
-                          {tech.name}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Separator 3 */}
-        <div className="section-separator">
-          <div className="separator-glow"></div>
-          <div className="separator-line"></div>
-          <div className="separator-icon">🚀</div>
-        </div>
-
-        {/* Projects Section */}
-        <section
-          id="projects"
-          className="section-padding section-with-separator"
-        >
-          <div className="container-max">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 m3-text-primary">
-              Featured Projects
-            </h2>
-            <div className="m3-card bg-surface-container-highest/30 p-8">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {site.projects.map((p) => (
-                  <div
-                    key={p.title}
-                    className="m3-card-elevated bg-surface-container-highest/30 overflow-hidden card-hover"
-                  >
-                    <div
-                      className={`h-48 flex items-center justify-center border-b border-outline-variant/30 ${
-                        p.title === "notemyminds"
-                          ? "bg-gradient-to-br from-primary-500/10 via-primary-400/5 to-primary-600/10"
-                          : p.title === "Portfolio Website"
-                            ? "bg-gradient-to-br from-orange-500/10 via-orange-400/5 to-orange-600/10"
-                            : p.title === "HangMeas App"
-                              ? "bg-gradient-to-br from-red-500/10 via-orange-400/5 to-yellow-500/10"
-                              : "bg-primary-500/20"
-                      }`}
-                    >
-                      {p.title === "notemyminds" ? (
-                        <img
-                          src={notemymindsIcon}
-                          alt={p.title}
-                          className="w-32 h-32 object-contain rounded-xl shadow-lg transition-transform duration-200 hover:scale-105"
-                        />
-                      ) : p.title === "Portfolio Website" ? (
-                        <img
-                          src={logo}
-                          alt={p.title}
-                          className="w-32 h-32 object-contain rounded-xl shadow-lg transition-transform duration-200 hover:scale-105"
-                        />
-                      ) : p.title === "HangMeas App" ? (
-                        <img
-                          src={hangmeasLogo}
-                          alt={p.title}
-                          className="w-32 h-32 object-contain rounded-xl shadow-lg transition-transform duration-200 hover:scale-105"
-                        />
-                      ) : (
-                        <span className="text-4xl" aria-hidden="true">
-                          {p.icon}
-                        </span>
-                      )}
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold mb-2 m3-text-primary">
-                        {p.title}
-                      </h3>
-                      <p className="text-text-secondary-dark mb-4">
-                        {p.description}
-                      </p>
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {p.tech.map((t) => (
-                          <span
-                            key={t}
-                            className="px-3 py-1 bg-primary-500/20 text-primary-400 rounded-m3-2xl text-sm border border-primary-500/30"
-                          >
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="flex gap-3">
-                        {p.sourceUrl && p.sourceUrl !== "#" ? (
-                          <a
-                            className="btn-secondary text-sm"
-                            href={p.sourceUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            Source Code
-                          </a>
-                        ) : null}
-                        {p.demoUrl &&
-                        p.demoUrl !== "#" &&
-                        p.demoUrl.includes("youtu") ? (
-                          <a
-                            className="flex items-center gap-2 bg-[#FF0000] hover:bg-[#CC0000] active:bg-[#990000] text-white font-medium py-3 px-6 rounded-m3-lg transition-all duration-200 shadow-m3-2 hover:shadow-m3-3 active:shadow-m3-1 text-sm"
-                            href={p.demoUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            <svg
-                              className="w-5 h-5"
-                              fill="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                            </svg>
-                            Watch Demo
-                          </a>
-                        ) : p.demoUrl && p.demoUrl !== "#" ? (
-                          <a
-                            className="btn-secondary text-sm"
-                            href={p.demoUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                          >
-                            View Demo
-                          </a>
-                        ) : null}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Separator 4 */}
-        <div className="section-separator">
-          <div className="separator-glow"></div>
-          <div className="separator-line"></div>
-          <div className="separator-icon">💼</div>
-        </div>
-
-        {/* Experience Section */}
-        <section
-          id="experience"
-          className="section-padding section-with-separator"
-        >
-          <div className="container-max">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 m3-text-primary">
-              Work Experience
-            </h2>
-            <div className="max-w-4xl mx-auto">
-              <div className="m3-card bg-surface-container-highest/30 p-8">
-                <div className="space-y-8">
-                  {site.experience.map((e) => (
-                    <div key={e.role + e.company} className="flex gap-6">
-                      <div
-                        className="flex-shrink-0 w-16 h-16 bg-primary-500 rounded-m3-3xl flex items-center justify-center text-white font-bold shadow-m3-2"
-                        aria-hidden="true"
-                      >
-                        {e.initials}
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xl font-semibold mb-1 m3-text-primary">
-                          {e.role}
-                        </h3>
-                        <p className="text-primary-500 font-medium mb-2">
-                          {e.companyUrl ? (
-                            <a
-                              href={e.companyUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="hover:text-primary-400 underline underline-offset-2 transition-colors"
-                            >
-                              {e.company}
-                            </a>
-                          ) : (
-                            e.company
-                          )}
-                        </p>
-                        <p className="text-text-secondary-dark mb-3">
-                          {e.period}
-                        </p>
-                        <ul className="text-text-secondary-dark space-y-2">
-                          {e.bullets.map((b, i) => (
-                            <li key={i}>• {b}</li>
-                          ))}
-                        </ul>
+                      <div className="text-sm font-medium text-muted-foreground mt-1">
+                        {s.label}
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
 
-        {/* Separator 5 */}
-        <div className="section-separator">
-          <div className="separator-glow"></div>
-          <div className="separator-line"></div>
-          <div className="separator-icon">📞</div>
-        </div>
-
-        {/* Contact Section */}
-        <section id="contact" className="section-padding">
-          <div className="container-max">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 m3-text-primary">
-              Get In Touch
-            </h2>
-            <div className="max-w-4xl mx-auto">
-              <div className="grid md:grid-cols-2 gap-12">
-                <div className="m3-card bg-surface-container-highest/30 p-8">
-                  <h3 className="text-2xl font-semibold mb-6 m3-text-primary">
-                    Let's work together!
-                  </h3>
-                  <p className="text-text-secondary-dark mb-8 leading-relaxed">
-                    I'm always interested in new opportunities and exciting
-                    projects. Whether you have a question or just want to say
-                    hi, feel free to reach out!
-                  </p>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary-500 rounded-m3-3xl flex items-center justify-center text-white shadow-m3-1">
-                        📧
-                      </div>
-                      <div>
-                        <p className="font-medium m3-text-primary">Email</p>
-                        <p className="text-text-secondary-dark">
-                          <a
-                            className="underline underline-offset-4"
-                            href={`mailto:${site.author.email}`}
-                          >
-                            {site.author.email}
-                          </a>
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary-500 rounded-m3-3xl flex items-center justify-center text-white shadow-m3-1">
-                        📱
-                      </div>
-                      <div>
-                        <p className="font-medium m3-text-primary">Phone</p>
-                        {site.author.phones.map((ph) => (
-                          <p key={ph} className="text-text-secondary-dark">
-                            {ph}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary-500 rounded-m3-3xl flex items-center justify-center text-white shadow-m3-1">
-                        📍
-                      </div>
-                      <div>
-                        <p className="font-medium m3-text-primary">Location</p>
-                        <p className="text-text-secondary-dark">
-                          {site.author.location}
-                        </p>
-                      </div>
-                    </div>
+              <div className="md:col-span-2 space-y-8">
+                <div className="rounded-xl border bg-card p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4">Education</h3>
+                  <div className="space-y-1">
+                    <p className="font-medium text-foreground">
+                      Bachelor of Computer Science (Software Engineering)
+                    </p>
+                    <a
+                      href="https://cadt.edu.kh"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm text-primary hover:underline underline-offset-4 inline-block my-1"
+                    >
+                      Cambodia Academy of Digital Technology (CADT)
+                    </a>
+                    <p className="text-sm text-muted-foreground">2021 – 2025</p>
+                    <p className="text-sm text-muted-foreground mt-3">
+                      Gained strong foundations in software architecture, mobile
+                      app development, and collaborative project work.
+                    </p>
                   </div>
                 </div>
-                <div className="m3-card-elevated p-8">
-                  <form
-                    className="space-y-6"
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      window.location.href = `mailto:${site.author.email}`;
-                    }}
-                    aria-label="Contact form"
-                  >
-                    <div>
-                      <label className="block text-sm font-medium text-text-secondary-dark mb-2">
-                        Name
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-4 py-3 bg-surface-container-high border-2 border-outline-variant rounded-m3-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-white placeholder-text-secondary-dark transition-all"
-                        placeholder="Your name"
-                        aria-label="Your name"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-text-secondary-dark mb-2">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        className="w-full px-4 py-3 bg-surface-container-high border-2 border-outline-variant rounded-m3-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-white placeholder-text-secondary-dark transition-all"
-                        placeholder="your@email.com"
-                        aria-label="Your email"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-text-secondary-dark mb-2">
-                        Message
-                      </label>
-                      <textarea
-                        rows="4"
-                        className="w-full px-4 py-3 bg-surface-container-high border-2 border-outline-variant rounded-m3-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-white placeholder-text-secondary-dark transition-all"
-                        placeholder="Your message..."
-                        aria-label="Your message"
-                      ></textarea>
-                    </div>
-                    <button type="submit" className="w-full btn-primary">
-                      Send Message
-                    </button>
-                  </form>
+
+                <div className="rounded-xl border bg-card p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4">What I Do</h3>
+                  <ul className="space-y-3">
+                    {[
+                      "Mobile App Development (Flutter)",
+                      "Web Development (React / Next.js)",
+                      "Backend & Developer Tooling (Node.js)",
+                      "CI/CD & Release Automation",
+                      "UI/UX Design",
+                      "Testing & QA",
+                    ].map((item) => (
+                      <li
+                        key={item}
+                        className="flex items-center text-sm text-muted-foreground"
+                      >
+                        <div className="mr-3 h-1.5 w-1.5 rounded-full bg-primary" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="bg-surface-950 text-white py-12 border-t border-surface-800">
-          <div className="container-max text-center">
-            <div className="flex justify-center space-x-6 mb-6">
-              <a
-                href="https://github.com/hulsambath"
-                className="text-text-secondary-dark hover:text-primary-400 transition-colors"
-              >
-                <span className="sr-only">GitHub</span>
-                <svg
-                  className="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                </svg>
-              </a>
-              <a
-                href="https://linkedin.com/in/hulsambath"
-                className="text-text-secondary-dark hover:text-primary-400 transition-colors"
-              >
-                <span className="sr-only">LinkedIn</span>
-                <svg
-                  className="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                </svg>
-              </a>
-              <a
-                href="https://x.com/hul_sambath"
-                className="text-text-secondary-dark hover:text-primary-400 transition-colors"
-              >
-                <span className="sr-only">X</span>
-                <svg
-                  className="h-6 w-6"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                </svg>
-              </a>
+        {/* Divider */}
+        <div className="w-full h-px bg-border/50 max-w-6xl mx-auto"></div>
+
+        {/* Skills Section */}
+        <section id="skills" className="px-6 py-24">
+          <div className="mx-auto max-w-5xl">
+            <div className="space-y-4 mb-16 text-center">
+              <h2 className="text-3xl font-bold tracking-tight">
+                Skills & Technologies
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                A look at the technologies and tools I work with every day.
+              </p>
             </div>
-            <p className="text-text-secondary-dark">
-              © 2024 Sambath. All rights reserved.
-            </p>
+
+            <div className="grid md:grid-cols-3 gap-6 mb-16">
+              {[
+                { title: "Mobile Development", items: site.skills.mobile },
+                { title: "Web Development", items: site.skills.web },
+                { title: "Tools & Others", items: site.skills.tools },
+              ].map((category) => (
+                <div
+                  key={category.title}
+                  className="rounded-xl border bg-card p-6 shadow-sm"
+                >
+                  <h3 className="text-lg font-semibold mb-6">
+                    {category.title}
+                  </h3>
+                  <div className="space-y-4">
+                    {category.items.map((sk) => (
+                      <div
+                        key={sk.name}
+                        className="flex justify-between items-center text-sm"
+                      >
+                        <div className="flex items-center gap-2 font-medium">
+                          {sk.icon && (
+                            <img
+                              src={sk.icon}
+                              alt={sk.name}
+                              className="w-4 h-4 object-contain"
+                            />
+                          )}
+                          {sk.name}
+                        </div>
+                        {sk.years && (
+                          <span className="text-xs font-medium text-primary whitespace-nowrap">
+                            {sk.years}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Tools Grid */}
+            <div className="space-y-12">
+              {[
+                { title: "Languages", items: site.technologies.languages },
+                {
+                  title: "Frameworks & Libraries",
+                  items: site.technologies.frameworks,
+                },
+                { title: "Backend & Cloud", items: site.technologies.backend },
+                {
+                  title: "Architecture & Patterns",
+                  items: site.technologies.architecture,
+                },
+                { title: "Development Tools", items: site.technologies.tools },
+                {
+                  title: "Development Environment",
+                  items: site.technologies.developmentEnvironment,
+                },
+              ].map((group) => (
+                <div key={group.title}>
+                  <h3 className="text-xl font-semibold mb-6">{group.title}</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {group.items.map((tech) => (
+                      <div
+                        key={tech.name}
+                        className="flex flex-col items-center justify-center rounded-xl border border-border/60 bg-card/50 backdrop-blur-md p-4 text-center shadow-sm hover:border-primary/50 hover:bg-card/70 transition-colors"
+                      >
+                        <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-black/5">
+                          {tech.useLocalImage && tech.name === "MCP Server" ? (
+                            <img
+                              src={mcpLogo}
+                              alt={tech.name}
+                              className="w-9 h-9 object-contain"
+                            />
+                          ) : tech.icon ? (
+                            <img
+                              src={tech.icon}
+                              alt={tech.name}
+                              className="w-9 h-9 object-contain"
+                            />
+                          ) : (
+                            <span
+                              className="text-sm font-bold leading-none"
+                              style={{ color: tech.textColor || "#B744B8" }}
+                            >
+                              {tech.name}
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-xs font-medium text-muted-foreground">
+                          {tech.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </footer>
-      </div>
+        </section>
+
+        {/* Divider */}
+        <div className="w-full h-px bg-border/50 max-w-6xl mx-auto"></div>
+
+        {/* Projects Section */}
+        <section id="projects" className="px-6 py-24 bg-muted/30">
+          <div className="mx-auto max-w-6xl">
+            <div className="space-y-4 mb-16 text-center">
+              <h2 className="text-3xl font-bold tracking-tight">
+                Featured Projects
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Some of my recent work that I am proud of.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {site.projects.map((p) => (
+                <div
+                  key={p.title}
+                  className="flex flex-col rounded-xl border bg-card overflow-hidden shadow-sm hover:shadow-md transition-shadow group"
+                >
+                  <div className="h-48 flex items-center justify-center bg-muted border-b relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    {p.image ? (
+                      <img
+                        src={p.image}
+                        alt={p.title}
+                        className="w-24 h-24 object-contain rounded-[22.5%] shadow-sm z-10"
+                      />
+                    ) : (
+                      <span className="text-4xl z-10" aria-hidden="true">
+                        {p.icon}
+                      </span>
+                    )}
+                  </div>
+                  <div className="p-6 flex flex-col flex-1">
+                    <h3 className="text-xl font-semibold mb-2">{p.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-6 flex-1">
+                      {p.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {p.tech.map((t) => (
+                        <span
+                          key={t}
+                          className="px-2.5 py-0.5 bg-secondary text-secondary-foreground rounded-md text-xs font-medium"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                      {p.playStoreUrl && p.playStoreUrl !== "#" && (
+                        <Button size="sm" asChild>
+                          <a
+                            href={p.playStoreUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5"
+                          >
+                            <img
+                              src="/assets/googleplay_btn.svg"
+                              alt=""
+                              aria-hidden="true"
+                              className="w-3.5 h-3.5"
+                            />
+                            Play Store
+                          </a>
+                        </Button>
+                      )}
+                      {p.appStoreUrl && p.appStoreUrl !== "#" && (
+                        <Button size="sm" asChild>
+                          <a
+                            href={p.appStoreUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5"
+                          >
+                            <img
+                              src="/assets/appstore_btn.svg"
+                              alt=""
+                              aria-hidden="true"
+                              className="w-3.5 h-3.5"
+                            />
+                            App Store
+                          </a>
+                        </Button>
+                      )}
+                      {p.sourceUrl && p.sourceUrl !== "#" && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a
+                            href={p.sourceUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Source
+                          </a>
+                        </Button>
+                      )}
+                      {p.demoUrl && p.demoUrl !== "#" && (
+                        <Button variant="outline" size="sm" asChild>
+                          <a href={p.demoUrl} target="_blank" rel="noreferrer">
+                            {p.demoUrl.includes("youtu")
+                              ? "Watch Demo"
+                              : "View Live"}
+                          </a>
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Divider */}
+        <div className="w-full h-px bg-border/50 max-w-6xl mx-auto"></div>
+
+        {/* Experience Section */}
+        <section id="experience" className="px-6 py-24">
+          <div className="mx-auto max-w-3xl">
+            <div className="space-y-4 mb-16 text-center">
+              <h2 className="text-3xl font-bold tracking-tight">
+                Work Experience
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                My professional journey and roles.
+              </p>
+            </div>
+
+            <div className="space-y-12 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border before:to-transparent">
+              {site.experience.map((e) => (
+                <div
+                  key={e.role + e.company}
+                  className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active"
+                >
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full border bg-background text-primary font-bold shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2">
+                    {e.initials}
+                  </div>
+                  <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-6 rounded-xl border bg-card shadow-sm hover:shadow-md transition-shadow">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2">
+                      <h3 className="font-bold text-lg">{e.role}</h3>
+                      <time className="text-xs font-medium text-muted-foreground bg-secondary px-2 py-1 rounded-md mt-2 sm:mt-0">
+                        {e.period}
+                      </time>
+                    </div>
+                    <p className="font-medium text-primary mb-4 text-sm">
+                      {e.companyUrl ? (
+                        <a
+                          href={e.companyUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="hover:underline underline-offset-4"
+                        >
+                          {e.company}
+                        </a>
+                      ) : (
+                        e.company
+                      )}
+                    </p>
+                    <ul className="text-sm text-muted-foreground space-y-2 list-disc pl-4 marker:text-muted">
+                      {e.bullets.map((b, i) => (
+                        <li key={i}>{b}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Divider */}
+        <div className="w-full h-px bg-border/50 max-w-6xl mx-auto"></div>
+
+        {/* Contact Section */}
+        <section id="contact" className="px-6 py-24 bg-muted/30">
+          <div className="mx-auto max-w-5xl">
+            <div className="space-y-4 mb-16 text-center">
+              <h2 className="text-3xl font-bold tracking-tight">
+                Get In Touch
+              </h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Feel free to reach out for collaborations, opportunities, or
+                just to say hi.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+              <div className="space-y-8">
+                <div>
+                  <h3 className="text-2xl font-semibold mb-2">
+                    Let's work together!
+                  </h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    I'm always interested in new opportunities and exciting
+                    projects. Whether you have a question or just want to say
+                    hi, I'll try my best to get back to you!
+                  </p>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border bg-background shadow-sm">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-muted-foreground"
+                      >
+                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="font-medium">Email</p>
+                      <a
+                        href={`mailto:${site.author.email}`}
+                        className="text-sm text-muted-foreground hover:text-foreground hover:underline underline-offset-4 transition-colors"
+                      >
+                        {site.author.email}
+                      </a>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border bg-background shadow-sm">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-muted-foreground"
+                      >
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="font-medium">Phone</p>
+                      {site.author.phones.map((ph) => (
+                        <p key={ph} className="text-sm text-muted-foreground">
+                          {ph}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full border bg-background shadow-sm">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-muted-foreground"
+                      >
+                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="font-medium">Location</p>
+                      <p className="text-sm text-muted-foreground">
+                        {site.author.location}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-xl border bg-card p-6 shadow-sm">
+                <form
+                  className="space-y-4"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    window.location.href = `mailto:${site.author.email}`;
+                  }}
+                >
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="name"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Name
+                    </label>
+                    <input
+                      id="name"
+                      type="text"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="Your name"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="email"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Email
+                    </label>
+                    <input
+                      id="email"
+                      type="email"
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="your@email.com"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="message"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Message
+                    </label>
+                    <textarea
+                      id="message"
+                      rows={4}
+                      className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      placeholder="Your message..."
+                    ></textarea>
+                  </div>
+                  <Button type="submit" className="w-full">
+                    Send Message
+                  </Button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t bg-background py-12 text-center">
+        <div className="mx-auto max-w-5xl flex flex-col items-center gap-6">
+          <div className="flex gap-6">
+            <a
+              href="https://github.com/hulsambath"
+              target="_blank"
+              rel="noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <span className="sr-only">GitHub</span>
+              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              </svg>
+            </a>
+            <a
+              href="https://linkedin.com/in/hulsambath"
+              target="_blank"
+              rel="noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <span className="sr-only">LinkedIn</span>
+              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+              </svg>
+            </a>
+            <a
+              href="https://x.com/hul_sambath"
+              target="_blank"
+              rel="noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <span className="sr-only">X</span>
+              <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+            </a>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Sambath HUL. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

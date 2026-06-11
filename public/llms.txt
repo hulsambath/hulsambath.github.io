@@ -1,0 +1,27 @@
+# Sambath HUL — Software Engineer
+
+> 2+ years experience, 4 production apps, 6 platform targets. Software Engineer in Phnom Penh, Cambodia. Designs, builds, and ships production software — mobile apps with Flutter and Firebase, web apps, and developer tooling.
+
+- Name: Sambath HUL
+- Title: Software Engineer
+- Location: Phnom Penh, Cambodia
+- Email: hulsambath14@gmail.com
+- Phone: +855 88 708 5187, +855 76 708 5187
+- Website: https://hulsambath.github.io
+- GitHub: https://github.com/hulsambath
+- LinkedIn: https://www.linkedin.com/in/hulsambath/
+- X (Twitter): https://x.com/hul_sambath
+
+## Projects
+- [BookMeBus](https://play.google.com/store/apps/details?id=com.bookmebus.bookmebus): Flagship consumer travel super-app covering five booking verticals — bus, ferry, hotel, airport transfer, and private taxi — across 80+ screen modules.
+- [iBus](https://play.google.com/store/apps/details?id=com.bookmebus.ibus): A branded bus operator app built and released to production from a shared white-label Flutter codebase with a flavor-based build system.
+- [BS Bus Cambodia](https://play.google.com/store/apps/details?id=com.bookmebus.bstransport): A branded operator app (the `bstransport` flavor) released to production from the same shared white-label Flutter codebase, with its own theme, configs, and assets.
+- [HangMeas App](https://play.google.com/store/apps/details?id=com.hangmeas.app): An all-in-one entertainment & live-voting platform — YouTube live-stream integration with real-time viewer counts, an interactive vote tap-counter for national TV shows (Got Talent, The Voice Cambodia), event & show details, ticketing, in-app vote top-up, social login, and maps.
+- [Trovara](https://hulsambath.github.io): AI-powered personal notes app with a full RAG pipeline for semantic chat over your notes — vector search, query rewriting, and multi-LLM support (Gemini / OpenAI / OpenRouter).
+- [Oudong Express](https://play.google.com/store/apps/details?id=com.oudongexpress.app): A second tenant proving out the multi-tenant white-label architecture, sharing a common core package with dedicated prod/staging flavors and Firebase configs.
+- [Developer Tooling](https://hulsambath.github.io): AI-assisted development infrastructure: a Dockerized Node.js MCP (Model Context Protocol) HTTP bridge server, a published VS Code extension for copying file references, plus custom Claude Code skills, hooks, and style-guide automation (MVVM, Repository pattern, i18n, tests) across the monorepos.
+- [Portfolio Website](https://github.com/hulsambath/hulsambath.github.io): Modern, responsive portfolio website built with React and Tailwind CSS.
+
+## Full details
+- [Complete portfolio (plain text)](https://hulsambath.github.io/llms-full.txt)
+- [Portfolio website](https://hulsambath.github.io)
