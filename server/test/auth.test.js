@@ -5,7 +5,9 @@ import test from "node:test";
 // Must be set BEFORE the module under test is imported
 process.env.ENCRYPTION_KEY = "test-key-0123456789abcdef0123456789abcdef";
 
-const { generateState, validateState } = await import("../middleware/auth.js");
+const { generateState, validateState, encrypt, decrypt } = await import(
+  "../middleware/auth.js"
+);
 
 const SECRET = process.env.ENCRYPTION_KEY;
 
@@ -53,4 +55,31 @@ test("malformed states are rejected", () => {
   assert.equal(validateState(""), false);
   assert.equal(validateState("longer-than-ten-chars-but-junk"), false);
   assert.equal(validateState("a.b.c"), false);
+});
+
+test("encrypt emits v2 GCM format and decrypt round-trips it", () => {
+  const out = encrypt("hello tokens");
+  assert.ok(out.startsWith("v2:"));
+  assert.equal(out.split(":").length, 4); // v2:iv:tag:ciphertext
+  assert.equal(decrypt(out), "hello tokens");
+});
+
+test("tampered v2 ciphertext fails to decrypt", () => {
+  const out = encrypt("hello tokens");
+  const parts = out.split(":");
+  const ct = parts[3];
+  const flipped = (ct[0] === "0" ? "1" : "0") + ct.slice(1);
+  const tampered = `${parts[0]}:${parts[1]}:${parts[2]}:${flipped}`;
+  assert.throws(() => decrypt(tampered));
+});
+
+test("legacy CBC tokens still decrypt", () => {
+  // Reproduce the legacy encrypt: AES-256-CBC, key padded to 32 bytes
+  const key = Buffer.from(SECRET.padEnd(32, "0").slice(0, 32));
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+  let enc = cipher.update("legacy data", "utf8", "hex");
+  enc += cipher.final("hex");
+  const legacy = iv.toString("hex") + ":" + enc;
+  assert.equal(decrypt(legacy), "legacy data");
 });

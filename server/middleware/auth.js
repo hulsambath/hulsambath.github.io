@@ -1,38 +1,53 @@
 import crypto from 'crypto';
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'default-key-change-in-production';
-const ALGORITHM = 'aes-256-cbc';
 const STATE_TTL_MS = 10 * 60 * 1000;
 
-/**
- * Encrypt sensitive data before sending to mobile app
- */
-export function encrypt(text) {
-  // Ensure key is 32 bytes
-  const key = Buffer.from(ENCRYPTION_KEY.padEnd(32, '0').slice(0, 32));
-  const iv = crypto.randomBytes(16);
-
-  const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
-  let encrypted = cipher.update(text, 'utf8', 'hex');
-  encrypted += cipher.final('hex');
-
-  // Return IV + encrypted data
-  return iv.toString('hex') + ':' + encrypted;
+// Must match the legacy CBC key derivation so old tokens still decrypt
+function deriveKey() {
+  return Buffer.from(ENCRYPTION_KEY.padEnd(32, '0').slice(0, 32));
 }
 
 /**
- * Decrypt data received from mobile app
+ * Encrypt sensitive data (AES-256-GCM, authenticated).
+ * Format: v2:<iv>:<authTag>:<ciphertext> (hex)
+ */
+export function encrypt(text) {
+  const key = deriveKey();
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  const tag = cipher.getAuthTag().toString('hex');
+  return `v2:${iv.toString('hex')}:${tag}:${encrypted}`;
+}
+
+/**
+ * Decrypt data. Accepts v2 (GCM) and legacy (CBC iv:ciphertext) formats —
+ * legacy support keeps refresh tokens already stored on devices working.
  */
 export function decrypt(text) {
-  const key = Buffer.from(ENCRYPTION_KEY.padEnd(32, '0').slice(0, 32));
+  const key = deriveKey();
+
+  if (text.startsWith('v2:')) {
+    const [, ivHex, tagHex, data] = text.split(':');
+    const decipher = crypto.createDecipheriv(
+      'aes-256-gcm',
+      key,
+      Buffer.from(ivHex, 'hex'),
+    );
+    decipher.setAuthTag(Buffer.from(tagHex, 'hex'));
+    let decrypted = decipher.update(data, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  }
+
+  // Legacy AES-256-CBC: <iv>:<ciphertext>
   const parts = text.split(':');
   const iv = Buffer.from(parts.shift(), 'hex');
-  const encryptedText = parts.join(':');
-
-  const decipher = crypto.createDecipheriv(ALGORITHM, key, iv);
-  let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+  const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+  let decrypted = decipher.update(parts.join(':'), 'hex', 'utf8');
   decrypted += decipher.final('utf8');
-
   return decrypted;
 }
 
