@@ -1,6 +1,24 @@
 import crypto from 'crypto';
 
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'default-key-change-in-production';
+const ENCRYPTION_KEY = (() => {
+  const key = process.env.ENCRYPTION_KEY;
+  if (process.env.NODE_ENV === "production") {
+    if (!key || key.length < 32) {
+      console.error(
+        "FATAL: ENCRYPTION_KEY must be set and at least 32 characters in production.",
+      );
+      process.exit(1);
+    }
+    return key;
+  }
+  if (!key) {
+    console.warn(
+      "WARNING: ENCRYPTION_KEY not set — using an insecure development-only key.",
+    );
+    return "dev-only-insecure-key-do-not-use";
+  }
+  return key;
+})();
 const STATE_TTL_MS = 10 * 60 * 1000;
 
 // Must match the legacy CBC key derivation so old tokens still decrypt
