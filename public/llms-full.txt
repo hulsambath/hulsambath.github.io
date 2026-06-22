@@ -68,13 +68,13 @@ January 2024 – April 2024
 - Worked with senior developers on state management, API integration, and UI improvements
 - Improved teamwork, debugging, and development workflows through hands-on mentorship
 
-### Software Engineer - notemyminds — Personal Project
+### Software Engineer - Trovara — Personal Project
 2023 - Present
-- Architected and developed notemyminds, a cross-platform note-taking app with MVVM pattern
-- Implemented Google Drive synchronization with conflict resolution and offline-first architecture
-- Built comprehensive tagging system with analytics and insights generation
-- Designed and implemented internationalization support (English/Khmer) with easy_localization
-- Created robust CI/CD pipeline with automated builds and credential management using SOPS
+- Architected and developed Trovara, an AI-powered cross-platform notes app with MVVM + Repository pattern and offline-first ObjectBox storage
+- Built a full RAG pipeline for semantic chat over notes — vector search, query rewriting, and multi-LLM support (Gemini / OpenAI / OpenRouter)
+- Implemented a knowledge graph linking related notes, quiz generation, and an Insights analytics tab; added imports from Obsidian, Notion, and Storypad
+- Delivered bidirectional Google Drive sync with conflict resolution, English/Khmer i18n, and a Pro tier with Google Play billing
+- Set up Shorebird OTA updates and a CI/CD pipeline with automated builds and credential management using SOPS
 
 ## Projects
 ### BookMeBus — BookMeBus Co., Ltd.
@@ -105,6 +105,7 @@ An all-in-one entertainment & live-voting platform — YouTube live-stream integ
 ### Trovara
 AI-powered personal notes app with a full RAG pipeline for semantic chat over your notes — vector search, query rewriting, and multi-LLM support (Gemini / OpenAI / OpenRouter). Builds a knowledge graph linking related notes, generates quizzes from your content, and surfaces analytics in an Insights tab. Imports from Obsidian, Notion, and Storypad; bidirectional Google Drive sync; offline-first ObjectBox storage; English/Khmer i18n; and a Pro tier with Google Play billing. Built with MVVM and Shorebird OTA updates.
   - Tech: Flutter, Dart, ObjectBox, RAG, Knowledge Graph, Google Drive API, In-App Purchase, MVVM
+  - Demo: https://photos.app.goo.gl/6zSm1oMRhwm6ByxFA
 
 ### Oudong Express — Company Project
 A second tenant proving out the multi-tenant white-label architecture, sharing a common core package with dedicated prod/staging flavors and Firebase configs. Includes documented performance-optimization work across the shared 25K-LOC reusable core of HTTP clients, models, and services.
