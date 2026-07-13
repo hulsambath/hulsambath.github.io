@@ -35,6 +35,23 @@
   animation: predictor-pulse 2.4s ease-in-out infinite;
 }
 
+/* Date strip: scroll-snap without a visible scrollbar. */
+.predictor-page .date-strip {
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.predictor-page .date-strip::-webkit-scrollbar {
+  display: none;
+}
+
+/* Sportsbook price cell: subtle tactile lift on hover. */
+.predictor-page .odds-cell {
+  transition: background-color 150ms ease, border-color 150ms ease;
+}
+.predictor-page .odds-cell:hover {
+  background-color: hsl(var(--secondary));
+}
+
 @keyframes predictor-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }

@@ -4,9 +4,9 @@ import type { ReactNode } from "react";
 import "./predictor.css";
 
 export const metadata: Metadata = {
-  title: "Matchday Model — Poisson football predictions | Sambath HUL",
+  title: "Matchday Board — live football odds & Poisson predictions | Sambath HUL",
   description:
-    "Time-weighted Poisson goal and corners predictions for the Premier League, La Liga and Serie A. A live ML side project by Sambath HUL.",
+    "Live fixtures, odds and time-weighted Poisson goal & corners predictions across ~30 competitions, fed by Sofascore. A live ML side project by Sambath HUL.",
 };
 
 export default function PredictorLayout({ children }: { children: ReactNode }) {

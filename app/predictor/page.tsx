@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, CornerDownRight, RefreshCw, WifiOff } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, CornerDownRight, RefreshCw, WifiOff } from "lucide-react";
 import * as React from "react";
 
 /* ---------------------------------------------------------------- types */
@@ -45,6 +45,7 @@ type Match = {
   prediction?: Prediction | null;
   odds?: Odds | null;
 };
+type DateBucket = { date: string; count: number };
 
 /* ------------------------------------------------------------- API base */
 
@@ -58,18 +59,21 @@ const wsBase = () => apiBase().replace(/^http/, "ws");
 
 /* -------------------------------------------------------------- helpers */
 
+const FINISHED = new Set(["FT", "AET", "PEN"]);
+const NOT_LIVE = new Set(["NS", "PST", "CANC", "FT", "AET", "PEN"]);
+const isFinished = (s: string) => FINISHED.has(s);
+const isLive = (s: string) => !NOT_LIVE.has(s);
+
 const pct = (p: number | null | undefined) =>
   p == null ? "–" : `${Math.round(p * 100)}%`;
+const odd = (v: number | null | undefined) => (v == null ? "–" : v.toFixed(2));
 
-function dayLabel(iso: string): string {
-  return new Date(iso).toLocaleDateString(undefined, {
-    weekday: "long", day: "numeric", month: "short",
-  });
+/** yyyy-mm-dd in the viewer's local time. */
+function isoDay(d: Date): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 function timeLabel(iso: string): string {
-  return new Date(iso).toLocaleTimeString(undefined, {
-    hour: "2-digit", minute: "2-digit",
-  });
+  return new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 }
 
 /** Model probabilities when available, else bookmaker-implied (normalized). */
@@ -86,6 +90,41 @@ function outcomeProbs(m: Match): { p1: number; px: number; p2: number; from: "mo
   return null;
 }
 
+/* ------------------------------------------------------- date strip data */
+
+/** A continuous window of days around today; count carries whether each day
+ *  has fixtures (0 → dimmed). */
+function buildDayWindow(buckets: DateBucket[], back = 2, ahead = 10): DateBucket[] {
+  const counts = new Map(buckets.map((b) => [b.date, b.count]));
+  const days: DateBucket[] = [];
+  const base = new Date();
+  base.setHours(0, 0, 0, 0);
+  for (let i = -back; i <= ahead; i++) {
+    const d = new Date(base);
+    d.setDate(base.getDate() + i);
+    const iso = isoDay(d);
+    days.push({ date: iso, count: counts.get(iso) ?? 0 });
+  }
+  // include any bucket dates outside the window (e.g. midweek European ties)
+  for (const b of buckets)
+    if (!days.some((d) => d.date === b.date)) days.push(b);
+  days.sort((a, b) => a.date.localeCompare(b.date));
+  return days;
+}
+
+function relativeLabel(iso: string): { top: string; sub: string } {
+  const today = isoDay(new Date());
+  const tmr = new Date(); tmr.setDate(tmr.getDate() + 1);
+  const yst = new Date(); yst.setDate(yst.getDate() - 1);
+  const d = new Date(`${iso}T00:00:00`);
+  const weekday = d.toLocaleDateString(undefined, { weekday: "short" });
+  const dayNum = d.toLocaleDateString(undefined, { day: "numeric", month: "short" });
+  if (iso === today) return { top: "Today", sub: dayNum };
+  if (iso === isoDay(tmr)) return { top: "Tmrw", sub: dayNum };
+  if (iso === isoDay(yst)) return { top: "Yest", sub: dayNum };
+  return { top: weekday, sub: dayNum };
+}
+
 /* ----------------------------------------------------------- components */
 
 function TeamBadge({ team }: { team: Team }) {
@@ -94,13 +133,37 @@ function TeamBadge({ team }: { team: Team }) {
     .filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
   if (team.logo_url && !broken)
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={team.logo_url} alt="" width={26} height={26}
-      className="h-[26px] w-[26px] shrink-0 rounded-full bg-secondary object-contain p-0.5"
+    return <img src={team.logo_url} alt="" width={28} height={28}
+      className="h-7 w-7 shrink-0 rounded-full bg-secondary object-contain p-0.5"
       onError={() => setBroken(true)} />;
   return (
-    <span aria-hidden className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full bg-secondary font-display text-[11px] font-bold text-muted-foreground">
+    <span aria-hidden className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-[11px] font-bold text-muted-foreground">
       {initials || "?"}
     </span>
+  );
+}
+
+/** The signature element: sportsbook price cells for 1 / X / 2 (and O/U 2.5),
+ *  with the model's favored outcome subtly accented in its outcome color. */
+function OddsBoard({ odds, fav }: { odds: Odds; fav: "1" | "X" | "2" | null }) {
+  const color = { "1": "--home", X: "--draw", "2": "--away" } as const;
+  const main = [["1", odds.home_win], ["X", odds.draw], ["2", odds.away_win]] as const;
+  const goals = [["O2.5", odds.over_25], ["U2.5", odds.under_25]] as const;
+  const Cell = ({ k, v, accent }: { k: string; v: number | null; accent?: string }) => (
+    <div className="odds-cell flex flex-1 flex-col items-center rounded-md border border-border bg-secondary/40 px-2 py-1.5"
+      style={accent ? { borderColor: `hsl(${accent})`, boxShadow: `inset 0 -2px 0 hsl(${accent} / 0.55)` } : undefined}>
+      <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{k}</span>
+      <span className="font-data text-sm font-medium">{odd(v)}</span>
+    </div>
+  );
+  return (
+    <div className="mt-3 flex items-stretch gap-1.5">
+      {main.map(([k, v]) => (
+        <Cell key={k} k={k} v={v} accent={fav === k ? `var(${color[k]})` : undefined} />
+      ))}
+      <span className="mx-0.5 w-px shrink-0 self-stretch bg-border" aria-hidden />
+      {goals.map(([k, v]) => <Cell key={k} k={k} v={v} />)}
+    </div>
   );
 }
 
@@ -111,24 +174,24 @@ function TriBand({ p1, px, p2, from }: { p1: number; px: number; p2: number; fro
     { key: "2", value: p2, color: "hsl(var(--away))" },
   ];
   return (
-    <div>
+    <div className="mt-2.5">
       <div className="mb-1 flex items-center justify-between font-data text-[11px] text-muted-foreground">
-        {seg.map((s) => (
-          <span key={s.key}>
-            <span className="mr-1 inline-block h-2 w-2 rounded-[2px]" style={{ background: s.color }} />
-            {s.key} {pct(s.value)}
-          </span>
-        ))}
+        <span className="uppercase tracking-wide">{from === "model" ? "model" : "market implied"}</span>
+        <span className="flex gap-3">
+          {seg.map((s) => (
+            <span key={s.key}>
+              <span className="mr-1 inline-block h-2 w-2 rounded-[2px]" style={{ background: s.color }} />
+              {s.key} {pct(s.value)}
+            </span>
+          ))}
+        </span>
       </div>
-      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-muted" role="img"
+      <div className="flex h-2 w-full overflow-hidden rounded-full bg-muted" role="img"
         aria-label={`${from} probabilities — home ${pct(p1)}, draw ${pct(px)}, away ${pct(p2)}`}>
         {seg.map((s) => (
           <div key={s.key} className="band-segment h-full"
             style={{ width: `${s.value * 100}%`, background: s.color }} />
         ))}
-      </div>
-      <div className="mt-1 text-right text-[10px] uppercase tracking-wide text-muted-foreground">
-        {from === "model" ? "model" : "market implied"}
       </div>
     </div>
   );
@@ -143,59 +206,61 @@ function StatChip({ label, value }: { label: string; value: string }) {
   );
 }
 
-function OddsRow({ odds }: { odds: Odds }) {
-  const cells = [["1", odds.home_win], ["X", odds.draw], ["2", odds.away_win],
-    ["O2.5", odds.over_25], ["U2.5", odds.under_25]] as const;
-  return (
-    <div className="mt-2.5 flex items-center gap-1.5 overflow-x-auto">
-      <span className="shrink-0 text-[10px] uppercase tracking-wide text-muted-foreground">
-        {odds.bookmaker ?? "odds"}
+/** Kickoff time, a pulsing LIVE badge, or the final score, depending on status. */
+function StatusPill({ match }: { match: Match }) {
+  if (isLive(match.status))
+    return (
+      <span className="flex items-center gap-1.5 rounded-full bg-[hsl(var(--live)/0.14)] px-2 py-0.5 font-data text-[11px] font-semibold uppercase tracking-wide text-[hsl(var(--live))]">
+        <span className="live-dot inline-block h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--live))" }} />
+        {match.status === "HT" ? "HT" : "Live"}
       </span>
-      {cells.filter(([, v]) => v != null).map(([k, v]) => (
-        <span key={k} className="shrink-0 rounded-md bg-secondary px-2 py-1 font-data text-xs">
-          <span className="text-muted-foreground">{k}</span> {v!.toFixed(2)}
-        </span>
-      ))}
-    </div>
-  );
+    );
+  if (isFinished(match.status))
+    return <span className="font-data text-[11px] uppercase tracking-wide text-muted-foreground">FT</span>;
+  return <span className="font-data text-xs text-muted-foreground">{timeLabel(match.kickoff_utc)}</span>;
 }
 
 function MatchCard({ match, league }: { match: Match; league?: League }) {
   const [open, setOpen] = React.useState(false);
   const p = match.prediction;
   const probs = outcomeProbs(match);
+  const showScore = isLive(match.status) || isFinished(match.status);
+  const fav = probs
+    ? (["1", "X", "2"] as const)[[probs.p1, probs.px, probs.p2].indexOf(Math.max(probs.p1, probs.px, probs.p2))]
+    : null;
+
   return (
-    <div className="rounded-xl border border-border bg-card">
+    <div className={`rounded-xl border bg-card transition-colors ${isLive(match.status) ? "border-[hsl(var(--live)/0.5)]" : "border-border"}`}>
       <button
         className="w-full px-4 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
         onClick={() => setOpen(!open)} aria-expanded={open}>
         <div className="mb-2.5 flex items-center justify-between text-xs text-muted-foreground">
           <span className="flex items-center gap-2">
-            <span className="font-data">{timeLabel(match.kickoff_utc)}</span>
+            <StatusPill match={match} />
             {league && (
-              <span className="rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wide">
+              <span className="truncate rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wide">
                 {league.name}
               </span>
             )}
           </span>
-          <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-180" : ""}`} />
+          <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
         </div>
-        <div className="mb-3 space-y-1.5">
-          {([["home", match.home_team, p?.home_exp_goals],
-             ["away", match.away_team, p?.away_exp_goals]] as const).map(([side, team, xg]) => (
+        <div className="mb-1 space-y-1.5">
+          {([["home", match.home_team, p?.home_exp_goals, match.home_goals],
+             ["away", match.away_team, p?.away_exp_goals, match.away_goals]] as const).map(([side, team, xg, goals]) => (
             <div key={side} className="grid grid-cols-[auto_1fr_auto] items-center gap-x-2.5">
               <TeamBadge team={team} />
               <span className="truncate font-display text-lg font-semibold leading-tight">{team.name}</span>
-              <span className="font-data text-xs text-muted-foreground">
-                {xg != null ? `${xg.toFixed(2)} xG` : ""}
-              </span>
+              {showScore
+                ? <span className={`font-data text-lg font-bold tabular-nums ${isLive(match.status) ? "text-[hsl(var(--live))]" : ""}`}>{goals ?? 0}</span>
+                : <span className="font-data text-xs text-muted-foreground">{xg != null ? `${xg.toFixed(2)} xG` : ""}</span>}
             </div>
           ))}
         </div>
+        {match.odds && <OddsBoard odds={match.odds} fav={fav} />}
         {probs ? <TriBand {...probs} /> : (
-          <p className="text-xs text-muted-foreground">No prices or prediction yet for this match.</p>
+          <p className="mt-2 text-xs text-muted-foreground">No prices or prediction yet for this match.</p>
         )}
-        {match.odds && <OddsRow odds={match.odds} />}
       </button>
 
       {open && p && (
@@ -246,42 +311,95 @@ function MatchCard({ match, league }: { match: Match; league?: League }) {
   );
 }
 
+/** Horizontal, scroll-snapping day selector. Empty days render dimmed. */
+function DateStrip({ days, selected, onSelect }: {
+  days: DateBucket[]; selected: string; onSelect: (d: string) => void;
+}) {
+  const scroller = React.useRef<HTMLDivElement>(null);
+  const nudge = (dir: number) => scroller.current?.scrollBy({ left: dir * 200, behavior: "smooth" });
+  return (
+    <div className="relative flex items-center gap-1">
+      <button aria-label="Earlier days" onClick={() => nudge(-1)}
+        className="hidden shrink-0 rounded-full border border-border p-1 text-muted-foreground hover:text-foreground sm:block">
+        <ChevronLeft className="h-4 w-4" />
+      </button>
+      <div ref={scroller} className="date-strip flex flex-1 gap-1.5 overflow-x-auto scroll-smooth py-1">
+        {days.map((d) => {
+          const { top, sub } = relativeLabel(d.date);
+          const active = d.date === selected;
+          const empty = d.count === 0;
+          return (
+            <button key={d.date} onClick={() => onSelect(d.date)} aria-pressed={active}
+              className={`flex shrink-0 snap-start flex-col items-center rounded-lg border px-3.5 py-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring ${
+                active ? "border-foreground bg-foreground text-background"
+                       : empty ? "border-border/60 text-muted-foreground/50"
+                               : "border-border text-foreground hover:border-foreground/60"}`}>
+              <span className="font-display text-sm font-semibold uppercase leading-none">{top}</span>
+              <span className="mt-0.5 font-data text-[10px] leading-none opacity-70">{sub}</span>
+            </button>
+          );
+        })}
+      </div>
+      <button aria-label="Later days" onClick={() => nudge(1)}
+        className="hidden shrink-0 rounded-full border border-border p-1 text-muted-foreground hover:text-foreground sm:block">
+        <ChevronRight className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
 /* ----------------------------------------------------------------- page */
 
 type WsStatus = "live" | "connecting" | "offline";
 
 export default function PredictorPage() {
   const [leagues, setLeagues] = React.useState<League[]>([]);
+  const [buckets, setBuckets] = React.useState<DateBucket[]>([]);
+  const [selectedDate, setSelectedDate] = React.useState<string>(() => isoDay(new Date()));
   const [country, setCountry] = React.useState<string | null>(null);
   const [leagueId, setLeagueId] = React.useState<number | null>(null);
   const [matches, setMatches] = React.useState<Match[] | null>(null);
-  const [recent, setRecent] = React.useState<Match[]>([]);
   const [wsStatus, setWsStatus] = React.useState<WsStatus>("connecting");
   const [error, setError] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    fetch(`${apiBase()}/leagues`).then((r) => r.json()).then(setLeagues)
+  const today = isoDay(new Date());
+
+  const loadDay = React.useCallback((date: string) => {
+    fetch(`${apiBase()}/matches/by-date?date=${date}`)
+      .then((r) => r.json()).then(setMatches)
       .catch(() => setError("The prediction server is not reachable right now."));
-    fetch(`${apiBase()}/matches/upcoming`).then((r) => r.json()).then(setMatches)
-      .catch(() => setError("The prediction server is not reachable right now."));
-    fetch(`${apiBase()}/matches/recent?limit=30`).then((r) => r.json()).then(setRecent)
-      .catch(() => {});
   }, []);
 
-  // one unfiltered live socket; filtering is client-side so tabs are instant
+  // initial: leagues + available dates; default to today or nearest fixtures
+  React.useEffect(() => {
+    fetch(`${apiBase()}/leagues`).then((r) => r.json()).then(setLeagues).catch(() => {});
+    fetch(`${apiBase()}/matches/dates`).then((r) => r.json()).then((bs: DateBucket[]) => {
+      setBuckets(bs);
+      if (!bs.some((b) => b.date === today) && bs.length) {
+        const next = bs.find((b) => b.date >= today) ?? bs[bs.length - 1];
+        setSelectedDate(next.date);
+      }
+    }).catch(() => setError("The prediction server is not reachable right now."));
+  }, [today]);
+
+  React.useEffect(() => { loadDay(selectedDate); }, [selectedDate, loadDay]);
+
+  // live socket: while viewing today, refresh the day's board when it changes
   React.useEffect(() => {
     let closed = false;
     const ws = new WebSocket(`${wsBase()}/ws/matches`);
     ws.onopen = () => setWsStatus("live");
     ws.onmessage = (e) => {
       const msg = JSON.parse(e.data);
-      if (msg.type === "snapshot" || msg.type === "update") setMatches(msg.matches);
+      if ((msg.type === "update" || msg.type === "snapshot") && selectedDate === today)
+        loadDay(today);
     };
     ws.onclose = () => { if (!closed) setWsStatus("offline"); };
     ws.onerror = () => { if (!closed) setWsStatus("offline"); };
     return () => { closed = true; ws.close(); };
-  }, []);
+  }, [selectedDate, today, loadDay]);
 
+  const days = buildDayWindow(buckets);
   const countries = Array.from(new Set(leagues.map((l) => l.country ?? "International")));
   const visibleLeagues = country == null ? leagues
     : leagues.filter((l) => (l.country ?? "International") === country);
@@ -290,30 +408,28 @@ export default function PredictorPage() {
     (leagueId != null ? leagues.filter((l) => l.id === leagueId) : visibleLeagues).map((l) => l.id));
 
   const filtered = (matches ?? []).filter((m) => activeLeagueIds.has(m.league_id));
-  const filteredRecent = recent.filter((m) => activeLeagueIds.has(m.league_id));
-
-  const byDay: [string, Match[]][] = [];
+  // group the day's matches by league for a scannable board
+  const byLeague: [number, Match[]][] = [];
   for (const m of filtered) {
-    const label = dayLabel(m.kickoff_utc);
-    const last = byDay[byDay.length - 1];
-    if (last && last[0] === label) last[1].push(m);
-    else byDay.push([label, [m]]);
+    const last = byLeague[byLeague.length - 1];
+    if (last && last[0] === m.league_id) last[1].push(m);
+    else byLeague.push([m.league_id, [m]]);
   }
 
   const chip = (active: boolean) =>
-    `rounded-full border px-3.5 py-1.5 font-display text-sm font-semibold uppercase tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring ${
+    `rounded-full border px-3 py-1 font-display text-sm font-semibold uppercase tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring ${
       active ? "border-foreground bg-foreground text-background"
              : "border-border text-muted-foreground hover:text-foreground"}`;
 
   return (
-    <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-10 sm:py-14">
-      <header className="mb-8">
+    <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12">
+      <header className="mb-5">
         <p className="font-data text-xs text-muted-foreground">hulsambath.me / predictor</p>
         <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">
-          Matchday model
+          Matchday board
         </h1>
         <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-          Fixtures and bookmaker prices from the 1xbet line, goal and corners
+          Live fixtures and bookmaker prices from Sofascore, goal and corners
           probabilities from a time-weighted Poisson model. Not betting advice.
         </p>
         <div className="mt-3 flex items-center gap-2 font-data text-xs text-muted-foreground">
@@ -334,9 +450,13 @@ export default function PredictorPage() {
         </div>
       )}
 
-      <nav className="mb-3 flex flex-wrap gap-2" aria-label="Country">
+      <div className="sticky top-0 z-10 -mx-4 mb-4 border-b border-border bg-background/85 px-4 pb-2 pt-2 backdrop-blur">
+        <DateStrip days={days} selected={selectedDate} onSelect={setSelectedDate} />
+      </div>
+
+      <nav className="mb-2 flex flex-wrap gap-2" aria-label="Country">
         <button className={chip(country == null)} onClick={() => { setCountry(null); setLeagueId(null); }}>
-          All countries
+          All
         </button>
         {countries.map((c) => (
           <button key={c} className={chip(country === c)}
@@ -356,49 +476,36 @@ export default function PredictorPage() {
         ))}
       </nav>
 
-      <section aria-label="Upcoming matches">
+      <section aria-label="Matches">
         {matches === null && !error && (
           <p className="py-8 text-center text-sm text-muted-foreground">Loading fixtures…</p>
         )}
         {matches !== null && filtered.length === 0 && (
           <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-            Nothing on the schedule for this filter right now. Fixtures appear
-            after the next data sync.
+            No matches for this day and filter. Pick another day above, or check
+            back after the next data sync.
           </div>
         )}
-        {byDay.map(([label, ms]) => (
-          <div key={label} className="mb-6">
-            <h2 className="mb-2 font-display text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              {label}
-            </h2>
-            <div className="space-y-3">
-              {ms.map((m) => <MatchCard key={m.id} match={m} league={leagueById.get(m.league_id)} />)}
+        {byLeague.map(([lid, ms]) => {
+          const lg = leagueById.get(lid);
+          return (
+            <div key={lid} className="mb-6">
+              {lg && (
+                <h2 className="mb-2 flex items-center gap-2 font-display text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                  {lg.name}
+                  {lg.country && <span className="text-[11px] font-normal normal-case text-muted-foreground/70">{lg.country}</span>}
+                </h2>
+              )}
+              <div className="space-y-3">
+                {ms.map((m) => <MatchCard key={m.id} match={m} league={lg} />)}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </section>
 
-      {filteredRecent.length > 0 && (
-        <section aria-label="Recent results" className="mt-10">
-          <h2 className="mb-3 font-display text-xl font-semibold uppercase">Recent results</h2>
-          <ul className="divide-y divide-border rounded-xl border border-border">
-            {filteredRecent.slice(0, 10).map((m) => (
-              <li key={m.id} className="flex items-center justify-between gap-3 px-4 py-2.5 text-sm">
-                <span className="flex min-w-0 items-center gap-2">
-                  <TeamBadge team={m.home_team} />
-                  <span className="truncate">
-                    {m.home_team.name} <span className="text-muted-foreground">vs</span> {m.away_team.name}
-                  </span>
-                </span>
-                <span className="font-data shrink-0">{m.home_goals}–{m.away_goals}</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
       <footer className="mt-12 border-t border-border pt-4 text-xs text-muted-foreground">
-        Built on a FastAPI + PostgreSQL Poisson model.{" "}
+        Built on a FastAPI + PostgreSQL Poisson model, fed by Sofascore.{" "}
         <a className="underline underline-offset-2 hover:text-foreground" href="https://hulsambath.me">
           ← back to hulsambath.me
         </a>
