@@ -27,6 +27,13 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          # Optional override for the football-predictor API URL. Left unset,
+          # the /predictor page auto-targets https://predictor-api.hulsambath.me
+          # when served from hulsambath.me, so these aren't required. Set them
+          # as Actions "Repository variables" only to point at a different API.
+          NEXT_PUBLIC_PREDICTOR_API: ${{ vars.NEXT_PUBLIC_PREDICTOR_API }}
+          NEXT_PUBLIC_PREDICTOR_WS:  ${{ vars.NEXT_PUBLIC_PREDICTOR_WS }}
         run: npm run build
 
       - name: Ensure trip images are in out
