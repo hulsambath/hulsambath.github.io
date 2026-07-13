@@ -93,3 +93,20 @@ export function visibleCompetitions<T extends BoardMatch>(
       return ca.localeCompare(cb) || a.league.name.localeCompare(b.league.name);
     });
 }
+
+export const FAVOURITES_KEY = "predictor:favourites";
+
+export function parseFavourites(raw: string | null): Set<number> {
+  if (!raw) return new Set();
+  try {
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return new Set();
+    return new Set(arr.filter((n): n is number => typeof n === "number"));
+  } catch {
+    return new Set();
+  }
+}
+
+export function serializeFavourites(s: Set<number>): string {
+  return JSON.stringify([...s]);
+}

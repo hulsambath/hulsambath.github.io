@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { classify, countryFlag, groupByCompetition, isFinished, isLive, visibleCompetitions } from "./board";
+import { classify, countryFlag, groupByCompetition, isFinished, isLive, parseFavourites, serializeFavourites, visibleCompetitions } from "./board";
+
+describe("favourites storage", () => {
+  it("parses a JSON array of ids, tolerating garbage", () => {
+    expect([...parseFavourites("[1,2,3]")]).toEqual([1, 2, 3]);
+    expect([...parseFavourites(null)]).toEqual([]);
+    expect([...parseFavourites("not json")]).toEqual([]);
+    expect([...parseFavourites('["x", 4]')]).toEqual([4]);
+  });
+  it("round-trips through serialize", () => {
+    expect([...parseFavourites(serializeFavourites(new Set([5, 6])))]).toEqual([5, 6]);
+  });
+});
 
 const _g = (id: number, name: string, country: string, live: number, up: number) => ({
   league: { id, name, country },
