@@ -45,3 +45,32 @@ export function countryFlag(country: string | null | undefined): string | null {
   if (!iso || iso.includes("-")) return null; // subdivisions handled by CUSTOM_FLAGS
   return iso2ToFlag(iso);
 }
+
+export type BoardLeague = { id: number; name: string; country: string | null };
+export type BoardMatch = { id: number; league_id: number; status: string };
+
+export type CompetitionGroup<T extends BoardMatch> = {
+  league: BoardLeague;
+  matches: T[];
+  counts: { live: number; finished: number; upcoming: number; total: number };
+};
+
+export function groupByCompetition<T extends BoardMatch>(
+  matches: T[],
+  leaguesById: Map<number, BoardLeague>,
+): CompetitionGroup<T>[] {
+  const groups = new Map<number, CompetitionGroup<T>>();
+  for (const m of matches) {
+    let g = groups.get(m.league_id);
+    if (!g) {
+      const league = leaguesById.get(m.league_id) ??
+        { id: m.league_id, name: `League ${m.league_id}`, country: null };
+      g = { league, matches: [], counts: { live: 0, finished: 0, upcoming: 0, total: 0 } };
+      groups.set(m.league_id, g);
+    }
+    g.matches.push(m);
+    g.counts.total += 1;
+    g.counts[classify(m.status)] += 1;
+  }
+  return [...groups.values()];
+}
