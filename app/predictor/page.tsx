@@ -2,6 +2,12 @@
 
 import { ChevronDown, ChevronLeft, ChevronRight, CornerDownRight, RefreshCw, WifiOff } from "lucide-react";
 import * as React from "react";
+import { groupByCompetition, visibleCompetitions, type BoardLeague, type StatusFilter } from "./board";
+import { BoardHeader, type BoardTab } from "./components/BoardHeader";
+import { CompetitionRow } from "./components/CompetitionRow";
+import { CompetitionsTab } from "./components/CompetitionsTab";
+import { FilterBar } from "./components/FilterBar";
+import { useFavourites } from "./useFavourites";
 
 /* ---------------------------------------------------------------- types */
 
@@ -220,7 +226,7 @@ function StatusPill({ match }: { match: Match }) {
   return <span className="font-data text-xs text-muted-foreground">{timeLabel(match.kickoff_utc)}</span>;
 }
 
-function MatchCard({ match, league }: { match: Match; league?: League }) {
+function MatchCard({ match, league, oddsShown = true }: { match: Match; league?: League; oddsShown?: boolean }) {
   const [open, setOpen] = React.useState(false);
   const p = match.prediction;
   const probs = outcomeProbs(match);
@@ -257,7 +263,7 @@ function MatchCard({ match, league }: { match: Match; league?: League }) {
             </div>
           ))}
         </div>
-        {match.odds && <OddsBoard odds={match.odds} fav={fav} />}
+        {oddsShown && match.odds && <OddsBoard odds={match.odds} fav={fav} />}
         {probs ? <TriBand {...probs} /> : (
           <p className="mt-2 text-xs text-muted-foreground">No prices or prediction yet for this match.</p>
         )}
@@ -356,9 +362,12 @@ export default function PredictorPage() {
   const [leagues, setLeagues] = React.useState<League[]>([]);
   const [buckets, setBuckets] = React.useState<DateBucket[]>([]);
   const [selectedDate, setSelectedDate] = React.useState<string>(() => isoDay(new Date()));
-  const [country, setCountry] = React.useState<string | null>(null);
+  const [tab, setTab] = React.useState<BoardTab>("all");
+  const [status, setStatus] = React.useState<StatusFilter>("live");
+  const [oddsShown, setOddsShown] = React.useState(false);
   const [leagueId, setLeagueId] = React.useState<number | null>(null);
   const [matches, setMatches] = React.useState<Match[] | null>(null);
+  const { favourites, isFavourite, toggle } = useFavourites();
   const [wsStatus, setWsStatus] = React.useState<WsStatus>("connecting");
   const [error, setError] = React.useState<string | null>(null);
 
@@ -400,26 +409,14 @@ export default function PredictorPage() {
   }, [selectedDate, today, loadDay]);
 
   const days = buildDayWindow(buckets);
-  const countries = Array.from(new Set(leagues.map((l) => l.country ?? "International")));
-  const visibleLeagues = country == null ? leagues
-    : leagues.filter((l) => (l.country ?? "International") === country);
   const leagueById = new Map(leagues.map((l) => [l.id, l]));
-  const activeLeagueIds = new Set(
-    (leagueId != null ? leagues.filter((l) => l.id === leagueId) : visibleLeagues).map((l) => l.id));
-
-  const filtered = (matches ?? []).filter((m) => activeLeagueIds.has(m.league_id));
-  // group the day's matches by league for a scannable board
-  const byLeague: [number, Match[]][] = [];
-  for (const m of filtered) {
-    const last = byLeague[byLeague.length - 1];
-    if (last && last[0] === m.league_id) last[1].push(m);
-    else byLeague.push([m.league_id, [m]]);
-  }
-
-  const chip = (active: boolean) =>
-    `rounded-full border px-3 py-1 font-display text-sm font-semibold uppercase tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring ${
-      active ? "border-foreground bg-foreground text-background"
-             : "border-border text-muted-foreground hover:text-foreground"}`;
+  const boardLeaguesById = new Map<number, BoardLeague>(
+    leagues.map((l) => [l.id, { id: l.id, name: l.name, country: l.country }]));
+  const groups = groupByCompetition(matches ?? [], boardLeaguesById);
+  const liveCount = (matches ?? []).filter((m) => isLive(m.status)).length;
+  const competitions = visibleCompetitions(groups, {
+    status, favourites, onlyFavourites: tab === "favourites", leagueId,
+  });
 
   return (
     <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12">
@@ -450,59 +447,41 @@ export default function PredictorPage() {
         </div>
       )}
 
-      <div className="sticky top-0 z-10 -mx-4 mb-4 border-b border-border bg-background/85 px-4 pb-2 pt-2 backdrop-blur">
-        <DateStrip days={days} selected={selectedDate} onSelect={setSelectedDate} />
+      <div className="sticky top-0 z-10 -mx-4 mb-4 border-b border-border bg-background/85 px-4 pb-2 pt-3 backdrop-blur">
+        <BoardHeader tab={tab} onTab={(t) => { setTab(t); setLeagueId(null); }} favouriteCount={favourites.size}>
+          <DateStrip days={days} selected={selectedDate} onSelect={setSelectedDate} />
+        </BoardHeader>
       </div>
 
-      <nav className="mb-2 flex flex-wrap gap-2" aria-label="Country">
-        <button className={chip(country == null)} onClick={() => { setCountry(null); setLeagueId(null); }}>
-          All
-        </button>
-        {countries.map((c) => (
-          <button key={c} className={chip(country === c)}
-            onClick={() => { setCountry(c); setLeagueId(null); }}>
-            {c}
-          </button>
-        ))}
-      </nav>
-      <nav className="mb-6 flex flex-wrap gap-2" aria-label="League">
-        <button className={chip(leagueId == null)} onClick={() => setLeagueId(null)}>
-          All leagues
-        </button>
-        {visibleLeagues.map((l) => (
-          <button key={l.id} className={chip(leagueId === l.id)} onClick={() => setLeagueId(l.id)}>
-            {l.name}
-          </button>
-        ))}
-      </nav>
-
-      <section aria-label="Matches">
-        {matches === null && !error && (
-          <p className="py-8 text-center text-sm text-muted-foreground">Loading fixtures…</p>
-        )}
-        {matches !== null && filtered.length === 0 && (
-          <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-            No matches for this day and filter. Pick another day above, or check
-            back after the next data sync.
-          </div>
-        )}
-        {byLeague.map(([lid, ms]) => {
-          const lg = leagueById.get(lid);
-          return (
-            <div key={lid} className="mb-6">
-              {lg && (
-                <h2 className="mb-2 flex items-center gap-2 font-display text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                  {lg.name}
-                  {lg.country && <span className="text-[11px] font-normal normal-case text-muted-foreground/70">{lg.country}</span>}
-                </h2>
-              )}
-              <div className="space-y-3">
-                {ms.map((m) => <MatchCard key={m.id} match={m} league={lg} />)}
+      {tab === "competitions" ? (
+        <CompetitionsTab
+          leagues={leagues.map((l) => ({ id: l.id, name: l.name, country: l.country }))}
+          onPick={(id) => { setLeagueId(id); setTab("all"); }}
+        />
+      ) : (
+        <>
+          <FilterBar status={status} onStatus={setStatus} liveCount={liveCount}
+            oddsShown={oddsShown} onOddsToggle={() => setOddsShown((v) => !v)} />
+          <section aria-label="Competitions">
+            {matches === null && !error && (
+              <p className="py-8 text-center text-sm text-muted-foreground">Loading fixtures…</p>
+            )}
+            {matches !== null && competitions.length === 0 && (
+              <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+                No {status} matches{tab === "favourites" ? " in your favourites" : ""} for this day. Try another day or filter.
               </div>
-            </div>
-          );
-        })}
-      </section>
+            )}
+            {competitions.map((g) => (
+              <CompetitionRow key={g.league.id} group={g} status={status}
+                isFavourite={isFavourite(g.league.id)}
+                onToggleFavourite={() => toggle(g.league.id)}
+                renderMatch={(m) => (
+                  <MatchCard key={m.id} match={m} league={leagueById.get(m.league_id)} oddsShown={oddsShown} />
+                )} />
+            ))}
+          </section>
+        </>
+      )}
 
       <footer className="mt-12 border-t border-border pt-4 text-xs text-muted-foreground">
         Built on a FastAPI + PostgreSQL Poisson model, fed by Sofascore.{" "}
