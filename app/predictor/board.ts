@@ -74,3 +74,22 @@ export function groupByCompetition<T extends BoardMatch>(
   }
   return [...groups.values()];
 }
+
+export function visibleCompetitions<T extends BoardMatch>(
+  groups: CompetitionGroup<T>[],
+  opts: { status: StatusFilter; favourites: Set<number>; onlyFavourites: boolean; leagueId?: number | null },
+): CompetitionGroup<T>[] {
+  const { status, favourites, onlyFavourites, leagueId } = opts;
+  return groups
+    .filter((g) => g.counts[status] > 0)
+    .filter((g) => (leagueId == null ? true : g.league.id === leagueId))
+    .filter((g) => (onlyFavourites ? favourites.has(g.league.id) : true))
+    .sort((a, b) => {
+      const fa = favourites.has(a.league.id) ? 0 : 1;
+      const fb = favourites.has(b.league.id) ? 0 : 1;
+      if (fa !== fb) return fa - fb;
+      const ca = a.league.country ?? "";
+      const cb = b.league.country ?? "";
+      return ca.localeCompare(cb) || a.league.name.localeCompare(b.league.name);
+    });
+}

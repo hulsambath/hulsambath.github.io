@@ -1,5 +1,31 @@
 import { describe, expect, it } from "vitest";
-import { classify, countryFlag, groupByCompetition, isFinished, isLive } from "./board";
+import { classify, countryFlag, groupByCompetition, isFinished, isLive, visibleCompetitions } from "./board";
+
+const _g = (id: number, name: string, country: string, live: number, up: number) => ({
+  league: { id, name, country },
+  matches: [] as { id: number; league_id: number; status: string }[],
+  counts: { live, finished: 0, upcoming: up, total: live + up },
+});
+
+describe("visibleCompetitions", () => {
+  const groups = [
+    _g(1, "Premier League", "England", 0, 2),
+    _g(2, "Serie B", "Brazil", 3, 0),
+    _g(3, "Copa", "Argentina", 0, 0),
+  ];
+  it("keeps only competitions with matches in the active status", () => {
+    const live = visibleCompetitions(groups, { status: "live", favourites: new Set(), onlyFavourites: false });
+    expect(live.map((x) => x.league.id)).toEqual([2]);
+  });
+  it("pins favourites first, then sorts by country then name", () => {
+    const up = visibleCompetitions(groups, { status: "upcoming", favourites: new Set([1]), onlyFavourites: false });
+    expect(up.map((x) => x.league.id)).toEqual([1]);
+  });
+  it("restricts to favourites when onlyFavourites", () => {
+    const favs = visibleCompetitions(groups, { status: "live", favourites: new Set([1]), onlyFavourites: true });
+    expect(favs).toHaveLength(0);
+  });
+});
 
 const _leagues = new Map([
   [1, { id: 1, name: "Premier League", country: "England" }],
