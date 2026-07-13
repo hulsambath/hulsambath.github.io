@@ -1,5 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { classify, isFinished, isLive } from "./board";
+import { classify, countryFlag, isFinished, isLive } from "./board";
+
+describe("countryFlag", () => {
+  it("maps known countries to emoji flags", () => {
+    expect(countryFlag("England")).toBe("🏴󠁧󠁢󠁥󠁮󠁧󠁿");
+    expect(countryFlag("Brazil")).toBe("🇧🇷");
+    expect(countryFlag("Argentina")).toBe("🇦🇷");
+  });
+  it("returns null for unknown / region names", () => {
+    expect(countryFlag("World")).toBeNull();
+    expect(countryFlag(null)).toBeNull();
+    expect(countryFlag("International")).toBeNull();
+  });
+});
 
 describe("status classification", () => {
   it("treats FT/AET/PEN as finished", () => {
