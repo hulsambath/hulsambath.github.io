@@ -18,7 +18,7 @@ const csp = [
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   // team logos on /predictor come from ESPN's and 1xbet's CDNs
-  "img-src 'self' data: https://a.espncdn.com https://v2l.traincdn.com",
+  "img-src 'self' data: https://a.espncdn.com https://v2l.traincdn.com https://api.sofascore.com",
   // predictor page talks to the football-predictor API (REST + WebSocket);
   // localhost entries cover local dev against the same page.
   "connect-src 'self' https://plausible.io https://predictor-api.hulsambath.me wss://predictor-api.hulsambath.me http://localhost:8000 ws://localhost:8000",

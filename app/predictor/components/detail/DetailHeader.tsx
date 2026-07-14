@@ -1,4 +1,4 @@
-import { apiBase } from "../../apiBase";
+import { crestUrl } from "../../apiBase";
 import type { MatchDetail } from "../../detail";
 
 type DetailTeam = { api_team_id: number; name: string };
@@ -9,7 +9,7 @@ type DetailMatch = {
 
 export function DetailHeader({ detail }: { detail: MatchDetail }) {
   const m = detail.match as DetailMatch;
-  const crest = (id: number) => `${apiBase()}/teams/${id}/image`;
+  const crest = (id: number) => crestUrl(id);
   const Side = ({ team }: { team: DetailTeam }) => (
     <div className="flex flex-1 flex-col items-center gap-1 text-center">
       {/* eslint-disable-next-line @next/next/no-img-element */}

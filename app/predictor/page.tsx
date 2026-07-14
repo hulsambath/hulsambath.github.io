@@ -7,7 +7,7 @@ import { BoardHeader, type BoardTab } from "./components/BoardHeader";
 import { CompetitionRow } from "./components/CompetitionRow";
 import { CompetitionsTab } from "./components/CompetitionsTab";
 import { FilterBar } from "./components/FilterBar";
-import { apiBase, wsBase } from "./apiBase";
+import { apiBase, crestUrl, wsBase } from "./apiBase";
 import { MatchDetailPanel } from "./components/detail/MatchDetailPanel";
 import { useFavourites } from "./useFavourites";
 
@@ -130,7 +130,7 @@ function TeamBadge({ team }: { team: Team }) {
   const [broken, setBroken] = React.useState(false);
   const initials = team.name.replace(/[^A-Za-z0-9 ]/g, "").split(" ")
     .filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
-  const src = `${apiBase()}/teams/${team.api_team_id}/image`;
+  const src = crestUrl(team.api_team_id);
   if (!broken)
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt="" width={28} height={28}
