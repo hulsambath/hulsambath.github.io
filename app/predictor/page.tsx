@@ -12,7 +12,7 @@ import { useFavourites } from "./useFavourites";
 /* ---------------------------------------------------------------- types */
 
 type League = { id: number; api_league_id: number; name: string; country: string | null };
-type Team = { id: number; name: string; logo_url: string | null };
+type Team = { id: number; api_team_id: number; name: string; logo_url: string | null };
 type ScoreProb = { score: string; p: number };
 type CornersLine = { over: number; under: number };
 type Prediction = {
@@ -137,9 +137,10 @@ function TeamBadge({ team }: { team: Team }) {
   const [broken, setBroken] = React.useState(false);
   const initials = team.name.replace(/[^A-Za-z0-9 ]/g, "").split(" ")
     .filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
-  if (team.logo_url && !broken)
+  const src = `${apiBase()}/teams/${team.api_team_id}/image`;
+  if (!broken)
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={team.logo_url} alt="" width={28} height={28}
+    return <img src={src} alt="" width={28} height={28}
       className="h-7 w-7 shrink-0 rounded-full bg-secondary object-contain p-0.5"
       onError={() => setBroken(true)} />;
   return (
