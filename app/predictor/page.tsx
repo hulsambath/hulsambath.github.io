@@ -8,6 +8,7 @@ import { CompetitionRow } from "./components/CompetitionRow";
 import { CompetitionsTab } from "./components/CompetitionsTab";
 import { FilterBar } from "./components/FilterBar";
 import { apiBase, wsBase } from "./apiBase";
+import { MatchDetailPanel } from "./components/detail/MatchDetailPanel";
 import { useFavourites } from "./useFavourites";
 
 /* ---------------------------------------------------------------- types */
@@ -359,6 +360,7 @@ export default function PredictorPage() {
   const [status, setStatus] = React.useState<StatusFilter>("live");
   const [oddsShown, setOddsShown] = React.useState(false);
   const [leagueId, setLeagueId] = React.useState<number | null>(null);
+  const [selectedMatchId, setSelectedMatchId] = React.useState<number | null>(null);
   const [matches, setMatches] = React.useState<Match[] | null>(null);
   const { favourites, isFavourite, toggle } = useFavourites();
   const [wsStatus, setWsStatus] = React.useState<WsStatus>("connecting");
@@ -386,6 +388,16 @@ export default function PredictorPage() {
 
   React.useEffect(() => { loadDay(selectedDate); }, [selectedDate, loadDay]);
 
+  // lock body scroll while the mobile detail drawer is open
+  React.useEffect(() => {
+    if (selectedMatchId == null) return;
+    const mql = window.matchMedia("(max-width: 1023px)");
+    if (!mql.matches) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [selectedMatchId]);
+
   // live socket: while viewing today, refresh the day's board when it changes
   React.useEffect(() => {
     let closed = false;
@@ -412,7 +424,7 @@ export default function PredictorPage() {
   });
 
   return (
-    <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12">
+    <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12 lg:max-w-6xl">
       <header className="mb-5">
         <p className="font-data text-xs text-muted-foreground">hulsambath.me / predictor</p>
         <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">
@@ -446,34 +458,53 @@ export default function PredictorPage() {
         </BoardHeader>
       </div>
 
-      {tab === "competitions" ? (
-        <CompetitionsTab
-          leagues={leagues.map((l) => ({ id: l.id, name: l.name, country: l.country }))}
-          onPick={(id) => { setLeagueId(id); setTab("all"); }}
-        />
-      ) : (
-        <>
-          <FilterBar status={status} onStatus={setStatus} liveCount={liveCount}
-            oddsShown={oddsShown} onOddsToggle={() => setOddsShown((v) => !v)} />
-          <section aria-label="Competitions">
-            {matches === null && !error && (
-              <p className="py-8 text-center text-sm text-muted-foreground">Loading fixtures…</p>
-            )}
-            {matches !== null && competitions.length === 0 && (
-              <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-                No {status} matches{tab === "favourites" ? " in your favourites" : ""} for this day. Try another day or filter.
-              </div>
-            )}
-            {competitions.map((g) => (
-              <CompetitionRow key={g.league.id} group={g} status={status}
-                isFavourite={isFavourite(g.league.id)}
-                onToggleFavourite={() => toggle(g.league.id)}
-                renderMatch={(m) => (
-                  <MatchCard key={m.id} match={m} league={leagueById.get(m.league_id)} oddsShown={oddsShown} />
-                )} />
-            ))}
-          </section>
-        </>
+      <div className="lg:grid lg:grid-cols-[1fr_22rem] lg:items-start lg:gap-6">
+        <div>
+          {tab === "competitions" ? (
+            <CompetitionsTab
+              leagues={leagues.map((l) => ({ id: l.id, name: l.name, country: l.country }))}
+              onPick={(id) => { setLeagueId(id); setTab("all"); }}
+            />
+          ) : (
+            <>
+              <FilterBar status={status} onStatus={setStatus} liveCount={liveCount}
+                oddsShown={oddsShown} onOddsToggle={() => setOddsShown((v) => !v)} />
+              <section aria-label="Competitions">
+                {matches === null && !error && (
+                  <p className="py-8 text-center text-sm text-muted-foreground">Loading fixtures…</p>
+                )}
+                {matches !== null && competitions.length === 0 && (
+                  <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+                    No {status} matches{tab === "favourites" ? " in your favourites" : ""} for this day. Try another day or filter.
+                  </div>
+                )}
+                {competitions.map((g) => (
+                  <CompetitionRow key={g.league.id} group={g} status={status}
+                    isFavourite={isFavourite(g.league.id)}
+                    onToggleFavourite={() => toggle(g.league.id)}
+                    renderMatch={(m) => (
+                      <div key={m.id} onClick={() => setSelectedMatchId(m.id)}
+                        className={`cursor-pointer rounded-xl ${selectedMatchId === m.id ? "ring-2 ring-ring" : ""}`}>
+                        <MatchCard match={m} league={leagueById.get(m.league_id)} oddsShown={oddsShown} />
+                      </div>
+                    )} />
+                ))}
+              </section>
+            </>
+          )}
+        </div>
+
+        <aside className="sticky top-24 hidden max-h-[calc(100vh-7rem)] overflow-hidden rounded-xl border border-border bg-card p-4 lg:block">
+          {selectedMatchId
+            ? <MatchDetailPanel matchId={selectedMatchId} onClose={() => setSelectedMatchId(null)} />
+            : <p className="py-12 text-center text-sm text-muted-foreground">Select a match to see details.</p>}
+        </aside>
+      </div>
+
+      {selectedMatchId != null && (
+        <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background p-4 lg:hidden">
+          <MatchDetailPanel matchId={selectedMatchId} onClose={() => setSelectedMatchId(null)} />
+        </div>
       )}
 
       <footer className="mt-12 border-t border-border pt-4 text-xs text-muted-foreground">
