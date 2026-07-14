@@ -134,7 +134,7 @@ function TeamBadge({ team }: { team: Team }) {
   const [broken, setBroken] = React.useState(false);
   const initials = team.name.replace(/[^A-Za-z0-9 ]/g, "").split(" ")
     .filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
-  const src = crestUrl(team.api_team_id);
+  const src = crestUrl(team.api_team_id, team.logo_url);
   if (!broken)
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt="" width={28} height={28}

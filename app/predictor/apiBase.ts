@@ -6,8 +6,7 @@ export function apiBase(): string {
 }
 export const wsBase = () => apiBase().replace(/^http/, "ws");
 
-// Team crest, fetched directly from SofaScore. Real browsers pass SofaScore's
-// Cloudflare check, so this works from the client even though the Heroku
-// backend (datacenter IP) is blocked — hence not the backend image proxy.
-export const crestUrl = (sofascoreTeamId: number) =>
-  `https://api.sofascore.com/api/v1/team/${sofascoreTeamId}/image`;
+// Prefer the image URL persisted by the API because teams can come from
+// different ingest sources. Fall back to SofaScore for older payloads.
+export const crestUrl = (sofascoreTeamId: number, logoUrl?: string | null) =>
+  logoUrl || `https://api.sofascore.com/api/v1/team/${sofascoreTeamId}/image`;
