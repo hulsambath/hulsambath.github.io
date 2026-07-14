@@ -47,7 +47,7 @@ export function countryFlag(country: string | null | undefined): string | null {
   return iso2ToFlag(iso);
 }
 
-export type BoardLeague = { id: number; name: string; country: string | null };
+export type BoardLeague = { id: number; api_league_id?: number; name: string; country: string | null };
 export type BoardMatch = {
   id: number;
   league_id: number;

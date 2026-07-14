@@ -10,3 +10,6 @@ export const wsBase = () => apiBase().replace(/^http/, "ws");
 // different ingest sources. Fall back to SofaScore for older payloads.
 export const crestUrl = (sofascoreTeamId: number, logoUrl?: string | null) =>
   logoUrl || `https://api.sofascore.com/api/v1/team/${sofascoreTeamId}/image`;
+
+export const leagueLogoUrl = (sofascoreLeagueId?: number | null) =>
+  sofascoreLeagueId == null ? null : `https://api.sofascore.com/api/v1/unique-tournament/${sofascoreLeagueId}/image`;

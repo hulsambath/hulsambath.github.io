@@ -79,6 +79,7 @@ const isLive = (s: string) => !NOT_LIVE.has(s);
 const pct = (p: number | null | undefined) =>
   p == null ? "–" : `${Math.round(p * 100)}%`;
 const odd = (v: number | null | undefined) => (v == null ? "–" : v.toFixed(2));
+const fairOdd = (p: number | null | undefined) => (p && p > 0 ? 1 / p : null);
 
 /** yyyy-mm-dd in the viewer's local time. */
 function isoDay(d: Date): string {
@@ -135,6 +136,7 @@ function TeamBadge({ team }: { team: Team }) {
   const initials = team.name.replace(/[^A-Za-z0-9 ]/g, "").split(" ")
     .filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
   const src = crestUrl(team.api_team_id, team.logo_url);
+  React.useEffect(() => setBroken(false), [src]);
   if (!broken)
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src} alt="" width={28} height={28}
@@ -166,31 +168,32 @@ function BadgeRow({ match }: { match: Match }) {
   );
 }
 
-function MarketCell({ label, value, accent }: { label: string; value: number | null | undefined; accent?: boolean }) {
+function MarketCell({ label, value, accent, fair }: { label: string; value: number | null | undefined; accent?: boolean; fair?: boolean }) {
   return (
     <div className={`odds-cell flex min-h-11 flex-col items-center justify-center rounded-md border px-2 py-1 ${
       accent
         ? "border-[hsl(var(--home)/0.7)] bg-[hsl(var(--home)/0.08)]"
-        : "border-border bg-secondary/40"
+        : fair ? "border-border border-dashed bg-secondary/20" : "border-border bg-secondary/40"
     }`}>
       <span className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span>
       <span className="font-data text-sm font-semibold">{odd(value)}</span>
+      {fair && <span className="font-data text-[9px] uppercase tracking-wide text-muted-foreground">fair</span>}
     </div>
   );
 }
 
-function MarketCells({ odds, fav, compact = false }: { odds?: Odds | null; fav: "1" | "X" | "2" | null; compact?: boolean }) {
+function MarketCells({ odds, prediction, fav, compact = false }: { odds?: Odds | null; prediction?: Prediction | null; fav: "1" | "X" | "2" | null; compact?: boolean }) {
   const cells = [
-    ["1", odds?.home_win ?? null],
-    ["X", odds?.draw ?? null],
-    ["2", odds?.away_win ?? null],
-    ["O2.5", odds?.over_25 ?? null],
-    ["U2.5", odds?.under_25 ?? null],
+    ["1", odds?.home_win ?? fairOdd(prediction?.p_home), odds?.home_win == null && prediction?.p_home != null],
+    ["X", odds?.draw ?? fairOdd(prediction?.p_draw), odds?.draw == null && prediction?.p_draw != null],
+    ["2", odds?.away_win ?? fairOdd(prediction?.p_away), odds?.away_win == null && prediction?.p_away != null],
+    ["O2.5", odds?.over_25 ?? fairOdd(prediction?.p_over_25), odds?.over_25 == null && prediction?.p_over_25 != null],
+    ["U2.5", odds?.under_25 ?? fairOdd(prediction?.p_over_25 == null ? null : 1 - prediction.p_over_25), odds?.under_25 == null && prediction?.p_over_25 != null],
   ] as const;
   return (
     <div className={`grid gap-1.5 ${compact ? "grid-cols-5" : "grid-cols-5"}`}>
-      {cells.map(([label, value]) => (
-        <MarketCell key={label} label={label} value={value} accent={fav === label} />
+      {cells.map(([label, value, fair]) => (
+        <MarketCell key={label} label={label} value={value} accent={fav === label} fair={fair} />
       ))}
     </div>
   );
@@ -270,6 +273,25 @@ function StatChip({ label, value }: { label: string; value: string }) {
   );
 }
 
+function CornerSummary({ prediction, compact = false }: { prediction?: Prediction | null; compact?: boolean }) {
+  if (!prediction?.corners_lines && prediction?.exp_corners == null) return null;
+  const bestLine = prediction.corners_lines
+    ? Object.entries(prediction.corners_lines).find(([line]) => line === "9.5") ?? Object.entries(prediction.corners_lines)[0]
+    : null;
+  return (
+    <div className={`mt-1.5 rounded-md border border-border bg-secondary/25 px-2 py-1 font-data text-[10px] text-muted-foreground ${compact ? "inline-flex items-center gap-1.5" : ""}`}>
+      <span className="inline-flex items-center gap-1 uppercase tracking-wide">
+        <CornerDownRight className="h-3 w-3" />
+        Corners
+      </span>
+      <span className="ml-1 text-foreground">{prediction.exp_corners?.toFixed(1) ?? "–"} exp</span>
+      {bestLine && (
+        <span className="ml-1">O{bestLine[0]} {pct(bestLine[1].over)}</span>
+      )}
+    </div>
+  );
+}
+
 /** Kickoff time, a pulsing LIVE badge, or the final score, depending on status. */
 function StatusPill({ match }: { match: Match }) {
   if (isLive(match.status))
@@ -343,7 +365,8 @@ function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
           ))}
         </div>
         <ModelEdgeStrip match={match} />
-        {oddsShown && <div className="mt-2"><MarketCells odds={match.odds} fav={fav} compact /></div>}
+        <CornerSummary prediction={p} compact />
+        {oddsShown && <div className="mt-2"><MarketCells odds={match.odds} prediction={match.prediction} fav={fav} compact /></div>}
         {probs ? <TriBand {...probs} /> : (
           <p className="mt-2 text-xs text-muted-foreground">No prices or prediction yet for this match.</p>
         )}
@@ -454,13 +477,14 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
             <div className={`font-data text-[10px] ${edge.edge != null && edge.edge > 0 ? "text-[hsl(var(--edge))]" : "text-muted-foreground"}`}>
               {edge.edge == null ? "No market" : `${edge.edge > 0 ? "+" : ""}${Math.round(edge.edge * 100)} pts`}
             </div>
+            <CornerSummary prediction={p} />
           </div>
         ) : (
           <span className="text-xs text-muted-foreground">Prediction pending</span>
         )}
       </div>
       <div>
-        {oddsShown ? <MarketCells odds={match.odds} fav={fav} /> : (
+        {oddsShown ? <MarketCells odds={match.odds} prediction={match.prediction} fav={fav} /> : (
           <div className="font-data text-xs text-muted-foreground">Odds hidden</div>
         )}
       </div>
@@ -516,7 +540,7 @@ export default function PredictorPage() {
   const [selectedDate, setSelectedDate] = React.useState<string>(() => isoDay(new Date()));
   const [tab, setTab] = React.useState<BoardTab>("all");
   const [status, setStatus] = React.useState<StatusFilter>("live");
-  const [oddsShown, setOddsShown] = React.useState(false);
+  const [oddsShown, setOddsShown] = React.useState(true);
   const [quickFilters, setQuickFilters] = React.useState<Set<QuickFilter>>(() => new Set());
   const [leagueId, setLeagueId] = React.useState<number | null>(null);
   const [selectedMatchId, setSelectedMatchId] = React.useState<number | null>(null);
@@ -579,7 +603,7 @@ export default function PredictorPage() {
   const days = buildDayWindow(buckets);
   const leagueById = new Map(leagues.map((l) => [l.id, l]));
   const boardLeaguesById = new Map<number, BoardLeague>(
-    leagues.map((l) => [l.id, { id: l.id, name: l.name, country: l.country }]));
+    leagues.map((l) => [l.id, { id: l.id, api_league_id: l.api_league_id, name: l.name, country: l.country }]));
   const topLeagueIds = new Set(leagues.filter((l) => TOP_LEAGUE_NAMES.has(l.name)).map((l) => l.id));
   const groups = groupByCompetition(matches ?? [], boardLeaguesById);
   const liveCount = (matches ?? []).filter((m) => isLive(m.status)).length;
@@ -640,7 +664,7 @@ export default function PredictorPage() {
         <div>
           {tab === "competitions" ? (
             <CompetitionsTab
-              leagues={leagues.map((l) => ({ id: l.id, name: l.name, country: l.country }))}
+              leagues={leagues.map((l) => ({ id: l.id, api_league_id: l.api_league_id, name: l.name, country: l.country }))}
               onPick={(id) => { setLeagueId(id); setTab("all"); }}
             />
           ) : (
@@ -657,7 +681,7 @@ export default function PredictorPage() {
                   )}
                   {oddsCount === 0 && (
                     <div className="rounded-xl border border-border bg-secondary/35 p-3 text-sm text-muted-foreground">
-                      <span className="font-semibold text-foreground">Odds unavailable.</span> Real bookmaker prices are not visible for this day yet, so market columns show dashes.
+                      <span className="font-semibold text-foreground">Market odds unavailable.</span> Real bookmaker prices are not visible for this day yet; predicted matches show dashed model fair odds instead.
                     </div>
                   )}
                 </div>

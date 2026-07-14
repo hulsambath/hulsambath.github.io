@@ -16,6 +16,8 @@ function initialsFor(name: string) {
 
 function TeamCrest({ team }: { team: DetailTeam }) {
   const [broken, setBroken] = React.useState(false);
+  const src = crestUrl(team.api_team_id, team.logo_url);
+  React.useEffect(() => setBroken(false), [src]);
   if (broken) {
     return (
       <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary font-display text-xs font-bold text-muted-foreground">
@@ -26,7 +28,7 @@ function TeamCrest({ team }: { team: DetailTeam }) {
   // eslint-disable-next-line @next/next/no-img-element
   return (
     <img
-      src={crestUrl(team.api_team_id, team.logo_url)}
+      src={src}
       alt=""
       width={40}
       height={40}
