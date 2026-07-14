@@ -7,6 +7,7 @@
   --draw: 222 10% 62%;
   --away: 214 48% 46%;
   --live: 26 100% 50%; /* portfolio brand orange */
+  --edge: 145 50% 35%;
   --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, monospace;
 }
@@ -15,6 +16,7 @@
   --home: 152 38% 46%;
   --draw: 222 8% 52%;
   --away: 214 58% 62%;
+  --edge: 145 48% 56%;
 }
 
 .predictor-page .font-display {
@@ -50,6 +52,10 @@
 }
 .predictor-page .odds-cell:hover {
   background-color: hsl(var(--secondary));
+}
+
+.predictor-page .match-row:last-child {
+  border-bottom: 0;
 }
 
 @keyframes predictor-pulse {

@@ -1,5 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { classify, countryFlag, groupByCompetition, isFinished, isLive, parseFavourites, serializeFavourites, visibleCompetitions } from "./board";
+import {
+  classify,
+  countryFlag,
+  dataBadges,
+  groupByCompetition,
+  isFinished,
+  isKickoffSoon,
+  isLive,
+  latestRefreshLabel,
+  marketImplied,
+  modelEdge,
+  outcomeProbs,
+  parseFavourites,
+  serializeFavourites,
+  visibleCompetitions,
+} from "./board";
 
 describe("favourites storage", () => {
   it("parses a JSON array of ids, tolerating garbage", () => {
@@ -36,6 +51,26 @@ describe("visibleCompetitions", () => {
   it("restricts to favourites when onlyFavourites", () => {
     const favs = visibleCompetitions(groups, { status: "live", favourites: new Set([1]), onlyFavourites: true });
     expect(favs).toHaveLength(0);
+  });
+  it("filters by predictions, odds, top leagues, and kickoff soon", () => {
+    const now = new Date("2026-07-15T10:00:00Z");
+    const rich = {
+      league: { id: 1, name: "Premier League", country: "England" },
+      matches: [
+        { id: 1, league_id: 1, status: "NS", kickoff_utc: "2026-07-15T11:00:00Z", prediction: {}, odds: {} },
+        { id: 2, league_id: 1, status: "NS", kickoff_utc: "2026-07-15T16:00:00Z", prediction: null, odds: {} },
+      ],
+      counts: { live: 0, finished: 0, upcoming: 2, total: 2 },
+    };
+    const result = visibleCompetitions([rich], {
+      status: "upcoming",
+      favourites: new Set(),
+      onlyFavourites: false,
+      quickFilters: new Set(["top", "predictions", "odds", "soon"]),
+      topLeagueIds: new Set([1]),
+      now,
+    });
+    expect(result[0].matches.map((m) => m.id)).toEqual([1]);
   });
 });
 
@@ -90,5 +125,41 @@ describe("status classification", () => {
   it("treats in-progress codes as live", () => {
     expect(isLive("1H")).toBe(true);
     expect(classify("HT")).toBe("live");
+  });
+});
+
+describe("board display helpers", () => {
+  it("calculates model probabilities before market implied probabilities", () => {
+    const probs = outcomeProbs(
+      { p_home: 0.5, p_draw: 0.25, p_away: 0.25 },
+      { home_win: 2, draw: 3, away_win: 4 },
+    );
+    expect(probs).toEqual({ p1: 0.5, px: 0.25, p2: 0.25, from: "model" });
+  });
+  it("normalizes odds into market implied probabilities", () => {
+    const probs = marketImplied({ home_win: 2, draw: 4, away_win: 4 })!;
+    expect(probs.p1).toBeCloseTo(0.5);
+    expect(probs.px).toBeCloseTo(0.25);
+    expect(probs.p2).toBeCloseTo(0.25);
+  });
+  it("returns the strongest model edge when odds exist", () => {
+    const edge = modelEdge(
+      { p_home: 0.6, p_draw: 0.2, p_away: 0.2 },
+      { home_win: 2, draw: 4, away_win: 4 },
+    )!;
+    expect(edge.pick).toBe("1");
+    expect(edge.edge).toBeCloseTo(0.1);
+  });
+  it("builds availability badges and kickoff-soon state", () => {
+    expect(dataBadges({ id: 1, league_id: 1, status: "NS" })).toEqual(["Pending"]);
+    expect(dataBadges({ id: 1, league_id: 1, status: "1H", prediction: {}, odds: {} })).toEqual(["Predicted", "Odds", "Live"]);
+    expect(isKickoffSoon(
+      { id: 1, league_id: 1, status: "NS", kickoff_utc: "2026-07-15T11:30:00Z" },
+      new Date("2026-07-15T10:00:00Z"),
+    )).toBe(true);
+  });
+  it("labels refresh age compactly", () => {
+    expect(latestRefreshLabel(new Date("2026-07-15T10:00:10Z"), new Date("2026-07-15T10:00:20Z"))).toBe("Updated 10s ago");
+    expect(latestRefreshLabel(new Date("2026-07-15T09:00:00Z"), new Date("2026-07-15T10:00:00Z"))).toBe("Updated 1h ago");
   });
 });

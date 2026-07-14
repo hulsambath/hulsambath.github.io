@@ -1,8 +1,19 @@
 "use client";
 
-import { ChevronDown, ChevronLeft, ChevronRight, CornerDownRight, RefreshCw, WifiOff } from "lucide-react";
+import { Activity, ChevronDown, ChevronLeft, ChevronRight, Clock3, CornerDownRight, RefreshCw, ShieldCheck, WifiOff } from "lucide-react";
 import * as React from "react";
-import { groupByCompetition, visibleCompetitions, type BoardLeague, type StatusFilter } from "./board";
+import {
+  dataBadges,
+  groupByCompetition,
+  latestRefreshLabel,
+  marketImplied,
+  modelEdge,
+  outcomeProbs,
+  visibleCompetitions,
+  type BoardLeague,
+  type QuickFilter,
+  type StatusFilter,
+} from "./board";
 import { BoardHeader, type BoardTab } from "./components/BoardHeader";
 import { CompetitionRow } from "./components/CompetitionRow";
 import { CompetitionsTab } from "./components/CompetitionsTab";
@@ -39,6 +50,8 @@ type Odds = {
   away_win: number | null;
   over_25: number | null;
   under_25: number | null;
+  btts_yes?: number | null;
+  btts_no?: number | null;
 };
 type Match = {
   id: number;
@@ -75,19 +88,10 @@ function timeLabel(iso: string): string {
   return new Date(iso).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" });
 }
 
-/** Model probabilities when available, else bookmaker-implied (normalized). */
-function outcomeProbs(m: Match): { p1: number; px: number; p2: number; from: "model" | "market" } | null {
-  const p = m.prediction;
-  if (p?.p_home != null && p.p_draw != null && p.p_away != null)
-    return { p1: p.p_home, px: p.p_draw, p2: p.p_away, from: "model" };
-  const o = m.odds;
-  if (o?.home_win && o.draw && o.away_win) {
-    const inv = [1 / o.home_win, 1 / o.draw, 1 / o.away_win];
-    const s = inv[0] + inv[1] + inv[2];
-    return { p1: inv[0] / s, px: inv[1] / s, p2: inv[2] / s, from: "market" };
-  }
-  return null;
-}
+const TOP_LEAGUE_NAMES = new Set([
+  "Premier League", "LaLiga", "La Liga", "Bundesliga", "Serie A", "Ligue 1",
+  "UEFA Champions League", "UEFA Europa League", "FIFA World Cup",
+]);
 
 /* ------------------------------------------------------- date strip data */
 
@@ -143,26 +147,51 @@ function TeamBadge({ team }: { team: Team }) {
   );
 }
 
-/** The signature element: sportsbook price cells for 1 / X / 2 (and O/U 2.5),
- *  with the model's favored outcome subtly accented in its outcome color. */
-function OddsBoard({ odds, fav }: { odds: Odds; fav: "1" | "X" | "2" | null }) {
-  const color = { "1": "--home", X: "--draw", "2": "--away" } as const;
-  const main = [["1", odds.home_win], ["X", odds.draw], ["2", odds.away_win]] as const;
-  const goals = [["O2.5", odds.over_25], ["U2.5", odds.under_25]] as const;
-  const Cell = ({ k, v, accent }: { k: string; v: number | null; accent?: string }) => (
-    <div className="odds-cell flex flex-1 flex-col items-center rounded-md border border-border bg-secondary/40 px-2 py-1.5"
-      style={accent ? { borderColor: `hsl(${accent})`, boxShadow: `inset 0 -2px 0 hsl(${accent} / 0.55)` } : undefined}>
-      <span className="text-[10px] uppercase tracking-wide text-muted-foreground">{k}</span>
-      <span className="font-data text-sm font-medium">{odd(v)}</span>
+function BadgeRow({ match }: { match: Match }) {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {dataBadges(match).map((badge) => (
+        <span key={badge}
+          className={`rounded-full border px-2 py-0.5 font-data text-[10px] uppercase tracking-wide ${
+            badge === "Live"
+              ? "border-[hsl(var(--live)/0.4)] bg-[hsl(var(--live)/0.12)] text-[hsl(var(--live))]"
+              : badge === "Pending"
+                ? "border-border bg-muted/40 text-muted-foreground"
+                : "border-border bg-secondary/50 text-muted-foreground"
+          }`}>
+          {badge}
+        </span>
+      ))}
     </div>
   );
+}
+
+function MarketCell({ label, value, accent }: { label: string; value: number | null | undefined; accent?: boolean }) {
   return (
-    <div className="mt-3 flex items-stretch gap-1.5">
-      {main.map(([k, v]) => (
-        <Cell key={k} k={k} v={v} accent={fav === k ? `var(${color[k]})` : undefined} />
+    <div className={`odds-cell flex min-h-11 flex-col items-center justify-center rounded-md border px-2 py-1 ${
+      accent
+        ? "border-[hsl(var(--home)/0.7)] bg-[hsl(var(--home)/0.08)]"
+        : "border-border bg-secondary/40"
+    }`}>
+      <span className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span>
+      <span className="font-data text-sm font-semibold">{odd(value)}</span>
+    </div>
+  );
+}
+
+function MarketCells({ odds, fav, compact = false }: { odds?: Odds | null; fav: "1" | "X" | "2" | null; compact?: boolean }) {
+  const cells = [
+    ["1", odds?.home_win ?? null],
+    ["X", odds?.draw ?? null],
+    ["2", odds?.away_win ?? null],
+    ["O2.5", odds?.over_25 ?? null],
+    ["U2.5", odds?.under_25 ?? null],
+  ] as const;
+  return (
+    <div className={`grid gap-1.5 ${compact ? "grid-cols-5" : "grid-cols-5"}`}>
+      {cells.map(([label, value]) => (
+        <MarketCell key={label} label={label} value={value} accent={fav === label} />
       ))}
-      <span className="mx-0.5 w-px shrink-0 self-stretch bg-border" aria-hidden />
-      {goals.map(([k, v]) => <Cell key={k} k={k} v={v} />)}
     </div>
   );
 }
@@ -197,6 +226,41 @@ function TriBand({ p1, px, p2, from }: { p1: number; px: number; p2: number; fro
   );
 }
 
+function ModelEdgeStrip({ match }: { match: Match }) {
+  const edge = modelEdge(match.prediction, match.odds);
+  const market = marketImplied(match.odds);
+  if (!edge) {
+    return (
+      <div className="rounded-md border border-dashed border-border px-2.5 py-2 text-xs text-muted-foreground">
+        Prediction pending
+      </div>
+    );
+  }
+  return (
+    <div className="grid grid-cols-3 gap-1.5 rounded-lg border border-border bg-secondary/30 p-1.5">
+      <div className="px-1.5 py-1">
+        <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Model pick</div>
+        <div className="font-display text-lg font-bold leading-none">{edge.pick} <span className="font-data text-sm">{pct(edge.probability)}</span></div>
+      </div>
+      <div className="px-1.5 py-1">
+        <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Odds implied</div>
+        <div className="font-data text-sm font-semibold">{edge.market == null ? "–" : pct(edge.market)}</div>
+      </div>
+      <div className="px-1.5 py-1">
+        <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Edge</div>
+        <div className={`font-data text-sm font-semibold ${edge.edge != null && edge.edge > 0 ? "text-[hsl(var(--edge))]" : ""}`}>
+          {edge.edge == null ? "No odds" : `${edge.edge > 0 ? "+" : ""}${Math.round(edge.edge * 100)} pts`}
+        </div>
+      </div>
+      {market && (
+        <div className="col-span-3">
+          <TriBand {...market} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function StatChip({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md border border-border bg-secondary/50 px-2.5 py-1.5">
@@ -220,17 +284,34 @@ function StatusPill({ match }: { match: Match }) {
   return <span className="font-data text-xs text-muted-foreground">{timeLabel(match.kickoff_utc)}</span>;
 }
 
-function MatchCard({ match, league, oddsShown = true }: { match: Match; league?: League; oddsShown?: boolean }) {
+function ScoreOrKickoff({ match }: { match: Match }) {
+  const showScore = isLive(match.status) || isFinished(match.status);
+  if (showScore) {
+    return (
+      <span className={`font-data text-lg font-bold tabular-nums ${isLive(match.status) ? "text-[hsl(var(--live))]" : ""}`}>
+        {match.home_goals ?? 0}–{match.away_goals ?? 0}
+      </span>
+    );
+  }
+  return <span className="font-data text-sm text-muted-foreground">{timeLabel(match.kickoff_utc)}</span>;
+}
+
+function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
+  match: Match;
+  league?: League;
+  oddsShown?: boolean;
+  onSelect: () => void;
+}) {
   const [open, setOpen] = React.useState(false);
   const p = match.prediction;
-  const probs = outcomeProbs(match);
+  const probs = outcomeProbs(match.prediction, match.odds);
   const showScore = isLive(match.status) || isFinished(match.status);
   const fav = probs
     ? (["1", "X", "2"] as const)[[probs.p1, probs.px, probs.p2].indexOf(Math.max(probs.p1, probs.px, probs.p2))]
     : null;
 
   return (
-    <div className={`rounded-xl border bg-card transition-colors ${isLive(match.status) ? "border-[hsl(var(--live)/0.5)]" : "border-border"}`}>
+    <div className={`rounded-xl border bg-card transition-colors md:hidden ${isLive(match.status) ? "border-[hsl(var(--live)/0.5)]" : "border-border"}`}>
       <button
         className="w-full px-4 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
         onClick={() => setOpen(!open)} aria-expanded={open}>
@@ -245,6 +326,10 @@ function MatchCard({ match, league, oddsShown = true }: { match: Match; league?:
           </span>
           <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
         </div>
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <BadgeRow match={match} />
+          <ScoreOrKickoff match={match} />
+        </div>
         <div className="mb-1 space-y-1.5">
           {([["home", match.home_team, p?.home_exp_goals, match.home_goals],
              ["away", match.away_team, p?.away_exp_goals, match.away_goals]] as const).map(([side, team, xg, goals]) => (
@@ -257,7 +342,8 @@ function MatchCard({ match, league, oddsShown = true }: { match: Match; league?:
             </div>
           ))}
         </div>
-        {oddsShown && match.odds && <OddsBoard odds={match.odds} fav={fav} />}
+        <ModelEdgeStrip match={match} />
+        {oddsShown && <div className="mt-2"><MarketCells odds={match.odds} fav={fav} compact /></div>}
         {probs ? <TriBand {...probs} /> : (
           <p className="mt-2 text-xs text-muted-foreground">No prices or prediction yet for this match.</p>
         )}
@@ -307,7 +393,79 @@ function MatchCard({ match, league, oddsShown = true }: { match: Match; league?:
           Model prediction pending — this league doesn&apos;t have enough result history yet.
         </div>
       )}
+      <button onClick={onSelect}
+        className="w-full border-t border-border px-4 py-2 text-left font-display text-sm font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground">
+        Open match details
+      </button>
     </div>
+  );
+}
+
+function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
+  match: Match;
+  league?: League;
+  oddsShown: boolean;
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  const p = match.prediction;
+  const probs = outcomeProbs(match.prediction, match.odds);
+  const edge = modelEdge(match.prediction, match.odds);
+  const fav = probs
+    ? (["1", "X", "2"] as const)[[probs.p1, probs.px, probs.p2].indexOf(Math.max(probs.p1, probs.px, probs.p2))]
+    : null;
+  const showScore = isLive(match.status) || isFinished(match.status);
+  return (
+    <button onClick={onSelect}
+      className={`match-row hidden w-full grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_minmax(0,1fr)_9rem_18rem_5rem] items-center gap-3 border-b border-border/70 px-3 py-2 text-left transition-colors hover:bg-secondary/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring md:grid ${
+        selected ? "bg-secondary/50 ring-1 ring-ring" : ""
+      }`}>
+      <div className="space-y-1">
+        <StatusPill match={match} />
+        <div className="font-data text-[10px] text-muted-foreground">{league?.country ?? "Competition"}</div>
+      </div>
+      <div className="flex min-w-0 items-center gap-2">
+        <TeamBadge team={match.home_team} />
+        <span className="truncate font-display text-base font-semibold">{match.home_team.name}</span>
+      </div>
+      <div className="text-center">
+        {showScore ? (
+          <span className={`font-data text-lg font-bold tabular-nums ${isLive(match.status) ? "text-[hsl(var(--live))]" : ""}`}>
+            {match.home_goals ?? 0}–{match.away_goals ?? 0}
+          </span>
+        ) : (
+          <div>
+            <div className="font-data text-sm">{timeLabel(match.kickoff_utc)}</div>
+            <div className="font-data text-[10px] text-muted-foreground">
+              {p?.home_exp_goals != null && p.away_exp_goals != null ? `${p.home_exp_goals.toFixed(1)}-${p.away_exp_goals.toFixed(1)} xG` : "kickoff"}
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="flex min-w-0 items-center justify-end gap-2">
+        <span className="truncate text-right font-display text-base font-semibold">{match.away_team.name}</span>
+        <TeamBadge team={match.away_team} />
+      </div>
+      <div>
+        {edge ? (
+          <div className="rounded-md border border-border bg-secondary/35 px-2 py-1">
+            <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Model pick</div>
+            <div className="font-data text-sm font-semibold">{edge.pick} {pct(edge.probability)}</div>
+            <div className={`font-data text-[10px] ${edge.edge != null && edge.edge > 0 ? "text-[hsl(var(--edge))]" : "text-muted-foreground"}`}>
+              {edge.edge == null ? "No market" : `${edge.edge > 0 ? "+" : ""}${Math.round(edge.edge * 100)} pts`}
+            </div>
+          </div>
+        ) : (
+          <span className="text-xs text-muted-foreground">Prediction pending</span>
+        )}
+      </div>
+      <div>
+        {oddsShown ? <MarketCells odds={match.odds} fav={fav} /> : (
+          <div className="font-data text-xs text-muted-foreground">Odds hidden</div>
+        )}
+      </div>
+      <BadgeRow match={match} />
+    </button>
   );
 }
 
@@ -359,18 +517,23 @@ export default function PredictorPage() {
   const [tab, setTab] = React.useState<BoardTab>("all");
   const [status, setStatus] = React.useState<StatusFilter>("live");
   const [oddsShown, setOddsShown] = React.useState(false);
+  const [quickFilters, setQuickFilters] = React.useState<Set<QuickFilter>>(() => new Set());
   const [leagueId, setLeagueId] = React.useState<number | null>(null);
   const [selectedMatchId, setSelectedMatchId] = React.useState<number | null>(null);
   const [matches, setMatches] = React.useState<Match[] | null>(null);
   const { favourites, isFavourite, toggle } = useFavourites();
   const [wsStatus, setWsStatus] = React.useState<WsStatus>("connecting");
   const [error, setError] = React.useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = React.useState<Date | null>(null);
 
   const today = isoDay(new Date());
 
   const loadDay = React.useCallback((date: string) => {
     fetch(`${apiBase()}/matches/by-date?date=${date}`)
-      .then((r) => r.json()).then(setMatches)
+      .then((r) => r.json()).then((data) => {
+        setMatches(data);
+        setLastUpdated(new Date());
+      })
       .catch(() => setError("The prediction server is not reachable right now."));
   }, []);
 
@@ -417,11 +580,23 @@ export default function PredictorPage() {
   const leagueById = new Map(leagues.map((l) => [l.id, l]));
   const boardLeaguesById = new Map<number, BoardLeague>(
     leagues.map((l) => [l.id, { id: l.id, name: l.name, country: l.country }]));
+  const topLeagueIds = new Set(leagues.filter((l) => TOP_LEAGUE_NAMES.has(l.name)).map((l) => l.id));
   const groups = groupByCompetition(matches ?? [], boardLeaguesById);
   const liveCount = (matches ?? []).filter((m) => isLive(m.status)).length;
+  const predictionCount = (matches ?? []).filter((m) => m.prediction).length;
+  const oddsCount = (matches ?? []).filter((m) => m.odds).length;
   const competitions = visibleCompetitions(groups, {
     status, favourites, onlyFavourites: tab === "favourites", leagueId,
+    quickFilters, topLeagueIds,
   });
+  const toggleQuickFilter = React.useCallback((filter: QuickFilter) => {
+    setQuickFilters((prev) => {
+      const next = new Set(prev);
+      if (next.has(filter)) next.delete(filter);
+      else next.add(filter);
+      return next;
+    });
+  }, []);
 
   return (
     <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12 lg:max-w-6xl">
@@ -434,7 +609,7 @@ export default function PredictorPage() {
           Live fixtures and bookmaker prices from Sofascore, goal and corners
           probabilities from a time-weighted Poisson model. Not betting advice.
         </p>
-        <div className="mt-3 flex items-center gap-2 font-data text-xs text-muted-foreground">
+        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 font-data text-xs text-muted-foreground">
           {wsStatus === "live" ? (
             <><span className="live-dot inline-block h-2 w-2 rounded-full" style={{ background: "hsl(var(--live))" }} />
               live — updates automatically</>
@@ -443,6 +618,9 @@ export default function PredictorPage() {
           ) : (
             <><WifiOff className="h-3 w-3" /> live feed unavailable — showing last fetch</>
           )}
+          <span className="flex items-center gap-1.5"><Clock3 className="h-3 w-3" />{latestRefreshLabel(lastUpdated)}</span>
+          <span className="flex items-center gap-1.5"><ShieldCheck className="h-3 w-3" />{predictionCount} predicted</span>
+          <span className="flex items-center gap-1.5"><Activity className="h-3 w-3" />{oddsCount} with odds</span>
         </div>
       </header>
 
@@ -468,7 +646,33 @@ export default function PredictorPage() {
           ) : (
             <>
               <FilterBar status={status} onStatus={setStatus} liveCount={liveCount}
-                oddsShown={oddsShown} onOddsToggle={() => setOddsShown((v) => !v)} />
+                oddsShown={oddsShown} onOddsToggle={() => setOddsShown((v) => !v)}
+                quickFilters={quickFilters} onQuickFilter={toggleQuickFilter} />
+              {matches && (predictionCount === 0 || oddsCount === 0) && (
+                <div className="mb-4 grid gap-2 sm:grid-cols-2">
+                  {predictionCount === 0 && (
+                    <div className="rounded-xl border border-border bg-secondary/35 p-3 text-sm text-muted-foreground">
+                      <span className="font-semibold text-foreground">Predictions pending.</span> The board is still usable for fixtures and live scores; model probabilities will appear after backend coverage is restored.
+                    </div>
+                  )}
+                  {oddsCount === 0 && (
+                    <div className="rounded-xl border border-border bg-secondary/35 p-3 text-sm text-muted-foreground">
+                      <span className="font-semibold text-foreground">Odds unavailable.</span> Real bookmaker prices are not visible for this day yet, so market columns show dashes.
+                    </div>
+                  )}
+                </div>
+              )}
+              {oddsShown && competitions.length > 0 && (
+                <div className="sticky top-[8.75rem] z-[5] mb-2 hidden grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_minmax(0,1fr)_9rem_18rem_5rem] items-center gap-3 rounded-lg border border-border bg-background/90 px-3 py-2 font-data text-[10px] uppercase tracking-wide text-muted-foreground backdrop-blur md:grid">
+                  <span>Status</span>
+                  <span>Home</span>
+                  <span className="text-center">Score</span>
+                  <span className="text-right">Away</span>
+                  <span>Model</span>
+                  <span className="grid grid-cols-5 gap-1.5 text-center"><span>1</span><span>X</span><span>2</span><span>O2.5</span><span>U2.5</span></span>
+                  <span>Data</span>
+                </div>
+              )}
               <section aria-label="Competitions">
                 {matches === null && !error && (
                   <p className="py-8 text-center text-sm text-muted-foreground">Loading fixtures…</p>
@@ -481,12 +685,16 @@ export default function PredictorPage() {
                 {competitions.map((g) => (
                   <CompetitionRow key={g.league.id} group={g} status={status}
                     isFavourite={isFavourite(g.league.id)}
+                    defaultOpen={status === "live" || isFavourite(g.league.id) || competitions.length <= 4}
                     onToggleFavourite={() => toggle(g.league.id)}
                     renderMatch={(m) => (
-                      <div key={m.id} onClick={() => setSelectedMatchId(m.id)}
-                        className={`cursor-pointer rounded-xl ${selectedMatchId === m.id ? "ring-2 ring-ring" : ""}`}>
-                        <MatchCard match={m} league={leagueById.get(m.league_id)} oddsShown={oddsShown} />
-                      </div>
+                      <React.Fragment key={m.id}>
+                        <MatchRowDesktop match={m} league={leagueById.get(m.league_id)}
+                          oddsShown={oddsShown} selected={selectedMatchId === m.id}
+                          onSelect={() => setSelectedMatchId(m.id)} />
+                        <MatchCardMobile match={m} league={leagueById.get(m.league_id)}
+                          oddsShown={oddsShown} onSelect={() => setSelectedMatchId(m.id)} />
+                      </React.Fragment>
                     )} />
                 ))}
               </section>

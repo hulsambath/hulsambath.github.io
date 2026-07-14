@@ -12,15 +12,17 @@ function badge(counts: CompetitionGroup<BoardMatch>["counts"], status: StatusFil
 }
 
 export function CompetitionRow<T extends BoardMatch>({
-  group, status, isFavourite, onToggleFavourite, renderMatch,
+  group, status, isFavourite, onToggleFavourite, renderMatch, defaultOpen = false,
 }: {
   group: CompetitionGroup<T>;
   status: StatusFilter;
   isFavourite: boolean;
   onToggleFavourite: () => void;
   renderMatch: (m: T) => React.ReactNode;
+  defaultOpen?: boolean;
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(defaultOpen);
+  React.useEffect(() => setOpen(defaultOpen), [defaultOpen, group.league.id]);
   return (
     <div className="mb-2 overflow-hidden rounded-xl border border-border bg-card">
       <div className="flex items-center gap-2 px-3 py-2.5">
@@ -45,7 +47,7 @@ export function CompetitionRow<T extends BoardMatch>({
         </button>
       </div>
       {open && (
-        <div className="space-y-2 border-t border-border bg-background/40 p-2.5">
+        <div className="space-y-2 border-t border-border bg-background/40 p-2.5 md:space-y-0 md:p-0">
           {group.matches.map((m) => renderMatch(m))}
         </div>
       )}
