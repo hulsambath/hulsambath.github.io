@@ -7,6 +7,7 @@ import { BoardHeader, type BoardTab } from "./components/BoardHeader";
 import { CompetitionRow } from "./components/CompetitionRow";
 import { CompetitionsTab } from "./components/CompetitionsTab";
 import { FilterBar } from "./components/FilterBar";
+import { apiBase, wsBase } from "./apiBase";
 import { useFavourites } from "./useFavourites";
 
 /* ---------------------------------------------------------------- types */
@@ -53,15 +54,6 @@ type Match = {
 };
 type DateBucket = { date: string; count: number };
 
-/* ------------------------------------------------------------- API base */
-
-function apiBase(): string {
-  if (process.env.NEXT_PUBLIC_PREDICTOR_API) return process.env.NEXT_PUBLIC_PREDICTOR_API;
-  if (typeof window !== "undefined" && window.location.hostname.endsWith("hulsambath.me"))
-    return "https://predictor-api.hulsambath.me";
-  return "http://localhost:8000";
-}
-const wsBase = () => apiBase().replace(/^http/, "ws");
 
 /* -------------------------------------------------------------- helpers */
 
