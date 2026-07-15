@@ -1,27 +1,5 @@
 {
-  "kampot": [
-    "trip-images/kampot/telegram-cloud-photo-size-5-6221994916015967708-w.jpg",
-    "trip-images/kampot/telegram-cloud-photo-size-5-6221994916015967709-w.jpg",
-    "trip-images/kampot/telegram-cloud-photo-size-5-6221994916015967717-w.jpg",
-    "trip-images/kampot/telegram-cloud-photo-size-5-6221994916015967718-w copy.jpg",
-    "trip-images/kampot/telegram-cloud-photo-size-5-6221994916015967722-w.jpg"
-  ],
-  "bokor": [
-    "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967693-w.jpg",
-    "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967694-w.jpg",
-    "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967695-w.jpg",
-    "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967696-w.jpg",
-    "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967712-w.jpg",
-    "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967714-w.jpg",
-    "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967715-w.jpg",
-    "trip-images/bokor/telegram-cloud-photo-size-5-6221994916015967716-w.jpg"
-  ],
-  "kep": [
-    "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967710-y copy.jpg",
-    "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967710-y.jpg",
-    "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967719-w.jpg",
-    "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967720-w.jpg",
-    "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967721-w.jpg",
-    "trip-images/kep/telegram-cloud-photo-size-5-6221994916015967723-w.jpg"
-  ]
+  "kampot": [],
+  "bokor": [],
+  "kep": []
 }

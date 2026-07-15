@@ -170,9 +170,11 @@ export function outcomeProbs(
     return { p1: prediction.p_home, px: prediction.p_draw, p2: prediction.p_away, from: "model" };
   }
   if (odds?.home_win && odds.draw && odds.away_win) {
-    const inv = [1 / odds.home_win, 1 / odds.draw, 1 / odds.away_win];
-    const total = inv[0] + inv[1] + inv[2];
-    return { p1: inv[0] / total, px: inv[1] / total, p2: inv[2] / total, from: "market" };
+    const invHome = 1 / odds.home_win;
+    const invDraw = 1 / odds.draw;
+    const invAway = 1 / odds.away_win;
+    const total = invHome + invDraw + invAway;
+    return { p1: invHome / total, px: invDraw / total, p2: invAway / total, from: "market" };
   }
   return null;
 }

@@ -7,7 +7,7 @@ single-page app; its nav links are in-page scroll anchors, not routes.
 
 | Route | File | Description |
 |---|---|---|
-| `/` | `app/page.tsx` → `src/App.jsx` | Main portfolio (single scrolling page) |
+| `/` | `app/page.tsx` → `src/App.tsx` | Main portfolio (single scrolling page) |
 | `/kp-trip` | `app/kp-trip/page.tsx` | Standalone Kampot/Kep/Bokor motorbike trip guide |
 
 `app/layout.tsx` is the shared root layout (not a route). There is no `route.ts`
@@ -16,7 +16,7 @@ service (see [oauth-server.md](oauth-server.md)).
 
 ## Home page (`/`) — section anchors
 
-`src/App.jsx` renders one long page. The top nav scrolls to these `id`
+`src/App.tsx` renders one long page. The top nav scrolls to these `id`
 anchors (no client routing involved):
 
 | Nav item | Section `id` | Content |
@@ -33,7 +33,7 @@ see [content-model.md](content-model.md).
 
 ### Project card image logic
 Cards render the `project.image` (app icon / logo) when present, otherwise they
-fall back to the emoji in `project.icon` (`src/App.jsx`, projects section). This
+fall back to the emoji in `project.icon` (`src/App.tsx`, projects section). This
 is data-driven — no title matching. App-store apps use real icons scraped from
 the App Store and stored in `public/assets/*_icon.jpg`.
 

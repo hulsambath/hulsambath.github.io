@@ -2,6 +2,7 @@
 
 import { Activity, ChevronDown, ChevronLeft, ChevronRight, Clock3, CornerDownRight, RefreshCw, ShieldCheck, WifiOff } from "lucide-react";
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import {
   dataBadges,
   groupByCompetition,
@@ -14,59 +15,16 @@ import {
   type QuickFilter,
   type StatusFilter,
 } from "./board";
+import { fetchDateBuckets, fetchLeagues, fetchMatchesByDate } from "./client";
 import { BoardHeader, type BoardTab } from "./components/BoardHeader";
 import { CompetitionRow } from "./components/CompetitionRow";
 import { CompetitionsTab } from "./components/CompetitionsTab";
 import { FilterBar } from "./components/FilterBar";
-import { apiBase, crestUrl, wsBase } from "./apiBase";
+import { crestUrl } from "./apiBase";
 import { MatchDetailPanel } from "./components/detail/MatchDetailPanel";
+import type { DateBucket, League, Match, Odds, Prediction, ScoreProb, Team, CornersLine } from "./types";
 import { useFavourites } from "./useFavourites";
-
-/* ---------------------------------------------------------------- types */
-
-type League = { id: number; api_league_id: number; name: string; country: string | null };
-type Team = { id: number; api_team_id: number; name: string; logo_url: string | null };
-type ScoreProb = { score: string; p: number };
-type CornersLine = { over: number; under: number };
-type Prediction = {
-  model_version: string;
-  home_exp_goals: number | null;
-  away_exp_goals: number | null;
-  p_home: number | null;
-  p_draw: number | null;
-  p_away: number | null;
-  p_over_15: number | null;
-  p_over_25: number | null;
-  p_over_35: number | null;
-  p_btts: number | null;
-  top_scores: ScoreProb[] | null;
-  exp_corners: number | null;
-  corners_lines: Record<string, CornersLine> | null;
-};
-type Odds = {
-  bookmaker: string | null;
-  home_win: number | null;
-  draw: number | null;
-  away_win: number | null;
-  over_25: number | null;
-  under_25: number | null;
-  btts_yes?: number | null;
-  btts_no?: number | null;
-};
-type Match = {
-  id: number;
-  league_id: number;
-  round: string | null;
-  kickoff_utc: string;
-  status: string;
-  home_team: Team;
-  away_team: Team;
-  home_goals: number | null;
-  away_goals: number | null;
-  prediction?: Prediction | null;
-  odds?: Odds | null;
-};
-type DateBucket = { date: string; count: number };
+import { usePredictorSocket } from "./usePredictorSocket";
 
 
 /* -------------------------------------------------------------- helpers */
@@ -133,7 +91,7 @@ function relativeLabel(iso: string): { top: string; sub: string } {
 function TeamBadge({ team }: { team: Team }) {
   const [broken, setBroken] = React.useState(false);
   const initials = team.name.replace(/[^A-Za-z0-9 ]/g, "").split(" ")
-    .filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
+    .filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("");
   const src = crestUrl(team.api_team_id, team.logo_url);
   React.useEffect(() => setBroken(false), [src]);
   if (!broken)
@@ -180,7 +138,7 @@ function MarketCell({ label, value, accent }: { label: string; value: number | n
   );
 }
 
-function MarketCells({ odds, fav, compact = false }: { odds?: Odds | null; fav: "1" | "X" | "2" | null; compact?: boolean }) {
+function MarketCells({ odds, fav, compact = false }: { odds?: Odds | null | undefined; fav: "1" | "X" | "2" | null; compact?: boolean }) {
   const cells = [
     ["1", odds?.home_win ?? null],
     ["X", odds?.draw ?? null],
@@ -195,6 +153,16 @@ function MarketCells({ odds, fav, compact = false }: { odds?: Odds | null; fav: 
       ))}
     </div>
   );
+}
+
+function favouriteOutcome(probs: { p1: number; px: number; p2: number } | null): "1" | "X" | "2" | null {
+  if (!probs) return null;
+  const entries: Array<["1" | "X" | "2", number]> = [
+    ["1", probs.p1],
+    ["X", probs.px],
+    ["2", probs.p2],
+  ];
+  return entries.reduce((best, current) => (current[1] > best[1] ? current : best))[0];
 }
 
 function TriBand({ p1, px, p2, from }: { p1: number; px: number; p2: number; from: "model" | "market" }) {
@@ -271,7 +239,7 @@ function StatChip({ label, value }: { label: string; value: string }) {
   );
 }
 
-function CornerSummary({ prediction, compact = false }: { prediction?: Prediction | null; compact?: boolean }) {
+function CornerSummary({ prediction, compact = false }: { prediction?: Prediction | null | undefined; compact?: boolean }) {
   if (!prediction?.corners_lines && prediction?.exp_corners == null) return null;
   const bestLine = prediction.corners_lines
     ? Object.entries(prediction.corners_lines).find(([line]) => line === "9.5") ?? Object.entries(prediction.corners_lines)[0]
@@ -318,7 +286,7 @@ function ScoreOrKickoff({ match }: { match: Match }) {
 
 function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
   match: Match;
-  league?: League;
+  league?: League | undefined;
   oddsShown?: boolean;
   onSelect: () => void;
 }) {
@@ -326,9 +294,7 @@ function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
   const p = match.prediction;
   const probs = outcomeProbs(match.prediction, match.odds);
   const showScore = isLive(match.status) || isFinished(match.status);
-  const fav = probs
-    ? (["1", "X", "2"] as const)[[probs.p1, probs.px, probs.p2].indexOf(Math.max(probs.p1, probs.px, probs.p2))]
-    : null;
+  const fav = favouriteOutcome(probs);
 
   return (
     <div className={`rounded-xl border bg-card transition-colors md:hidden ${isLive(match.status) ? "border-[hsl(var(--live)/0.5)]" : "border-border"}`}>
@@ -363,7 +329,7 @@ function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
           ))}
         </div>
         <ModelEdgeStrip match={match} />
-        <CornerSummary prediction={p} compact />
+        <CornerSummary prediction={p ?? undefined} compact />
         {oddsShown && <div className="mt-2"><MarketCells odds={match.odds} fav={fav} compact /></div>}
         {probs ? <TriBand {...probs} /> : (
           <p className="mt-2 text-xs text-muted-foreground">No prices or prediction yet for this match.</p>
@@ -424,7 +390,7 @@ function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
 
 function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
   match: Match;
-  league?: League;
+  league?: League | undefined;
   oddsShown: boolean;
   selected: boolean;
   onSelect: () => void;
@@ -432,9 +398,7 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
   const p = match.prediction;
   const probs = outcomeProbs(match.prediction, match.odds);
   const edge = modelEdge(match.prediction, match.odds);
-  const fav = probs
-    ? (["1", "X", "2"] as const)[[probs.p1, probs.px, probs.p2].indexOf(Math.max(probs.p1, probs.px, probs.p2))]
-    : null;
+  const fav = favouriteOutcome(probs);
   const showScore = isLive(match.status) || isFinished(match.status);
   return (
     <button onClick={onSelect}
@@ -475,7 +439,7 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
             <div className={`font-data text-[10px] ${edge.edge != null && edge.edge > 0 ? "text-[hsl(var(--edge))]" : "text-muted-foreground"}`}>
               {edge.edge == null ? "No market" : `${edge.edge > 0 ? "+" : ""}${Math.round(edge.edge * 100)} pts`}
             </div>
-            <CornerSummary prediction={p} />
+            <CornerSummary prediction={p ?? undefined} />
           </div>
         ) : (
           <span className="text-xs text-muted-foreground">Prediction pending</span>
@@ -530,9 +494,8 @@ function DateStrip({ days, selected, onSelect }: {
 
 /* ----------------------------------------------------------------- page */
 
-type WsStatus = "live" | "connecting" | "offline";
-
 export default function PredictorPage() {
+  const router = useRouter();
   const [leagues, setLeagues] = React.useState<League[]>([]);
   const [buckets, setBuckets] = React.useState<DateBucket[]>([]);
   const [selectedDate, setSelectedDate] = React.useState<string>(() => isoDay(new Date()));
@@ -544,15 +507,14 @@ export default function PredictorPage() {
   const [selectedMatchId, setSelectedMatchId] = React.useState<number | null>(null);
   const [matches, setMatches] = React.useState<Match[] | null>(null);
   const { favourites, isFavourite, toggle } = useFavourites();
-  const [wsStatus, setWsStatus] = React.useState<WsStatus>("connecting");
   const [error, setError] = React.useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = React.useState<Date | null>(null);
 
   const today = isoDay(new Date());
 
   const loadDay = React.useCallback((date: string) => {
-    fetch(`${apiBase()}/matches/by-date?date=${date}`)
-      .then((r) => r.json()).then((data) => {
+    fetchMatchesByDate(date)
+      .then((data) => {
         setMatches(data);
         setLastUpdated(new Date());
       })
@@ -561,12 +523,12 @@ export default function PredictorPage() {
 
   // initial: leagues + available dates; default to today or nearest fixtures
   React.useEffect(() => {
-    fetch(`${apiBase()}/leagues`).then((r) => r.json()).then(setLeagues).catch(() => {});
-    fetch(`${apiBase()}/matches/dates`).then((r) => r.json()).then((bs: DateBucket[]) => {
+    fetchLeagues().then(setLeagues).catch(() => {});
+    fetchDateBuckets().then((bs: DateBucket[]) => {
       setBuckets(bs);
       if (!bs.some((b) => b.date === today) && bs.length) {
         const next = bs.find((b) => b.date >= today) ?? bs[bs.length - 1];
-        setSelectedDate(next.date);
+        if (next) setSelectedDate(next.date);
       }
     }).catch(() => setError("The prediction server is not reachable right now."));
   }, [today]);
@@ -583,21 +545,6 @@ export default function PredictorPage() {
     return () => { document.body.style.overflow = prev; };
   }, [selectedMatchId]);
 
-  // live socket: while viewing today, refresh the day's board when it changes
-  React.useEffect(() => {
-    let closed = false;
-    const ws = new WebSocket(`${wsBase()}/ws/matches`);
-    ws.onopen = () => setWsStatus("live");
-    ws.onmessage = (e) => {
-      const msg = JSON.parse(e.data);
-      if ((msg.type === "update" || msg.type === "snapshot") && selectedDate === today)
-        loadDay(today);
-    };
-    ws.onclose = () => { if (!closed) setWsStatus("offline"); };
-    ws.onerror = () => { if (!closed) setWsStatus("offline"); };
-    return () => { closed = true; ws.close(); };
-  }, [selectedDate, today, loadDay]);
-
   const days = buildDayWindow(buckets);
   const leagueById = new Map(leagues.map((l) => [l.id, l]));
   const boardLeaguesById = new Map<number, BoardLeague>(
@@ -610,6 +557,19 @@ export default function PredictorPage() {
   const competitions = visibleCompetitions(groups, {
     status, favourites, onlyFavourites: tab === "favourites", leagueId,
     quickFilters, topLeagueIds,
+  });
+  const visibleMatchIds = React.useMemo(
+    () => competitions.flatMap((group) => group.matches.map((match) => match.id)),
+    [competitions],
+  );
+  const wsStatus = usePredictorSocket({
+    selectedDate,
+    today,
+    visibleMatchIds,
+    selectedMatchId,
+    matches,
+    onPatch: setMatches,
+    onRefreshDay: () => loadDay(selectedDate),
   });
   const toggleQuickFilter = React.useCallback((filter: QuickFilter) => {
     setQuickFilters((prev) => {
@@ -711,11 +671,19 @@ export default function PredictorPage() {
                     onToggleFavourite={() => toggle(g.league.id)}
                     renderMatch={(m) => (
                       <React.Fragment key={m.id}>
-                        <MatchRowDesktop match={m} league={leagueById.get(m.league_id)}
+                        <MatchRowDesktop match={m}
+                          {...(leagueById.get(m.league_id) ? { league: leagueById.get(m.league_id) } : {})}
                           oddsShown={oddsShown} selected={selectedMatchId === m.id}
-                          onSelect={() => setSelectedMatchId(m.id)} />
-                        <MatchCardMobile match={m} league={leagueById.get(m.league_id)}
-                          oddsShown={oddsShown} onSelect={() => setSelectedMatchId(m.id)} />
+                          onSelect={() => {
+                            setSelectedMatchId(m.id);
+                            router.replace(`/match?id=${m.id}`, { scroll: false });
+                          }} />
+                        <MatchCardMobile match={m}
+                          {...(leagueById.get(m.league_id) ? { league: leagueById.get(m.league_id) } : {})}
+                          oddsShown={oddsShown} onSelect={() => {
+                            setSelectedMatchId(m.id);
+                            router.replace(`/match?id=${m.id}`, { scroll: false });
+                          }} />
                       </React.Fragment>
                     )} />
                 ))}
@@ -726,14 +694,20 @@ export default function PredictorPage() {
 
         <aside className="sticky top-24 hidden max-h-[calc(100vh-7rem)] overflow-hidden rounded-xl border border-border bg-card p-4 lg:block">
           {selectedMatchId
-            ? <MatchDetailPanel matchId={selectedMatchId} onClose={() => setSelectedMatchId(null)} />
+            ? <MatchDetailPanel matchId={selectedMatchId} onClose={() => {
+              setSelectedMatchId(null);
+              router.replace("/predictor", { scroll: false });
+            }} />
             : <p className="py-12 text-center text-sm text-muted-foreground">Select a match to see details.</p>}
         </aside>
       </div>
 
       {selectedMatchId != null && (
         <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background p-4 lg:hidden">
-          <MatchDetailPanel matchId={selectedMatchId} onClose={() => setSelectedMatchId(null)} />
+          <MatchDetailPanel matchId={selectedMatchId} onClose={() => {
+            setSelectedMatchId(null);
+            router.replace("/predictor", { scroll: false });
+          }} />
         </div>
       )}
 

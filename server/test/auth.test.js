@@ -30,7 +30,7 @@ test("state has timestamp.nonce.hmac structure", () => {
 
 test("tampered state is rejected", () => {
   const state = generateState();
-  const [ts, nonce, sig] = state.split(".");
+  const [ts, _nonce, sig] = state.split(".");
   const otherNonce = crypto.randomBytes(16).toString("hex");
   assert.equal(validateState(`${ts}.${otherNonce}.${sig}`), false);
 });

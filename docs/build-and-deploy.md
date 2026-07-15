@@ -6,13 +6,11 @@
 |---|---|---|
 | `predev` | `setup_kp_trip_images.mjs && generate_llms.mjs` | Runs automatically before `dev` |
 | `dev` | `next dev` | Next.js dev server (primary) |
-| `dev:vite` | `vite` | Legacy Vite dev server |
 | `prebuild` | `setup_kp_trip_images.mjs && generate_llms.mjs` | Runs automatically before `build` |
 | `build` | `next build` | Production static export → `out/` |
-| `build:vite` | `vite build` | Legacy Vite build → `dist/` |
 | `start` | `next start` | Not used in production (static export is deployed) |
 | `lint` | `eslint .` | Lint |
-| `preview` | `vite preview` | Preview legacy Vite build |
+| `test` | `vitest run` | Frontend logic tests |
 
 ## Static export
 
@@ -50,7 +48,7 @@ plain-text files into `public/` (served at the site root), following the
 
 Because it's generated from `site.js`, the LLM files never drift from the site
 content — edit `site.js`, not the `.txt` files. Education is mirrored as a
-constant in the script (it lives in `App.jsx`, not `site.js`). `robots.txt`
+constant in the script (it lives in `App.tsx`, not `site.js`). `robots.txt`
 points crawlers/agents at both files.
 
 ## CI/CD — GitHub Pages (`.github/workflows/deploy.yml`)

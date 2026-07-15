@@ -1,7 +1,7 @@
 # Content Model — `src/content/site.js`
 
 **All** portfolio content is centralized in a single exported object,
-`site`, in `src/content/site.js`. `src/App.jsx` imports it and renders every
+`site`, in `src/content/site.js`. `src/App.tsx` imports it and renders every
 section from it. To update the portfolio's text, edit this file — not the JSX.
 
 ## Top-level shape

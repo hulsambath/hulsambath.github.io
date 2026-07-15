@@ -6,8 +6,7 @@
 |---|---|
 | Framework | **Next.js 16** (App Router, `app/`) |
 | UI library | **React 19** + React DOM 19 |
-| Language | **TypeScript 6** (config + `app/`), with the main UI in **JSX** (`src/App.jsx`) |
-| Secondary bundler | **Vite 7** (legacy entry point — see below) |
+| Language | **TypeScript 6** + TSX (`app/`, `src/App.tsx`) |
 | Styling | **Tailwind CSS 3.4** + `@tailwindcss/typography`, PostCSS, autoprefixer |
 | UI primitives | **shadcn/ui** (style: `new-york`) over `@radix-ui/react-slot`, `class-variance-authority`, `clsx`, `tailwind-merge` |
 | Icons | `lucide-react` |
@@ -15,31 +14,16 @@
 | Linting | ESLint 9 (flat config) + react-hooks + react-refresh plugins |
 | Output | Static export (`output: "export"`) → `out/` |
 
-## The Next.js + Vite hybrid (important)
+## Current app structure
 
-This repo is **transitional**. It was originally a Vite + React SPA and was
-wrapped in Next.js without removing the old setup. As a result there are two
-overlapping toolchains:
+This repo is now a single active **Next.js** application path:
 
-- **Next.js (primary)** — `app/` App Router. `app/page.tsx` is a thin client
-  component that simply renders the old SPA:
-
-  ```tsx
-  "use client";
-  import App from "../src/App.jsx";
-  export default function Page() { return <App />; }
-  ```
-
-- **Vite (legacy/secondary)** — `index.html`, `src/main.jsx`, `vite.config.ts`.
-  Reachable via `npm run dev:vite` / `npm run build:vite` but **not** used for
-  the deployed build.
-
-### Practical implications
-- The real portfolio markup lives in **`src/App.jsx`**, not in `app/`.
-- TypeScript is installed and configured, but the main component is plain JSX.
-- `package.json` exposes a `start` script (`next start`), but deployment uses a
-  **static export**, so `next start` is not part of the production path.
-- Two path aliases exist: `@/*` → repo root (tsconfig + vite.config).
+- `app/` owns routing and layout.
+- `app/page.tsx` renders the home portfolio page from `src/App.tsx`.
+- `src/content/site.js` remains the single source of portfolio content.
+- `package.json` still exposes `start`, but production uses **static export**,
+  so `next start` is not part of the deployed path.
+- The `@/*` alias is defined through `tsconfig.json`.
 
 ## Directory map
 
@@ -47,15 +31,14 @@ overlapping toolchains:
 my-portfolio/
 ├── app/                      # Next.js App Router
 │   ├── layout.tsx            # Root layout: ThemeProvider + AutoScrollDemo, metadata
-│   ├── page.tsx              # "/" → renders src/App.jsx
+│   ├── page.tsx              # "/" → renders src/App.tsx
 │   ├── globals.css           # Tailwind layer + design tokens
 │   ├── auto-scroll-demo.tsx  # Optional auto-scroll wrapper (query-param driven)
 │   └── kp-trip/              # "/kp-trip" standalone trip guide
 │       ├── layout.tsx
 │       └── page.tsx
-├── src/                      # Legacy Vite SPA — still the source of the UI
-│   ├── App.jsx               # The entire portfolio page (all sections)
-│   ├── main.jsx              # Vite entry (legacy)
+├── src/
+│   ├── App.tsx               # The entire portfolio home page (all sections)
 │   ├── content/site.js       # ★ Single source of all portfolio content
 │   └── assets/               # Logos + trip images (source)
 ├── components/
@@ -65,10 +48,9 @@ my-portfolio/
 ├── public/                   # Static assets, CV PDF, deep-link pages, trip images
 ├── server/                   # Standalone NoteMyMinds OAuth backend (see oauth-server.md)
 ├── out/                      # Static export output (generated)
-├── dist/                     # Vite build output (generated, legacy)
+├── dist/                     # Generated artifact from older builds; not an app path
 ├── setup_kp_trip_images.mjs  # Pre-build: copies src/assets trip images → public/trip-images
 ├── next.config.js            # output: "export", images.unoptimized, strict mode
-├── vite.config.ts            # Legacy Vite config
 ├── tailwind.config.js
 ├── components.json           # shadcn/ui config
 └── .github/workflows/deploy.yml

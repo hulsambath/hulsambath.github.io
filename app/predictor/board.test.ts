@@ -70,7 +70,7 @@ describe("visibleCompetitions", () => {
       topLeagueIds: new Set([1]),
       now,
     });
-    expect(result[0].matches.map((m) => m.id)).toEqual([1]);
+    expect(result[0]?.matches.map((m) => m.id)).toEqual([1]);
   });
 });
 
@@ -95,7 +95,7 @@ describe("groupByCompetition", () => {
   });
   it("synthesizes a placeholder league when id is unknown", () => {
     const groups = groupByCompetition([{ id: 9, league_id: 99, status: "NS" }], _leagues);
-    expect(groups[0].league.name).toBe("League 99");
+    expect(groups[0]?.league.name).toBe("League 99");
   });
 });
 

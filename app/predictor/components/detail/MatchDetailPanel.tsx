@@ -2,8 +2,8 @@
 
 import { BarChart3, ClipboardList, LineChart, ListTree, Swords, X } from "lucide-react";
 import * as React from "react";
-import { apiBase } from "../../apiBase";
-import type { MatchDetail } from "../../detail";
+import { fetchMatchDetail } from "../../client";
+import type { MatchDetail, Match } from "../../types";
 import { DetailHeader } from "./DetailHeader";
 import { HeadToHead } from "./HeadToHead";
 import { Lineups } from "./Lineups";
@@ -11,7 +11,7 @@ import { MatchStatsBars } from "./MatchStatsBars";
 import { TeamForm } from "./TeamForm";
 import { Timeline } from "./Timeline";
 
-type PanelMatch = { home_team: { name: string }; away_team: { name: string } };
+type PanelMatch = Match;
 type PanelPrediction = {
   p_home?: number | null;
   p_draw?: number | null;
@@ -131,8 +131,7 @@ export function MatchDetailPanel({ matchId, onClose }: { matchId: number; onClos
     let live = true;
     setDetail(null);
     setError(false);
-    fetch(`${apiBase()}/matches/${matchId}/detail`)
-      .then((r) => (r.ok ? r.json() : Promise.reject()))
+    fetchMatchDetail(matchId)
       .then((d) => { if (live) setDetail(d); })
       .catch(() => { if (live) setError(true); });
     return () => { live = false; };

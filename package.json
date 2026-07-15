@@ -6,14 +6,11 @@
   "scripts": {
     "predev": "node setup_kp_trip_images.mjs && node generate_llms.mjs",
     "dev": "next dev",
-    "dev:vite": "vite",
     "prebuild": "node setup_kp_trip_images.mjs && node generate_llms.mjs",
     "build": "next build",
-    "build:vite": "vite build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "vitest run",
-    "preview": "vite preview"
+    "test": "vitest run"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
@@ -33,7 +30,6 @@
     "@tailwindcss/typography": "^0.5.16",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
-    "@vitejs/plugin-react": "^5.0.0",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",
@@ -41,7 +37,6 @@
     "globals": "^16.3.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
-    "vite": "^7.1.2",
     "vitest": "^3.2.7"
   }
 }

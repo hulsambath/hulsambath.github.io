@@ -3,20 +3,21 @@ import { Button } from "../components/ui/button";
 import { site } from "./content/site.js";
 
 const mcpLogo = "/assets/mcp_logo.png";
+const sections = [
+  "home",
+  "about",
+  "skills",
+  "projects",
+  "experience",
+  "contact",
+] as const;
+type SectionId = (typeof sections)[number];
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState("home");
+  const [activeSection, setActiveSection] = useState<SectionId>("home");
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = [
-        "home",
-        "about",
-        "skills",
-        "projects",
-        "experience",
-        "contact",
-      ];
       const scrollPosition = window.scrollY + 100;
 
       for (const section of sections) {
@@ -40,8 +41,8 @@ export default function App() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId) => {
-    document.getElementById(sectionId).scrollIntoView({ behavior: "smooth" });
+  const scrollToSection = (sectionId: SectionId) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
   };
 
   const handleDownloadResume = async () => {
@@ -88,14 +89,7 @@ export default function App() {
 
           <div className="flex items-center gap-4">
             <div className="hidden items-center gap-8 md:flex">
-              {[
-                "home",
-                "about",
-                "skills",
-                "projects",
-                "experience",
-                "contact",
-              ].map((section) => (
+              {sections.map((section) => (
                 <button
                   key={section}
                   onClick={() => scrollToSection(section)}
@@ -346,7 +340,9 @@ export default function App() {
                         className="flex flex-col items-center justify-center rounded-xl border border-border/60 bg-card/50 backdrop-blur-md p-4 text-center shadow-sm hover:border-primary/50 hover:bg-card/70 transition-colors"
                       >
                         <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm ring-1 ring-black/5">
-                          {tech.useLocalImage && tech.name === "MCP Server" ? (
+                          {"useLocalImage" in tech &&
+                          tech.useLocalImage &&
+                          tech.name === "MCP Server" ? (
                             <img
                               src={mcpLogo}
                               alt={tech.name}
@@ -361,7 +357,11 @@ export default function App() {
                           ) : (
                             <span
                               className="text-sm font-bold leading-none"
-                              style={{ color: tech.textColor || "#B744B8" }}
+                              style={{
+                                color:
+                                  ("textColor" in tech && tech.textColor) ||
+                                  "#B744B8",
+                              }}
                             >
                               {tech.name}
                             </span>

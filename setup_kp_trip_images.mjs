@@ -84,6 +84,5 @@ async function main() {
 }
 
 main().catch((err) => {
-  // eslint-disable-next-line no-console
   console.error("setup_kp_trip_images failed:", err);
 });

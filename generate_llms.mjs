@@ -10,7 +10,7 @@ import { site } from "./src/content/site.js";
 const SITE_URL = "https://hulsambath.github.io";
 const PUBLIC_DIR = path.resolve("public");
 
-// Education is rendered in the About section of App.jsx (not in site.js); mirror it here.
+// Education is rendered in the About section of App.tsx (not in site.js); mirror it here.
 const education = {
   degree: "Bachelor of Computer Science (Software Engineering)",
   school: "Cambodia Academy of Digital Technology (CADT)",

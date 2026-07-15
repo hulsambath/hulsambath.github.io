@@ -234,7 +234,7 @@ router.post("/refresh", async (req, res) => {
     let decryptedRefreshToken = refresh_token;
     try {
       decryptedRefreshToken = decrypt(refresh_token);
-    } catch (e) {
+    } catch {
       // A v2 token that fails decryption is tampered or corrupted — reject it.
       // Legacy/plain tokens may legitimately fail decrypt; use them as-is.
       if (typeof refresh_token === "string" && refresh_token.startsWith("v2:")) {

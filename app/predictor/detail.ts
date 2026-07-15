@@ -1,21 +1,14 @@
-export type FormResult = "W" | "D" | "L";
-export type Incident = { minute: number | null; type: "goal" | "card"; team: "home" | "away"; player: string | null; detail: string | null };
-export type H2HMatch = { date: string | null; homeName: string | null; awayName: string | null; homeGoals: number | null; awayGoals: number | null };
-export type LineupPlayer = { name: string | null; number: number | null; position: string | null; isStarter: boolean };
-export type Lineups = { formationHome: string | null; formationAway: string | null; home: LineupPlayer[]; away: LineupPlayer[] };
-export type TeamForm = { recent: { date: string | null; opp: string | null; gf: number | null; ga: number | null; result: FormResult }[]; next: { date: string | null; opp: string | null } | null };
-export type MatchStats = Record<string, number | null>;
-export type MatchDetail = {
-  match: unknown;
-  stats: MatchStats | null;
-  lineups: Lineups | null;
-  incidents: Incident[] | null;
-  h2h: H2HMatch[] | null;
-  home_form: TeamForm | null;
-  away_form: TeamForm | null;
-  prediction?: unknown;
-  odds?: unknown;
-};
+export type {
+  FormResult,
+  H2HMatch,
+  Incident,
+  Lineups,
+  MatchDetail,
+  MatchStats,
+  TeamForm,
+} from "./types";
+
+import type { FormResult, Incident, MatchStats } from "./types";
 
 export function formChip(result: FormResult): { label: string; cls: string } {
   const cls = result === "W" ? "bg-[hsl(var(--home)/0.2)] text-[hsl(var(--home))]"

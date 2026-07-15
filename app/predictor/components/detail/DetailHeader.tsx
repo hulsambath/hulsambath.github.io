@@ -11,7 +11,7 @@ type DetailMatch = {
 
 function initialsFor(name: string) {
   return name.replace(/[^A-Za-z0-9 ]/g, "").split(" ")
-    .filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("") || "?";
+    .filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("") || "?";
 }
 
 function TeamCrest({ team }: { team: DetailTeam }) {

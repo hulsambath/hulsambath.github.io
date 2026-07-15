@@ -22,7 +22,7 @@ extras that happen to share this repo:
 
 | Doc | Contents |
 |---|---|
-| [architecture.md](architecture.md) | Tech stack, the Next.js + Vite hybrid, directory map |
+| [architecture.md](architecture.md) | Tech stack, active app structure, directory map |
 | [routing.md](routing.md) | Routes, page structure, scroll-anchor nav |
 | [content-model.md](content-model.md) | `src/content/site.js` — the single source of site content |
 | [build-and-deploy.md](build-and-deploy.md) | Scripts, static export, GitHub Pages CI |
