@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import {
   dataBadges,
   groupByCompetition,
+  isFinished,
+  isLive,
   latestRefreshLabel,
   marketImplied,
   modelEdge,
@@ -29,10 +31,7 @@ import { usePredictorSocket } from "./usePredictorSocket";
 
 /* -------------------------------------------------------------- helpers */
 
-const FINISHED = new Set(["FT", "AET", "PEN"]);
-const NOT_LIVE = new Set(["NS", "PST", "CANC", "FT", "AET", "PEN"]);
-const isFinished = (s: string) => FINISHED.has(s);
-const isLive = (s: string) => !NOT_LIVE.has(s);
+/* Status helpers (isFinished, isLive) imported from ./board */
 
 const pct = (p: number | null | undefined) =>
   p == null ? "–" : `${Math.round(p * 100)}%`;
@@ -676,13 +675,13 @@ export default function PredictorPage() {
                           oddsShown={oddsShown} selected={selectedMatchId === m.id}
                           onSelect={() => {
                             setSelectedMatchId(m.id);
-                            router.replace(`/match?id=${m.id}`, { scroll: false });
+                            router.replace(`/predictor/match?id=${m.id}`, { scroll: false });
                           }} />
                         <MatchCardMobile match={m}
                           {...(leagueById.get(m.league_id) ? { league: leagueById.get(m.league_id) } : {})}
                           oddsShown={oddsShown} onSelect={() => {
                             setSelectedMatchId(m.id);
-                            router.replace(`/match?id=${m.id}`, { scroll: false });
+                            router.replace(`/predictor/match?id=${m.id}`, { scroll: false });
                           }} />
                       </React.Fragment>
                     )} />

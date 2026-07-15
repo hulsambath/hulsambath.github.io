@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 
-import { MatchDetailPanel } from "../predictor/components/detail/MatchDetailPanel";
+import { MatchDetailPanel } from "../components/detail/MatchDetailPanel";
 
 export function MatchPageClient() {
   const router = useRouter();

@@ -28,13 +28,26 @@ export function usePredictorSocket({
   const [status, setStatus] = React.useState<WsStatus>("connecting");
   const refreshTimer = React.useRef<number | null>(null);
 
+  // Keep mutable refs for values the WS callbacks read but that should NOT
+  // cause the effect to reconnect when they change.
+  const matchesRef = React.useRef(matches);
+  matchesRef.current = matches;
+  const onPatchRef = React.useRef(onPatch);
+  onPatchRef.current = onPatch;
+  const onRefreshDayRef = React.useRef(onRefreshDay);
+  onRefreshDayRef.current = onRefreshDay;
+  const selectedDateRef = React.useRef(selectedDate);
+  selectedDateRef.current = selectedDate;
+  const todayRef = React.useRef(today);
+  todayRef.current = today;
+
   const scheduleRefresh = React.useCallback(() => {
     if (refreshTimer.current != null) return;
     refreshTimer.current = window.setTimeout(() => {
       refreshTimer.current = null;
-      onRefreshDay();
+      onRefreshDayRef.current();
     }, 150);
-  }, [onRefreshDay]);
+  }, []);
 
   React.useEffect(() => {
     let active = true;
@@ -71,12 +84,13 @@ export function usePredictorSocket({
         const message = parseRealtimeMessage(event.data);
         if (!message) return;
         if (message.type === "heartbeat") return;
-        if (!matches || !shouldProcessMatchEvent(message)) return;
-        if (selectedDate === today && needsRefetchForEvent(matches, message)) {
+        const currentMatches = matchesRef.current;
+        if (!currentMatches || !shouldProcessMatchEvent(message)) return;
+        if (selectedDateRef.current === todayRef.current && needsRefetchForEvent(currentMatches, message)) {
           scheduleRefresh();
           return;
         }
-        onPatch(patchMatchVersion(matches, message));
+        onPatchRef.current(patchMatchVersion(currentMatches, message));
       };
       socket.onerror = () => setStatus("offline");
       socket.onclose = () => {
@@ -101,7 +115,7 @@ export function usePredictorSocket({
       }
       socket?.close();
     };
-  }, [matches, onPatch, scheduleRefresh, selectedDate, selectedMatchId, today, visibleMatchIds]);
+  }, [visibleMatchIds, selectedMatchId, scheduleRefresh]);
 
   return status;
 }

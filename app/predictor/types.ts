@@ -30,13 +30,16 @@ export type Odds = {
   under_25: number | null;
   btts_yes?: number | null;
   btts_no?: number | null;
+  is_closing?: boolean;
 };
 
 export type Match = {
   id: number;
   source: string;
   version: number;
+  api_fixture_id?: number;
   league_id: number;
+  season?: number;
   round: string | null;
   kickoff_utc: string;
   status: string;
