@@ -9,9 +9,9 @@
   Limitations of meta-CSP: `frame-ancestors` (clickjacking) and report-uri are
   ignored by browsers in meta tags. For real header control / WAF / bot rules,
   the site would need a custom domain behind Cloudflare or similar.
-- **CSP allowlist:** Google Fonts (styles + fonts), plausible.io (analytics),
-  everything else self-only. Update `csp` in `app/layout.tsx` when adding
-  external resources.
+- **CSP allowlist:** Google Fonts (styles + fonts), `plausible.io`, and
+  `static.cloudflareinsights.com` for analytics, everything else self-only.
+  Update `csp` in `app/layout.tsx` when adding external resources.
 - **`'unsafe-inline'` in script-src:** required by Next.js static export
   (hydration payloads and the next-themes script are inline, and no server
   exists to inject nonces). This means the CSP does not protect against

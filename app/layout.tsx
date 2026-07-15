@@ -14,14 +14,14 @@ const devEval = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
 
 const csp = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline' https://plausible.io${devEval}`,
+  `script-src 'self' 'unsafe-inline' https://plausible.io https://static.cloudflareinsights.com${devEval}`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
   // team logos on /predictor come from ESPN's and 1xbet's CDNs
   "img-src 'self' data: https://a.espncdn.com https://v2l.traincdn.com https://api.sofascore.com",
   // predictor page talks to the football-predictor API (REST + WebSocket);
   // localhost entries cover local dev against the same page.
-  "connect-src 'self' https://plausible.io https://predictor-api.hulsambath.me wss://predictor-api.hulsambath.me http://localhost:8000 ws://localhost:8000",
+  "connect-src 'self' https://plausible.io https://static.cloudflareinsights.com https://predictor-api.hulsambath.me wss://predictor-api.hulsambath.me http://localhost:8000 ws://localhost:8000",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
