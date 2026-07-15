@@ -79,7 +79,6 @@ const isLive = (s: string) => !NOT_LIVE.has(s);
 const pct = (p: number | null | undefined) =>
   p == null ? "–" : `${Math.round(p * 100)}%`;
 const odd = (v: number | null | undefined) => (v == null ? "–" : v.toFixed(2));
-const fairOdd = (p: number | null | undefined) => (p && p > 0 ? 1 / p : null);
 
 /** yyyy-mm-dd in the viewer's local time. */
 function isoDay(d: Date): string {
@@ -168,32 +167,31 @@ function BadgeRow({ match }: { match: Match }) {
   );
 }
 
-function MarketCell({ label, value, accent, fair }: { label: string; value: number | null | undefined; accent?: boolean; fair?: boolean }) {
+function MarketCell({ label, value, accent }: { label: string; value: number | null | undefined; accent?: boolean }) {
   return (
     <div className={`odds-cell flex min-h-11 flex-col items-center justify-center rounded-md border px-2 py-1 ${
       accent
         ? "border-[hsl(var(--home)/0.7)] bg-[hsl(var(--home)/0.08)]"
-        : fair ? "border-border border-dashed bg-secondary/20" : "border-border bg-secondary/40"
+        : "border-border bg-secondary/40"
     }`}>
       <span className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span>
       <span className="font-data text-sm font-semibold">{odd(value)}</span>
-      {fair && <span className="font-data text-[9px] uppercase tracking-wide text-muted-foreground">fair</span>}
     </div>
   );
 }
 
-function MarketCells({ odds, prediction, fav, compact = false }: { odds?: Odds | null; prediction?: Prediction | null; fav: "1" | "X" | "2" | null; compact?: boolean }) {
+function MarketCells({ odds, fav, compact = false }: { odds?: Odds | null; fav: "1" | "X" | "2" | null; compact?: boolean }) {
   const cells = [
-    ["1", odds?.home_win ?? fairOdd(prediction?.p_home), odds?.home_win == null && prediction?.p_home != null],
-    ["X", odds?.draw ?? fairOdd(prediction?.p_draw), odds?.draw == null && prediction?.p_draw != null],
-    ["2", odds?.away_win ?? fairOdd(prediction?.p_away), odds?.away_win == null && prediction?.p_away != null],
-    ["O2.5", odds?.over_25 ?? fairOdd(prediction?.p_over_25), odds?.over_25 == null && prediction?.p_over_25 != null],
-    ["U2.5", odds?.under_25 ?? fairOdd(prediction?.p_over_25 == null ? null : 1 - prediction.p_over_25), odds?.under_25 == null && prediction?.p_over_25 != null],
+    ["1", odds?.home_win ?? null],
+    ["X", odds?.draw ?? null],
+    ["2", odds?.away_win ?? null],
+    ["O2.5", odds?.over_25 ?? null],
+    ["U2.5", odds?.under_25 ?? null],
   ] as const;
   return (
     <div className={`grid gap-1.5 ${compact ? "grid-cols-5" : "grid-cols-5"}`}>
-      {cells.map(([label, value, fair]) => (
-        <MarketCell key={label} label={label} value={value} accent={fav === label} fair={fair} />
+      {cells.map(([label, value]) => (
+        <MarketCell key={label} label={label} value={value} accent={fav === label} />
       ))}
     </div>
   );
@@ -366,7 +364,7 @@ function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
         </div>
         <ModelEdgeStrip match={match} />
         <CornerSummary prediction={p} compact />
-        {oddsShown && <div className="mt-2"><MarketCells odds={match.odds} prediction={match.prediction} fav={fav} compact /></div>}
+        {oddsShown && <div className="mt-2"><MarketCells odds={match.odds} fav={fav} compact /></div>}
         {probs ? <TriBand {...probs} /> : (
           <p className="mt-2 text-xs text-muted-foreground">No prices or prediction yet for this match.</p>
         )}
@@ -484,7 +482,7 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
         )}
       </div>
       <div>
-        {oddsShown ? <MarketCells odds={match.odds} prediction={match.prediction} fav={fav} /> : (
+        {oddsShown ? <MarketCells odds={match.odds} fav={fav} /> : (
           <div className="font-data text-xs text-muted-foreground">Odds hidden</div>
         )}
       </div>
@@ -681,7 +679,7 @@ export default function PredictorPage() {
                   )}
                   {oddsCount === 0 && (
                     <div className="rounded-xl border border-border bg-secondary/35 p-3 text-sm text-muted-foreground">
-                      <span className="font-semibold text-foreground">Market odds unavailable.</span> Real bookmaker prices are not visible for this day yet; predicted matches show dashed model fair odds instead.
+                      <span className="font-semibold text-foreground">Market odds unavailable.</span> Real bookmaker prices are not visible for this day yet, so market columns show dashes.
                     </div>
                   )}
                 </div>
