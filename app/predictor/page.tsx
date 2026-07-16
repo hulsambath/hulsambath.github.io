@@ -401,7 +401,7 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
   const showScore = isLive(match.status) || isFinished(match.status);
   return (
     <button onClick={onSelect}
-      className={`match-row hidden w-full grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_minmax(0,1fr)_9rem_18rem_5rem] items-center gap-3 border-b border-border/70 px-3 py-2 text-left transition-colors hover:bg-secondary/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring md:grid ${
+      className={`match-row hidden w-full grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_3.5rem_minmax(0,1fr)_9rem_18rem_5rem] items-center gap-3 border-b border-border/70 px-3 py-2 text-left transition-colors hover:bg-secondary/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring md:grid ${
         selected ? "bg-secondary/50 ring-1 ring-ring" : ""
       }`}>
       <div className="space-y-1">
@@ -426,6 +426,17 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
           </div>
         )}
       </div>
+      <div className="text-center font-data tabular-nums text-sm text-muted-foreground">
+        {match.home_corners != null && match.away_corners != null ? (
+          <span className="font-semibold text-foreground">
+            {match.home_corners}–{match.away_corners}
+          </span>
+        ) : p?.exp_corners != null ? (
+          <span>{p.exp_corners.toFixed(1)} <span className="text-[10px] text-muted-foreground/60">exp</span></span>
+        ) : (
+          <span>–</span>
+        )}
+      </div>
       <div className="flex min-w-0 items-center justify-end gap-2">
         <span className="truncate text-right font-display text-base font-semibold">{match.away_team.name}</span>
         <TeamBadge team={match.away_team} />
@@ -438,7 +449,6 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
             <div className={`font-data text-[10px] ${edge.edge != null && edge.edge > 0 ? "text-[hsl(var(--edge))]" : "text-muted-foreground"}`}>
               {edge.edge == null ? "No market" : `${edge.edge > 0 ? "+" : ""}${Math.round(edge.edge * 100)} pts`}
             </div>
-            <CornerSummary prediction={p ?? undefined} />
           </div>
         ) : (
           <span className="text-xs text-muted-foreground">Prediction pending</span>
@@ -629,7 +639,7 @@ export default function PredictorPage() {
               <FilterBar status={status} onStatus={setStatus} liveCount={liveCount}
                 oddsShown={oddsShown} onOddsToggle={() => setOddsShown((v) => !v)}
                 quickFilters={quickFilters} onQuickFilter={toggleQuickFilter} />
-              {matches && (predictionCount === 0 || oddsCount === 0) && (
+              {matches && matches.length > 0 && (predictionCount === 0 || oddsCount === 0) && (
                 <div className="mb-4 grid gap-2 sm:grid-cols-2">
                   {predictionCount === 0 && (
                     <div className="rounded-xl border border-border bg-secondary/35 p-3 text-sm text-muted-foreground">
@@ -644,10 +654,11 @@ export default function PredictorPage() {
                 </div>
               )}
               {oddsShown && competitions.length > 0 && (
-                <div className="sticky top-[8.75rem] z-[5] mb-2 hidden grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_minmax(0,1fr)_9rem_18rem_5rem] items-center gap-3 rounded-lg border border-border bg-background/90 px-3 py-2 font-data text-[10px] uppercase tracking-wide text-muted-foreground backdrop-blur md:grid">
+                <div className="sticky top-[8.75rem] z-[5] mb-2 hidden grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_3.5rem_minmax(0,1fr)_9rem_18rem_5rem] items-center gap-3 rounded-lg border border-border bg-background/90 px-3 py-2 font-data text-[10px] uppercase tracking-wide text-muted-foreground backdrop-blur md:grid">
                   <span>Status</span>
                   <span>Home</span>
                   <span className="text-center">Score</span>
+                  <span className="text-center">Corners</span>
                   <span className="text-right">Away</span>
                   <span>Model</span>
                   <span className="grid grid-cols-5 gap-1.5 text-center"><span>1</span><span>X</span><span>2</span><span>O2.5</span><span>U2.5</span></span>
