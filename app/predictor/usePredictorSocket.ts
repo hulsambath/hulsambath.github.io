@@ -51,6 +51,8 @@ export function usePredictorSocket({
   }, []);
  
   // Subscription helper
+  const lastSubscribedRef = React.useRef<string>("");
+
   const sendSubscribe = React.useCallback(() => {
     const socket = socketRef.current;
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
@@ -70,6 +72,11 @@ export function usePredictorSocket({
     );
     if (selectedMatchId != null) ids.add(selectedMatchId);
     if (ids.size === 0) return;
+
+    const idList = [...ids].sort((a, b) => a - b).join(",");
+    if (idList === lastSubscribedRef.current) return;
+    lastSubscribedRef.current = idList;
+
     console.log("[WS] Sending subscribe message for matches:", [...ids]);
     socket.send(JSON.stringify({ action: "subscribe", matches: [...ids] }));
   }, [visibleMatchIds, selectedMatchId, matches]);
@@ -95,7 +102,8 @@ export function usePredictorSocket({
     const connect = () => {
       console.log("[WS] Connecting to WebSocket...");
       setStatus("connecting");
-      const socket = new WebSocket(`${wsBase()}/ws/matches`);
+      const token = process.env.NEXT_PUBLIC_WS_AUTH_TOKEN || "dev-secret-key";
+      const socket = new WebSocket(`${wsBase()}/ws/matches?token=${token}`);
       socketRef.current = socket;
  
       socket.onopen = () => {
@@ -103,6 +111,7 @@ export function usePredictorSocket({
         attempt = 0;
         setStatus("live");
         resetHeartbeat();
+        lastSubscribedRef.current = "";
         sendSubscribeRef.current();
       };
       socket.onmessage = (event) => {

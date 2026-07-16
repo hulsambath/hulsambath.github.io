@@ -3,20 +3,30 @@
 /* Scoped tokens for the predictor page. The tri-band colors encode the
    model's three outcomes; they are data colors, not decoration. */
 .predictor-page {
-  --home: 152 42% 34%;
-  --draw: 222 10% 62%;
-  --away: 214 48% 46%;
-  --live: 26 100% 50%; /* portfolio brand orange */
-  --edge: 145 50% 35%;
+  --home: 217 91% 60%; /* Blue */
+  --draw: 240 5% 65%;  /* Slate Gray */
+  --away: 25 95% 53%;  /* Orange */
+  --live: 142 71% 45%; /* Emerald Green */
+  --edge: 142 71% 45%;
   --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, monospace;
 }
 
 .dark .predictor-page {
-  --home: 152 38% 46%;
-  --draw: 222 8% 52%;
-  --away: 214 58% 62%;
-  --edge: 145 48% 56%;
+  --home: 217 91% 65%;
+  --draw: 240 5% 55%;
+  --away: 25 95% 58%;
+  --edge: 142 71% 50%;
+  --live: 142 71% 50%;
+  
+  /* Deeper betting-app dark mode slate instead of standard black/gray */
+  --background: 222 47% 11%;
+  --card: 222 47% 11%;
+  --popover: 222 47% 11%;
+  --secondary: 217 33% 17%;
+  --muted: 217 33% 17%;
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
 }
 
 .predictor-page .font-display {

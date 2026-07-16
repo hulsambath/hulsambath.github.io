@@ -126,13 +126,13 @@ function BadgeRow({ match }: { match: Match }) {
 
 function MarketCell({ label, value, accent }: { label: string; value: number | null | undefined; accent?: boolean }) {
   return (
-    <div className={`odds-cell flex min-h-11 flex-col items-center justify-center rounded-md border px-2 py-1 ${
+    <div className={`odds-cell group flex min-h-11 cursor-default flex-col items-center justify-center rounded-md border px-2 py-1 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
       accent
-        ? "border-[hsl(var(--home)/0.7)] bg-[hsl(var(--home)/0.08)]"
-        : "border-border bg-secondary/40"
+        ? "border-[hsl(var(--edge))] bg-[hsl(var(--edge)/0.12)]"
+        : "border-border/60 bg-secondary/60 hover:border-primary/40 hover:bg-primary/10"
     }`}>
-      <span className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">{label}</span>
-      <span className="font-data text-sm font-semibold">{odd(value)}</span>
+      <span className={`font-data text-[10px] uppercase tracking-wide transition-colors ${accent ? "text-[hsl(var(--edge))]" : "text-muted-foreground group-hover:text-foreground"}`}>{label}</span>
+      <span className={`font-data text-sm font-bold transition-colors ${accent ? "text-[hsl(var(--edge))]" : "text-foreground group-hover:text-primary"}`}>{odd(value)}</span>
     </div>
   );
 }
@@ -204,24 +204,25 @@ function ModelEdgeStrip({ match }: { match: Match }) {
       </div>
     );
   }
+  const isPositive = edge.edge != null && edge.edge > 0;
   return (
-    <div className="grid grid-cols-3 gap-1.5 rounded-lg border border-border bg-secondary/30 p-1.5">
+    <div className="grid grid-cols-3 gap-1.5 rounded-lg border border-border/60 bg-secondary/40 p-1.5 shadow-sm">
       <div className="px-1.5 py-1">
         <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Model pick</div>
-        <div className="font-display text-lg font-bold leading-none">{edge.pick} <span className="font-data text-sm">{pct(edge.probability)}</span></div>
+        <div className="font-display text-lg font-bold leading-none">{edge.pick} <span className="font-data text-sm text-muted-foreground">{pct(edge.probability)}</span></div>
       </div>
       <div className="px-1.5 py-1">
         <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Odds implied</div>
-        <div className="font-data text-sm font-semibold">{edge.market == null ? "–" : pct(edge.market)}</div>
+        <div className="font-data text-sm font-bold">{edge.market == null ? "–" : pct(edge.market)}</div>
       </div>
       <div className="px-1.5 py-1">
         <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Edge</div>
-        <div className={`font-data text-sm font-semibold ${edge.edge != null && edge.edge > 0 ? "text-[hsl(var(--edge))]" : ""}`}>
+        <div className={`font-data text-lg font-bold leading-none ${isPositive ? "text-[hsl(var(--edge))] drop-shadow-[0_0_8px_hsla(var(--edge)/0.4)]" : "text-muted-foreground"}`}>
           {edge.edge == null ? "No odds" : `${edge.edge > 0 ? "+" : ""}${Math.round(edge.edge * 100)} pts`}
         </div>
       </div>
       {market && (
-        <div className="col-span-3">
+        <div className="col-span-3 mt-1">
           <TriBand {...market} />
         </div>
       )}
@@ -300,31 +301,37 @@ function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
       <button
         className="w-full px-4 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
         onClick={() => setOpen(!open)} aria-expanded={open}>
-        <div className="mb-2.5 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="mb-3 flex items-center justify-between text-xs text-muted-foreground">
           <span className="flex items-center gap-2">
             <StatusPill match={match} />
             {league && (
-              <span className="truncate rounded-full border border-border px-2 py-0.5 text-[10px] uppercase tracking-wide">
+              <span className="truncate rounded-full border border-border/60 bg-secondary/30 px-2 py-0.5 text-[10px] uppercase tracking-wide">
                 {league.name}
               </span>
             )}
           </span>
-          <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
+          <div className="flex items-center gap-2">
+            <BadgeRow match={match} />
+            <ChevronDown className={`h-4 w-4 shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
+          </div>
         </div>
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <BadgeRow match={match} />
-          <ScoreOrKickoff match={match} />
-        </div>
-        <div className="mb-1 space-y-1.5">
+        
+        <div className="mb-4 grid grid-cols-[1fr_auto] gap-x-4 gap-y-2">
           {([["home", match.home_team, p?.home_exp_goals, match.home_goals],
              ["away", match.away_team, p?.away_exp_goals, match.away_goals]] as const).map(([side, team, xg, goals]) => (
-            <div key={side} className="grid grid-cols-[auto_1fr_auto] items-center gap-x-2.5">
-              <TeamBadge team={team} />
-              <span className="truncate font-display text-lg font-semibold leading-tight">{team.name}</span>
-              {showScore
-                ? <span className={`font-data text-lg font-bold tabular-nums ${isLive(match.status) ? "text-[hsl(var(--live))]" : ""}`}>{goals ?? 0}</span>
-                : <span className="font-data text-xs text-muted-foreground">{xg != null ? `${xg.toFixed(2)} xG` : ""}</span>}
-            </div>
+            <React.Fragment key={side}>
+              <div className="flex items-center gap-3 min-w-0">
+                <TeamBadge team={team} />
+                <span className="truncate font-display text-xl font-bold leading-none">{team.name}</span>
+              </div>
+              <div className="flex flex-col items-end justify-center">
+                {showScore ? (
+                   <span className={`font-data text-2xl font-bold tabular-nums leading-none ${isLive(match.status) ? "text-[hsl(var(--live))]" : ""}`}>{goals ?? 0}</span>
+                ) : (
+                   <span className="font-data text-xs text-muted-foreground">{xg != null ? `${xg.toFixed(2)} xG` : ""}</span>
+                )}
+              </div>
+            </React.Fragment>
           ))}
         </div>
         <ModelEdgeStrip match={match} />
@@ -443,10 +450,10 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
       </div>
       <div>
         {edge ? (
-          <div className="rounded-md border border-border bg-secondary/35 px-2 py-1">
+          <div className={`rounded-md border px-2 py-1 transition-colors ${edge.edge != null && edge.edge > 0 ? "border-[hsl(var(--edge))/0.4] bg-[hsl(var(--edge))/0.08]" : "border-border bg-secondary/35"}`}>
             <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Model pick</div>
-            <div className="font-data text-sm font-semibold">{edge.pick} {pct(edge.probability)}</div>
-            <div className={`font-data text-[10px] ${edge.edge != null && edge.edge > 0 ? "text-[hsl(var(--edge))]" : "text-muted-foreground"}`}>
+            <div className="font-data text-sm font-bold">{edge.pick} {pct(edge.probability)}</div>
+            <div className={`font-data text-[10px] font-semibold ${edge.edge != null && edge.edge > 0 ? "text-[hsl(var(--edge))]" : "text-muted-foreground"}`}>
               {edge.edge == null ? "No market" : `${edge.edge > 0 ? "+" : ""}${Math.round(edge.edge * 100)} pts`}
             </div>
           </div>
@@ -525,11 +532,19 @@ export default function PredictorPage() {
 
   const today = isoDay(new Date());
 
+  const autoFilteredDate = React.useRef<string | null>(null);
+
   const loadDay = React.useCallback((date: string) => {
     fetchMatchesByDate(date)
       .then((data) => {
         setMatches(data);
         setLastUpdated(new Date());
+        if (autoFilteredDate.current !== date) {
+          const live = data.filter((m) => isLive(m.status)).length;
+          const upcoming = data.filter((m) => !isFinished(m.status) && !isLive(m.status)).length;
+          setStatus(live > 0 ? "live" : upcoming > 0 ? "upcoming" : "finished");
+          autoFilteredDate.current = date;
+        }
       })
       .catch(() => setError("The prediction server is not reachable right now."));
   }, []);
@@ -636,7 +651,7 @@ export default function PredictorPage() {
         </div>
       )}
 
-      <div className="sticky top-0 z-10 -mx-4 mb-4 border-b border-border bg-background/85 px-4 pb-2 pt-3 backdrop-blur">
+      <div className="sticky top-0 z-10 -mx-4 mb-4 border-b border-border/80 bg-background/75 px-4 pb-2 pt-3 backdrop-blur-md">
         <BoardHeader tab={tab} onTab={(t) => { setTab(t); setLeagueId(null); }} favouriteCount={favourites.size}>
           <DateStrip days={days} selected={selectedDate} onSelect={setSelectedDate} />
         </BoardHeader>

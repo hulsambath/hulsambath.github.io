@@ -3,6 +3,7 @@
 import { BarChart3, ClipboardList, LineChart, ListTree, Swords, X } from "lucide-react";
 import * as React from "react";
 import { fetchMatchDetail } from "../../client";
+import { isLive } from "../../board";
 import type { MatchDetail, Match } from "../../types";
 import { DetailHeader } from "./DetailHeader";
 import { HeadToHead } from "./HeadToHead";
@@ -128,13 +129,38 @@ export function MatchDetailPanel({ matchId, onClose }: { matchId: number; onClos
   const [tab, setTab] = React.useState<DetailTab>("summary");
 
   React.useEffect(() => {
-    let live = true;
+    let active = true;
+    let timer: number | undefined;
+
+    const load = () => {
+      fetchMatchDetail(matchId)
+        .then((d) => {
+          if (!active) return;
+          setDetail(d);
+          setError(false);
+          if (d.match?.status && isLive(d.match.status)) {
+            timer = window.setTimeout(load, 15000);
+          } else {
+            if (timer) window.clearTimeout(timer);
+          }
+        })
+        .catch(() => {
+          if (!active) return;
+          setDetail((prev) => {
+             if (!prev) setError(true);
+             return prev;
+          });
+        });
+    };
+
     setDetail(null);
     setError(false);
-    fetchMatchDetail(matchId)
-      .then((d) => { if (live) setDetail(d); })
-      .catch(() => { if (live) setError(true); });
-    return () => { live = false; };
+    load();
+
+    return () => {
+      active = false;
+      if (timer) window.clearTimeout(timer);
+    };
   }, [matchId]);
 
   const m = detail?.match as PanelMatch | undefined;

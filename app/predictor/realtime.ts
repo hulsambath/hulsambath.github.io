@@ -10,6 +10,7 @@ export type MatchEventMessage = {
   type: string;
   match_id: number;
   version: number;
+  changes?: Record<string, unknown>;
 };
 
 export function parseRealtimeMessage(raw: string): RealtimeMessage | null {
@@ -50,6 +51,6 @@ export function needsRefetchForEvent(
 
 export function patchMatchVersion(matches: Match[], message: MatchEventMessage): Match[] {
   return matches.map((match) =>
-    match.id === message.match_id ? { ...match, version: message.version } : match,
+    match.id === message.match_id ? { ...match, ...(message.changes || {}), version: message.version } : match,
   );
 }

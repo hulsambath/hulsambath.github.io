@@ -8,7 +8,9 @@ async function readJson<T>(path: string): Promise<T> {
 
   let lastError: Error | null = null;
   for (const candidate of candidates) {
-    const response = await fetch(`${apiBase()}${candidate}`);
+    const response = await fetch(`${apiBase()}${candidate}`, {
+      signal: AbortSignal.timeout(15000)
+    });
     if (response.ok) return response.json() as Promise<T>;
     if (response.status !== 404) {
       throw new Error(`request failed: ${response.status}`);
