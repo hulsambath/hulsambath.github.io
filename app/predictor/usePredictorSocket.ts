@@ -54,12 +54,25 @@ export function usePredictorSocket({
   const sendSubscribe = React.useCallback(() => {
     const socket = socketRef.current;
     if (!socket || socket.readyState !== WebSocket.OPEN) return;
-    const ids = new Set<number>(visibleMatchIds.filter((n) => !isNaN(n) && n > 0));
+    
+    // Create a Set of finished match IDs to exclude them from real-time subscriptions
+    const finishedMatchIds = new Set<number>();
+    if (matches) {
+      for (const m of matches) {
+        if (m.status === "FT" || m.status === "AET" || m.status === "PEN") {
+          finishedMatchIds.add(m.id);
+        }
+      }
+    }
+    
+    const ids = new Set<number>(
+      visibleMatchIds.filter((id) => !isNaN(id) && id > 0 && !finishedMatchIds.has(id))
+    );
     if (selectedMatchId != null) ids.add(selectedMatchId);
     if (ids.size === 0) return;
     console.log("[WS] Sending subscribe message for matches:", [...ids]);
     socket.send(JSON.stringify({ action: "subscribe", matches: [...ids] }));
-  }, [visibleMatchIds, selectedMatchId]);
+  }, [visibleMatchIds, selectedMatchId, matches]);
 
   const sendSubscribeRef = React.useRef(sendSubscribe);
   sendSubscribeRef.current = sendSubscribe;
