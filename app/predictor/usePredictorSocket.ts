@@ -49,6 +49,8 @@ export function usePredictorSocket({
     }, 150);
   }, []);
 
+  const visibleMatchIdsStr = visibleMatchIds.join(",");
+
   React.useEffect(() => {
     let active = true;
     let socket: WebSocket | null = null;
@@ -57,7 +59,12 @@ export function usePredictorSocket({
     let attempt = 0;
 
     const subscribe = () => {
-      const ids = new Set<number>(visibleMatchIds);
+      const ids = new Set<number>(
+        visibleMatchIdsStr
+          .split(",")
+          .map(Number)
+          .filter((n) => !isNaN(n) && n > 0)
+      );
       if (selectedMatchId != null) ids.add(selectedMatchId);
       if (ids.size === 0 || !socket || socket.readyState !== WebSocket.OPEN) return;
       socket.send(JSON.stringify({ action: "subscribe", matches: [...ids] }));
@@ -115,7 +122,7 @@ export function usePredictorSocket({
       }
       socket?.close();
     };
-  }, [visibleMatchIds, selectedMatchId, scheduleRefresh]);
+  }, [visibleMatchIdsStr, selectedMatchId, scheduleRefresh]);
 
   return status;
 }
