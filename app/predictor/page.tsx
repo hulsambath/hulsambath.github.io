@@ -407,8 +407,8 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
   const fav = favouriteOutcome(probs);
   const showScore = isLive(match.status) || isFinished(match.status);
   return (
-    <button onClick={onSelect}
-      className={`match-row hidden w-full grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_3.5rem_minmax(0,1fr)_9rem_18rem_5rem] items-center gap-3 border-b border-border/70 px-3 py-2 text-left transition-colors hover:bg-secondary/35 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring md:grid ${
+    <div
+      className={`match-row hidden w-full grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_3.5rem_minmax(0,1fr)_9rem_18rem_5rem_auto] items-center gap-3 border-b border-border/70 px-3 py-2 text-left transition-colors hover:bg-secondary/35 md:grid ${
         selected ? "bg-secondary/50 ring-1 ring-ring" : ""
       }`}>
       <div className="space-y-1">
@@ -466,8 +466,16 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
           <div className="font-data text-xs text-muted-foreground">Odds hidden</div>
         )}
       </div>
-      <BadgeRow match={match} />
-    </button>
+      <div>
+        <BadgeRow match={match} />
+      </div>
+      <div>
+        <button onClick={onSelect}
+          className="rounded bg-secondary px-3 py-1.5 font-display text-sm font-semibold uppercase tracking-wide text-foreground hover:bg-secondary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring">
+          Details
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -684,7 +692,7 @@ export default function PredictorPage() {
                 </div>
               )}
               {oddsShown && competitions.length > 0 && (
-                <div className="sticky top-[8.75rem] z-[5] mb-2 hidden grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_3.5rem_minmax(0,1fr)_9rem_18rem_5rem] items-center gap-3 rounded-lg border border-border bg-background/90 px-3 py-2 font-data text-[10px] uppercase tracking-wide text-muted-foreground backdrop-blur md:grid">
+                <div className="sticky top-[8.75rem] z-[5] mb-2 hidden grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_3.5rem_minmax(0,1fr)_9rem_18rem_5rem_auto] items-center gap-3 rounded-lg border border-border bg-background/90 px-3 py-2 font-data text-[10px] uppercase tracking-wide text-muted-foreground backdrop-blur md:grid">
                   <span>Status</span>
                   <span>Home</span>
                   <span className="text-center">Score</span>
@@ -693,6 +701,7 @@ export default function PredictorPage() {
                   <span>Model</span>
                   <span className="grid grid-cols-5 gap-1.5 text-center"><span>1</span><span>X</span><span>2</span><span>O2.5</span><span>U2.5</span></span>
                   <span>Data</span>
+                  <span></span>
                 </div>
               )}
               <section aria-label="Competitions">
