@@ -48,6 +48,8 @@ export type Match = {
   away_team: Team;
   home_goals: number | null;
   away_goals: number | null;
+  home_corners?: number | null;
+  away_corners?: number | null;
   prediction?: Prediction | null;
   odds?: Odds | null;
 };
