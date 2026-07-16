@@ -60,6 +60,9 @@ export function usePredictorSocket({
     console.log("[WS] Sending subscribe message for matches:", [...ids]);
     socket.send(JSON.stringify({ action: "subscribe", matches: [...ids] }));
   }, [visibleMatchIds, selectedMatchId]);
+
+  const sendSubscribeRef = React.useRef(sendSubscribe);
+  sendSubscribeRef.current = sendSubscribe;
  
   // WebSocket Connection Lifecycle (Connects once on mount)
   React.useEffect(() => {
@@ -87,7 +90,7 @@ export function usePredictorSocket({
         attempt = 0;
         setStatus("live");
         resetHeartbeat();
-        sendSubscribe();
+        sendSubscribeRef.current();
       };
       socket.onmessage = (event) => {
         resetHeartbeat();
@@ -135,7 +138,7 @@ export function usePredictorSocket({
       }
       socketRef.current?.close();
     };
-  }, [scheduleRefresh, sendSubscribe]);
+  }, [scheduleRefresh]);
  
   // Dynamic Subscription Effect (Updates subscriptions without reconnecting the socket)
   React.useEffect(() => {
