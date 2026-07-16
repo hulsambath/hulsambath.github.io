@@ -505,6 +505,10 @@ function DateStrip({ days, selected, onSelect }: {
 
 export default function PredictorPage() {
   const router = useRouter();
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
   const [leagues, setLeagues] = React.useState<League[]>([]);
   const [buckets, setBuckets] = React.useState<DateBucket[]>([]);
   const [selectedDate, setSelectedDate] = React.useState<string>(() => isoDay(new Date()));
@@ -588,6 +592,17 @@ export default function PredictorPage() {
       return next;
     });
   }, []);
+
+  if (!mounted) {
+    return (
+      <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12 lg:max-w-6xl flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground/60" />
+          <p className="font-data text-xs text-muted-foreground/60">Loading matchday board…</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12 lg:max-w-6xl">
