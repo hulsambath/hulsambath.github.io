@@ -26,8 +26,9 @@ export function usePredictorSocket({
   onRefreshDay: () => void;
 }): WsStatus {
   const [status, setStatus] = React.useState<WsStatus>("connecting");
+  const socketRef = React.useRef<WebSocket | null>(null);
   const refreshTimer = React.useRef<number | null>(null);
-
+ 
   // Keep mutable refs for values the WS callbacks read but that should NOT
   // cause the effect to reconnect when they change.
   const matchesRef = React.useRef(matches);
@@ -40,7 +41,7 @@ export function usePredictorSocket({
   selectedDateRef.current = selectedDate;
   const todayRef = React.useRef(today);
   todayRef.current = today;
-
+ 
   const scheduleRefresh = React.useCallback(() => {
     if (refreshTimer.current != null) return;
     refreshTimer.current = window.setTimeout(() => {
@@ -48,71 +49,83 @@ export function usePredictorSocket({
       onRefreshDayRef.current();
     }, 150);
   }, []);
-
-  const visibleMatchIdsStr = visibleMatchIds.join(",");
-
+ 
+  // Subscription helper
+  const sendSubscribe = React.useCallback(() => {
+    const socket = socketRef.current;
+    if (!socket || socket.readyState !== WebSocket.OPEN) return;
+    const ids = new Set<number>(visibleMatchIds.filter((n) => !isNaN(n) && n > 0));
+    if (selectedMatchId != null) ids.add(selectedMatchId);
+    if (ids.size === 0) return;
+    console.log("[WS] Sending subscribe message for matches:", [...ids]);
+    socket.send(JSON.stringify({ action: "subscribe", matches: [...ids] }));
+  }, [visibleMatchIds, selectedMatchId]);
+ 
+  // WebSocket Connection Lifecycle (Connects once on mount)
   React.useEffect(() => {
     let active = true;
-    let socket: WebSocket | null = null;
     let heartbeatTimer: number | null = null;
     let reconnectTimer: number | null = null;
     let attempt = 0;
-
-    const subscribe = () => {
-      const ids = new Set<number>(
-        visibleMatchIdsStr
-          .split(",")
-          .map(Number)
-          .filter((n) => !isNaN(n) && n > 0)
-      );
-      if (selectedMatchId != null) ids.add(selectedMatchId);
-      if (ids.size === 0 || !socket || socket.readyState !== WebSocket.OPEN) return;
-      socket.send(JSON.stringify({ action: "subscribe", matches: [...ids] }));
-    };
-
+ 
     const resetHeartbeat = () => {
       if (heartbeatTimer != null) window.clearTimeout(heartbeatTimer);
       heartbeatTimer = window.setTimeout(() => {
-        socket?.close();
+        console.warn("[WS] Heartbeat timeout, closing connection");
+        socketRef.current?.close();
       }, 45_000);
     };
-
+ 
     const connect = () => {
+      console.log("[WS] Connecting to WebSocket...");
       setStatus("connecting");
-      socket = new WebSocket(`${wsBase()}/ws/matches`);
+      const socket = new WebSocket(`${wsBase()}/ws/matches`);
+      socketRef.current = socket;
+ 
       socket.onopen = () => {
+        console.log("[WS] Connected successfully!");
         attempt = 0;
         setStatus("live");
-        subscribe();
         resetHeartbeat();
+        sendSubscribe();
       };
       socket.onmessage = (event) => {
         resetHeartbeat();
         const message = parseRealtimeMessage(event.data);
         if (!message) return;
         if (message.type === "heartbeat") return;
+        console.log("[WS] Received message:", message);
         const currentMatches = matchesRef.current;
         if (!currentMatches || !shouldProcessMatchEvent(message)) return;
         if (selectedDateRef.current === todayRef.current && needsRefetchForEvent(currentMatches, message)) {
+          console.log("[WS] Version mismatch, scheduling full refresh:", { message, matchesCount: currentMatches.length });
           scheduleRefresh();
           return;
         }
+        console.log("[WS] Patching match version:", message.match_id, "to", message.version);
         onPatchRef.current(patchMatchVersion(currentMatches, message));
       };
-      socket.onerror = () => setStatus("offline");
-      socket.onclose = () => {
+      socket.onerror = (err) => {
+        console.error("[WS] WebSocket error:", err);
         setStatus("offline");
+      };
+      socket.onclose = (evt) => {
+        console.warn("[WS] WebSocket closed:", { code: evt.code, reason: evt.reason, wasClean: evt.wasClean });
+        setStatus("offline");
+        socketRef.current = null;
         if (!active) return;
         attempt += 1;
         const backoff = Math.min(10_000, 500 * (2 ** attempt));
         const jitter = Math.round(Math.random() * 250);
+        console.log(`[WS] Reconnecting in ${backoff + jitter}ms...`);
         reconnectTimer = window.setTimeout(connect, backoff + jitter);
       };
     };
-
+ 
     connect();
-
+ 
     return () => {
+      console.log("[WS] Tearing down connection...");
       active = false;
       if (heartbeatTimer != null) window.clearTimeout(heartbeatTimer);
       if (reconnectTimer != null) window.clearTimeout(reconnectTimer);
@@ -120,9 +133,14 @@ export function usePredictorSocket({
         window.clearTimeout(refreshTimer.current);
         refreshTimer.current = null;
       }
-      socket?.close();
+      socketRef.current?.close();
     };
-  }, [visibleMatchIdsStr, selectedMatchId, scheduleRefresh]);
-
+  }, [scheduleRefresh, sendSubscribe]);
+ 
+  // Dynamic Subscription Effect (Updates subscriptions without reconnecting the socket)
+  React.useEffect(() => {
+    sendSubscribe();
+  }, [sendSubscribe]);
+ 
   return status;
 }
