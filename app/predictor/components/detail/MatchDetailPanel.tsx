@@ -1,10 +1,10 @@
 "use client";
 
-import { BarChart3, ClipboardList, LineChart, ListTree, Swords, X } from "lucide-react";
+import { BarChart3, ClipboardList, LineChart, ListTree, Loader2, Sparkles, Swords, X } from "lucide-react";
 import * as React from "react";
-import { fetchMatchDetail } from "../../client";
+import { fetchMatchDetail, predictMatch, predictionErrorMessage } from "../../client";
 import { isLive } from "../../board";
-import type { MatchDetail, Match } from "../../types";
+import type { MatchDetail, Match, Prediction } from "../../types";
 import { DetailHeader } from "./DetailHeader";
 import { HeadToHead } from "./HeadToHead";
 import { Lineups } from "./Lineups";
@@ -14,6 +14,8 @@ import { Timeline } from "./Timeline";
 
 type PanelMatch = Match;
 type PanelPrediction = {
+  model_version?: string;
+  created_at?: string;
   p_home?: number | null;
   p_draw?: number | null;
   p_away?: number | null;
@@ -25,6 +27,8 @@ type PanelPrediction = {
 };
 type PanelOdds = {
   bookmaker?: string | null;
+  captured_at?: string;
+  is_closing?: boolean;
   home_win?: number | null;
   draw?: number | null;
   away_win?: number | null;
@@ -46,10 +50,48 @@ const TABS: { key: DetailTab; label: string; icon: React.ComponentType<{ classNa
 
 const pct = (p: number | null | undefined) => p == null ? "-" : `${Math.round(p * 100)}%`;
 const odd = (v: number | null | undefined) => v == null ? "-" : v.toFixed(2);
+const timestamp = (value: string | null | undefined) => value
+  ? new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })
+  : null;
 
-function PredictionSummary({ prediction }: { prediction: PanelPrediction | null }) {
+function PredictButton({ hasPrediction, predicting, canPredict, onPredict }: {
+  hasPrediction: boolean;
+  predicting: boolean;
+  canPredict: boolean;
+  onPredict: () => void;
+}) {
+  if (!canPredict) return null;
+  return (
+    <button onClick={onPredict} disabled={predicting}
+      className="flex items-center gap-1.5 rounded-md border border-border bg-background/60 px-2.5 py-1.5 font-data text-[11px] uppercase tracking-wide text-foreground hover:bg-secondary disabled:opacity-60">
+      {predicting
+        ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        : <Sparkles className="h-3.5 w-3.5" />}
+      {predicting ? "Predicting…" : hasPrediction ? "Refresh prediction" : "Predict"}
+    </button>
+  );
+}
+
+function PredictionSummary({ prediction, predicting, predictError, canPredict, onPredict }: {
+  prediction: PanelPrediction | null;
+  predicting: boolean;
+  predictError: string | null;
+  canPredict: boolean;
+  onPredict: () => void;
+}) {
   if (!prediction) {
-    return <p className="rounded-lg border border-dashed border-border p-3 text-sm text-muted-foreground">Prediction pending for this match.</p>;
+    return (
+      <section className="mb-4 rounded-lg border border-dashed border-border p-3">
+        <div className="flex items-center justify-between gap-2">
+          <p className="text-sm text-muted-foreground">
+            {canPredict ? "No prediction yet for this match." : "Prediction pending for this match."}
+          </p>
+          <PredictButton hasPrediction={false} predicting={predicting}
+            canPredict={canPredict} onPredict={onPredict} />
+        </div>
+        {predictError && <p className="mt-2 text-xs text-destructive">{predictError}</p>}
+      </section>
+    );
   }
   const outcomes = [
     ["1", prediction.p_home],
@@ -58,7 +100,18 @@ function PredictionSummary({ prediction }: { prediction: PanelPrediction | null 
   ] as const;
   return (
     <section className="mb-4 rounded-xl border border-border bg-secondary/30 p-3">
-      <h3 className="mb-2 font-display text-sm font-semibold uppercase tracking-wide text-muted-foreground">Model probability</h3>
+      <div className="mb-2 flex items-center justify-between gap-2">
+        <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-muted-foreground">Model probability</h3>
+        <PredictButton hasPrediction predicting={predicting}
+          canPredict={canPredict} onPredict={onPredict} />
+      </div>
+      {predictError && <p className="mb-2 text-xs text-destructive">{predictError}</p>}
+      {(prediction.model_version || prediction.created_at) && (
+        <p className="mb-2 font-data text-[10px] text-muted-foreground">
+          {prediction.model_version ?? "Prediction"}
+          {prediction.created_at ? ` · generated ${timestamp(prediction.created_at)}` : ""}
+        </p>
+      )}
       <div className="grid grid-cols-3 gap-2">
         {outcomes.map(([label, value]) => (
           <div key={label} className="rounded-md border border-border bg-background/50 px-2 py-2 text-center">
@@ -109,8 +162,13 @@ function OddsSummary({ odds }: { odds: PanelOdds | null }) {
     <section className="mb-4">
       <div className="mb-2 flex items-center justify-between">
         <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-muted-foreground">Market odds</h3>
-        <span className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">{odds.bookmaker ?? "bookmaker"}</span>
+        <span className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">
+          {odds.bookmaker ?? "bookmaker"}{odds.is_closing ? " · closing" : ""}
+        </span>
       </div>
+      {odds.captured_at && (
+        <p className="mb-2 font-data text-[10px] text-muted-foreground">Captured {timestamp(odds.captured_at)}</p>
+      )}
       <div className="grid grid-cols-3 gap-2">
         {cells.map(([label, value]) => (
           <div key={label} className="rounded-md border border-border bg-secondary/35 px-2 py-2 text-center">
@@ -123,10 +181,17 @@ function OddsSummary({ odds }: { odds: PanelOdds | null }) {
   );
 }
 
-export function MatchDetailPanel({ matchId, onClose }: { matchId: number; onClose: () => void }) {
+export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
+  matchId: number;
+  onClose: () => void;
+  onPrediction?: (matchId: number, prediction: Prediction) => void;
+}) {
   const [detail, setDetail] = React.useState<MatchDetail | null>(null);
   const [error, setError] = React.useState(false);
   const [tab, setTab] = React.useState<DetailTab>("summary");
+  const [predictionOverride, setPredictionOverride] = React.useState<PanelPrediction | null>(null);
+  const [predicting, setPredicting] = React.useState(false);
+  const [predictError, setPredictError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     let active = true;
@@ -155,6 +220,9 @@ export function MatchDetailPanel({ matchId, onClose }: { matchId: number; onClos
 
     setDetail(null);
     setError(false);
+    setPredictionOverride(null);
+    setPredicting(false);
+    setPredictError(null);
     load();
 
     return () => {
@@ -164,8 +232,26 @@ export function MatchDetailPanel({ matchId, onClose }: { matchId: number; onClos
   }, [matchId]);
 
   const m = detail?.match as PanelMatch | undefined;
-  const prediction = (detail?.prediction ?? null) as PanelPrediction | null;
+  const prediction = (predictionOverride ?? detail?.prediction ?? null) as PanelPrediction | null;
   const odds = (detail?.odds ?? null) as PanelOdds | null;
+  const canPredict = m?.status === "NS";
+  const hasPrediction = prediction != null;
+
+  const handlePredict = React.useCallback(async () => {
+    setPredicting(true);
+    setPredictError(null);
+    try {
+      // A refresh revalidates with the server. The backend remains
+      // idempotent and may reuse the result while its inputs are unchanged.
+      const fresh = await predictMatch(matchId, { force: hasPrediction });
+      setPredictionOverride(fresh as PanelPrediction);
+      onPrediction?.(matchId, fresh);
+    } catch (predictFailure) {
+      setPredictError(predictionErrorMessage(predictFailure));
+    } finally {
+      setPredicting(false);
+    }
+  }, [matchId, hasPrediction, onPrediction]);
   return (
     <div className="flex h-full flex-col">
       <button onClick={onClose} aria-label="Close details"
@@ -177,6 +263,11 @@ export function MatchDetailPanel({ matchId, onClose }: { matchId: number; onClos
       {detail && (
         <div className="overflow-y-auto">
           <DetailHeader detail={detail} />
+          <div className="-mt-2 mb-4 flex flex-wrap gap-x-2 gap-y-1 font-data text-[10px] uppercase tracking-wide text-muted-foreground">
+            <span>Source: {m?.source ?? "unknown"}</span>
+            {m?.provider_updated_at && <span>Feed: {timestamp(m.provider_updated_at)}</span>}
+            {detail.detail_fetched_at && <span>Details: {timestamp(detail.detail_fetched_at)}</span>}
+          </div>
           <div className="sticky top-0 z-10 mb-4 flex gap-1 overflow-x-auto border-b border-border bg-card/95 pb-2 backdrop-blur">
             {TABS.map((item) => {
               const Icon = item.icon;
@@ -194,7 +285,9 @@ export function MatchDetailPanel({ matchId, onClose }: { matchId: number; onClos
           </div>
           {tab === "summary" && (
             <>
-              <PredictionSummary prediction={prediction} />
+              <PredictionSummary prediction={prediction} predicting={predicting}
+                predictError={predictError} canPredict={canPredict}
+                onPredict={handlePredict} />
               <Timeline incidents={detail.incidents} />
               <TeamForm home={detail.home_form} away={detail.away_form}
                 homeName={m?.home_team?.name ?? ""} awayName={m?.away_team?.name ?? ""} />

@@ -49,6 +49,12 @@ export function needsRefetchForEvent(
   return message.version !== current + 1;
 }
 
+/** Odds and prediction events only carry identity/version metadata, not the
+ * nested board objects. REST remains the source of truth for those updates. */
+export function eventNeedsSnapshot(message: MatchEventMessage): boolean {
+  return message.type === "odds.updated" || message.type === "prediction.updated";
+}
+
 export function patchMatchVersion(matches: Match[], message: MatchEventMessage): Match[] {
   return matches.map((match) =>
     match.id === message.match_id ? { ...match, ...(message.changes || {}), version: message.version } : match,

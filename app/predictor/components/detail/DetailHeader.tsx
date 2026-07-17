@@ -1,12 +1,15 @@
 import * as React from "react";
 
 import { crestUrl } from "../../apiBase";
+import { isFinished, isLive } from "../../board";
 import type { MatchDetail } from "../../detail";
 
 type DetailTeam = { api_team_id: number; name: string; logo_url?: string | null };
 type DetailMatch = {
   home_team: DetailTeam; away_team: DetailTeam;
   home_goals: number | null; away_goals: number | null;
+  kickoff_utc: string;
+  status: string;
 };
 
 function initialsFor(name: string) {
@@ -40,6 +43,7 @@ function TeamCrest({ team }: { team: DetailTeam }) {
 
 export function DetailHeader({ detail }: { detail: MatchDetail }) {
   const m = detail.match as DetailMatch;
+  const hasScore = isLive(m.status) || isFinished(m.status);
   const Side = ({ team }: { team: DetailTeam }) => (
     <div className="flex flex-1 flex-col items-center gap-1 text-center">
       <TeamCrest team={team} />
@@ -49,8 +53,19 @@ export function DetailHeader({ detail }: { detail: MatchDetail }) {
   return (
     <div className="mb-4 flex items-center justify-between gap-3 border-b border-border pb-4">
       <Side team={m.home_team} />
-      <div className="font-data text-2xl font-bold tabular-nums">
-        {m.home_goals ?? 0}–{m.away_goals ?? 0}
+      <div className="min-w-16 text-center font-data tabular-nums">
+        {hasScore ? (
+          <div className="text-2xl font-bold">{m.home_goals ?? 0}–{m.away_goals ?? 0}</div>
+        ) : (
+          <>
+            <div className="text-lg font-bold">
+              {new Date(m.kickoff_utc).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
+            </div>
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              {new Date(m.kickoff_utc).toLocaleDateString(undefined, { day: "numeric", month: "short" })}
+            </div>
+          </>
+        )}
       </div>
       <Side team={m.away_team} />
     </div>

@@ -599,14 +599,17 @@ export default function PredictorPage() {
     [competitions],
   );
   const wsStatus = usePredictorSocket({
-    selectedDate,
-    today,
     visibleMatchIds,
     selectedMatchId,
     matches,
     onPatch: setMatches,
     onRefreshDay: () => loadDay(selectedDate),
   });
+  const applyPrediction = React.useCallback((matchId: number, prediction: Prediction) => {
+    setMatches((current) => current?.map((match) =>
+      match.id === matchId ? { ...match, prediction } : match,
+    ) ?? null);
+  }, []);
   const toggleQuickFilter = React.useCallback((filter: QuickFilter) => {
     setQuickFilters((prev) => {
       const next = new Set(prev);
@@ -635,8 +638,8 @@ export default function PredictorPage() {
           Matchday board
         </h1>
         <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-          Live fixtures and bookmaker prices from Sofascore, goal and corners
-          probabilities from a time-weighted Poisson model. Not betting advice.
+          Live fixtures, bookmaker prices, and server-generated goal and corner
+          probabilities. Analytics only—not betting advice.
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 font-data text-xs text-muted-foreground">
           {wsStatus === "live" ? (
@@ -743,7 +746,7 @@ export default function PredictorPage() {
 
         <aside className="sticky top-24 hidden max-h-[calc(100vh-7rem)] overflow-hidden rounded-xl border border-border bg-card p-4 lg:block">
           {selectedMatchId
-            ? <MatchDetailPanel matchId={selectedMatchId} onClose={() => {
+            ? <MatchDetailPanel matchId={selectedMatchId} onPrediction={applyPrediction} onClose={() => {
               setSelectedMatchId(null);
               router.replace("/predictor", { scroll: false });
             }} />
@@ -753,7 +756,7 @@ export default function PredictorPage() {
 
       {selectedMatchId != null && (
         <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background p-4 lg:hidden">
-          <MatchDetailPanel matchId={selectedMatchId} onClose={() => {
+          <MatchDetailPanel matchId={selectedMatchId} onPrediction={applyPrediction} onClose={() => {
             setSelectedMatchId(null);
             router.replace("/predictor", { scroll: false });
           }} />
@@ -761,7 +764,7 @@ export default function PredictorPage() {
       )}
 
       <footer className="mt-12 border-t border-border pt-4 text-xs text-muted-foreground">
-        Built on a FastAPI + PostgreSQL Poisson model, fed by Sofascore.{" "}
+        FastAPI + PostgreSQL football analytics, with provider-attributed fixtures and odds.{" "}
         <a className="underline underline-offset-2 hover:text-foreground" href="https://hulsambath.me">
           ← back to hulsambath.me
         </a>

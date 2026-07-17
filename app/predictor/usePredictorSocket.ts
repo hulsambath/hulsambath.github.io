@@ -3,22 +3,18 @@
 import * as React from "react";
 
 import { wsBase } from "./apiBase";
-import { needsRefetchForEvent, parseRealtimeMessage, patchMatchVersion, shouldProcessMatchEvent } from "./realtime";
+import { eventNeedsSnapshot, needsRefetchForEvent, parseRealtimeMessage, patchMatchVersion, shouldProcessMatchEvent } from "./realtime";
 import type { Match } from "./types";
 
 type WsStatus = "live" | "connecting" | "offline";
 
 export function usePredictorSocket({
-  selectedDate,
-  today,
   visibleMatchIds,
   selectedMatchId,
   matches,
   onPatch,
   onRefreshDay,
 }: {
-  selectedDate: string;
-  today: string;
   visibleMatchIds: number[];
   selectedMatchId: number | null;
   matches: Match[] | null;
@@ -37,10 +33,6 @@ export function usePredictorSocket({
   onPatchRef.current = onPatch;
   const onRefreshDayRef = React.useRef(onRefreshDay);
   onRefreshDayRef.current = onRefreshDay;
-  const selectedDateRef = React.useRef(selectedDate);
-  selectedDateRef.current = selectedDate;
-  const todayRef = React.useRef(today);
-  todayRef.current = today;
  
   const scheduleRefresh = React.useCallback(() => {
     if (refreshTimer.current != null) return;
@@ -122,8 +114,9 @@ export function usePredictorSocket({
         console.log("[WS] Received message:", message);
         const currentMatches = matchesRef.current;
         if (!currentMatches || !shouldProcessMatchEvent(message)) return;
-        if (selectedDateRef.current === todayRef.current && needsRefetchForEvent(currentMatches, message)) {
-          console.log("[WS] Version mismatch, scheduling full refresh:", { message, matchesCount: currentMatches.length });
+        const matchIsVisible = currentMatches.some((match) => match.id === message.match_id);
+        if (matchIsVisible && (eventNeedsSnapshot(message) || needsRefetchForEvent(currentMatches, message))) {
+          console.log("[WS] Snapshot required, scheduling refresh:", { message, matchesCount: currentMatches.length });
           scheduleRefresh();
           return;
         }

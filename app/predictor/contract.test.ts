@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import byDate from "./fixtures/by-date.json";
-import { matchVersionMap, needsRefetchForEvent, patchMatchVersion, shouldRefreshSelectedDay } from "./realtime";
+import { eventNeedsSnapshot, matchVersionMap, needsRefetchForEvent, patchMatchVersion, shouldRefreshSelectedDay } from "./realtime";
 
 describe("predictor API contract fixture", () => {
   it("keeps the board fields consumed by the portal", () => {
@@ -47,5 +47,8 @@ describe("WebSocket v2 invalidation contract", () => {
     expect(needsRefetchForEvent(matches, message)).toBe(false);
     expect(patchMatchVersion(matches, message)[0]?.version).toBe(4);
     expect(needsRefetchForEvent(matches, { type: "match.updated", match_id: matchId, version: 6 })).toBe(true);
+    expect(eventNeedsSnapshot({ type: "prediction.updated", match_id: matchId, version: 4 })).toBe(true);
+    expect(eventNeedsSnapshot({ type: "odds.updated", match_id: matchId, version: 4 })).toBe(true);
+    expect(eventNeedsSnapshot({ type: "score.updated", match_id: matchId, version: 4 })).toBe(false);
   });
 });
