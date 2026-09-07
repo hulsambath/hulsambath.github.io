@@ -273,12 +273,12 @@ export default function App() {
 
                   {/* Blueprint chassis */}
                   <div className="relative rounded-3xl border border-border/80 bg-card/90 backdrop-blur-xl p-4 sm:p-5 shadow-2xl transition-all duration-500 hover:border-primary/50 group">
-                    {/* Technical header bar */}
-                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-border/50 font-mono text-[11px] text-muted-foreground">
+                    {/* Header bar */}
+                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-border/50 text-[11px] text-muted-foreground">
                       <div className="flex items-center gap-2">
                         <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="font-semibold tracking-wider text-foreground">
-                          DOSSIER // SE-01
+                        <span className="font-semibold text-foreground">
+                          {site.author.title}
                         </span>
                       </div>
                       <span className="px-2 py-0.5 rounded bg-muted/80 text-muted-foreground text-[10px] font-medium tracking-wide">
