@@ -116,31 +116,255 @@ export default function App() {
         {/* Hero Section */}
         <section
           id="home"
-          className="relative flex min-h-[90vh] flex-col items-center justify-center px-6 pt-24 pb-16"
+          className="relative flex min-h-[92vh] flex-col justify-center px-6 pt-24 pb-16 overflow-hidden"
         >
+          {/* Subtle grid background */}
           <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-          <div className="mx-auto max-w-3xl text-center space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl md:text-7xl">
-                Hi, I'm <span className="text-primary">{site.author.name}</span>
-              </h1>
-              <p className="mx-auto max-w-2xl text-lg text-muted-foreground sm:text-xl">
-                {site.author.title} passionate about building exceptional
-                software — from mobile and web apps to developer tooling — with
-                clean architecture and beautiful design.
-              </p>
+
+          <div className="mx-auto max-w-6xl w-full">
+            <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+              {/* Left Column: Headline, Value Prop & Actions */}
+              <div className="lg:col-span-7 space-y-6 text-left">
+                {/* Live Status Badge */}
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-primary/25 bg-primary/10 text-primary text-xs font-semibold tracking-wide backdrop-blur-sm shadow-sm">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                  </span>
+                  <span>Available for Engineering Roles • Phnom Penh, KH</span>
+                </div>
+
+                <div className="space-y-3">
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-foreground">
+                    Hi, I'm{" "}
+                    <span className="bg-gradient-to-r from-primary via-amber-500 to-orange-400 bg-clip-text text-transparent">
+                      {site.author.name}
+                    </span>
+                  </h1>
+                  <p className="text-xl sm:text-2xl font-semibold text-foreground/90 tracking-tight">
+                    Mobile & Applied AI Software Engineer
+                  </p>
+                </div>
+
+                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
+                  Specializing in high-performance{" "}
+                  <strong className="text-foreground font-medium">Flutter</strong>{" "}
+                  mobile architectures, on-device{" "}
+                  <strong className="text-foreground font-medium">
+                    Edge AI (TensorFlow Lite)
+                  </strong>
+                  , and resilient full-stack backends. Shipped 4+ production apps
+                  across travel super-apps, live event voting, and ophthalmic
+                  healthcare.
+                </p>
+
+                {/* Actions & Social Links */}
+                <div className="flex flex-wrap items-center gap-4 pt-2">
+                  <Button
+                    size="lg"
+                    onClick={() => scrollToSection("projects")}
+                    className="font-semibold shadow-md gap-2"
+                  >
+                    <span>Explore Projects</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M5 12h14" />
+                      <path d="m12 5 7 7-7 7" />
+                    </svg>
+                  </Button>
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    onClick={handleDownloadResume}
+                    className="font-semibold gap-2 border-border/80 hover:bg-muted/60"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" x2="12" y1="15" y2="3" />
+                    </svg>
+                    <span>Download CV</span>
+                  </Button>
+
+                  {/* Micro Social Icons */}
+                  <div className="flex items-center gap-2 pl-1">
+                    <a
+                      href={site.author.social.github}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="GitHub"
+                      className="p-2.5 rounded-lg border border-border/60 text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-card transition-colors"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                      </svg>
+                    </a>
+                    <a
+                      href={site.author.social.linkedin}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label="LinkedIn"
+                      className="p-2.5 rounded-lg border border-border/60 text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-card transition-colors"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                      </svg>
+                    </a>
+                    <a
+                      href={`mailto:${site.author.email}`}
+                      aria-label="Email"
+                      className="p-2.5 rounded-lg border border-border/60 text-muted-foreground hover:text-foreground hover:border-primary/50 hover:bg-card transition-colors"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <rect width="20" height="16" x="2" y="4" rx="2" />
+                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: The Engineer Dossier Portrait Card */}
+              <div className="lg:col-span-5 flex justify-center">
+                <div className="relative mx-auto w-full max-w-sm sm:max-w-md">
+                  {/* Ambient glowing backlight */}
+                  <div className="absolute -inset-2 rounded-3xl bg-gradient-to-tr from-primary/35 via-amber-500/25 to-orange-500/15 blur-3xl opacity-70 pointer-events-none" />
+
+                  {/* Blueprint chassis */}
+                  <div className="relative rounded-3xl border border-border/80 bg-card/90 backdrop-blur-xl p-4 sm:p-5 shadow-2xl transition-all duration-500 hover:border-primary/50 group">
+                    {/* Technical header bar */}
+                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-border/50 font-mono text-[11px] text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="font-semibold tracking-wider text-foreground">
+                          DOSSIER // SE-01
+                        </span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded bg-muted/80 text-muted-foreground text-[10px] font-medium tracking-wide">
+                        CADT '25
+                      </span>
+                    </div>
+
+                    {/* Studio Portrait Container with corner crosshairs */}
+                    <div className="relative rounded-2xl overflow-hidden bg-muted/40 aspect-[4/5] border border-border/60">
+                      {/* Corner crosshairs */}
+                      <span className="absolute top-2 left-2 text-[11px] font-mono text-foreground/40 z-10 select-none">
+                        +
+                      </span>
+                      <span className="absolute top-2 right-2 text-[11px] font-mono text-foreground/40 z-10 select-none">
+                        +
+                      </span>
+                      <span className="absolute bottom-2 left-2 text-[11px] font-mono text-foreground/40 z-10 select-none">
+                        +
+                      </span>
+                      <span className="absolute bottom-2 right-2 text-[11px] font-mono text-foreground/40 z-10 select-none">
+                        +
+                      </span>
+
+                      <img
+                        src="/assets/sambath_portrait.jpg"
+                        alt={site.author.name}
+                        className="w-full h-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.025]"
+                      />
+
+                      {/* Subtle bottom gradient to blend badges */}
+                      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/90 via-background/40 to-transparent pointer-events-none" />
+
+                      {/* Floating Badge 1: Bottom Left */}
+                      <div className="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-background/90 backdrop-blur-md border border-border/80 shadow-md text-xs font-semibold">
+                        <span className="text-sm">📱</span>
+                        <span className="tracking-tight text-foreground">
+                          4+ Store Apps
+                        </span>
+                      </div>
+
+                      {/* Floating Badge 2: Bottom Right */}
+                      <div className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-background/90 backdrop-blur-md border border-border/80 shadow-md text-xs font-semibold">
+                        <span className="text-sm">🔬</span>
+                        <span className="tracking-tight text-foreground">
+                          Edge AI (TFLite)
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Technical footer strip */}
+                    <div className="flex items-center justify-between pt-3 mt-3 border-t border-border/50 font-mono text-[10px] text-muted-foreground/80">
+                      <span>11.5564° N, 104.9282° E</span>
+                      <span className="text-primary font-medium tracking-wide">
+                        PHNOM PENH, KH
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button size="lg" onClick={() => scrollToSection("projects")}>
-                View My Work
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={handleDownloadResume}
-              >
-                Download Resume
-              </Button>
+
+            {/* Quick Stats Metric Strip */}
+            <div className="mt-16 w-full grid grid-cols-2 sm:grid-cols-4 gap-4 p-3 sm:p-4 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md shadow-sm">
+              {[
+                { label: "Production Dart LOC", value: "208K+", icon: "💻" },
+                { label: "Live Store Apps", value: "4 Apps", icon: "🚀" },
+                { label: "Target OS Platforms", value: "6 OS", icon: "🌐" },
+                { label: "Edge AI Diagnosis", value: "100% Offline", icon: "⚡" },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted/40 transition-colors"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-lg shrink-0">
+                    {stat.icon}
+                  </div>
+                  <div>
+                    <div className="font-bold text-lg text-foreground tracking-tight">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs text-muted-foreground font-medium">
+                      {stat.label}
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </section>
