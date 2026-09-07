@@ -345,7 +345,7 @@ export default function App() {
               {[
                 { label: "Hands-on Experience", value: "3 Years", icon: "⏱️" },
                 { label: "Apps Built & Shipped", value: "8 Apps", icon: "🚀" },
-                { label: "Production Dart LOC", value: "208K+", icon: "💻" },
+                { label: "Target OS Platforms", value: "6 OS", icon: "🌐" },
                 { label: "Edge AI Diagnosis", value: "100% Offline", icon: "⚡" },
               ].map((stat) => (
                 <div

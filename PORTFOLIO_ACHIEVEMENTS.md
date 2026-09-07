@@ -9,7 +9,6 @@ _Compiled 2026-06-10 for Sambath HUL (hulsambath14@gmail.com), Phnom Penh, Cambo
 | Production apps built/maintained | **8** (+ 1 shared package) |
 | Operator brands you shipped to stores | **2** — iBus, BS Bus Cambodia |
 | Total Dart source files | **~2,100+** |
-| Total Dart lines of code (lib only) | **~208,000+** |
 | Platform targets covered | Android, iOS, Web, macOS, Windows, Linux (6 OS) |
 | Your tracked commits across repos | **~431+** |
 | Experience span | **3 Years (2023 – 2026)** |
@@ -24,7 +23,7 @@ plus a **live TV-show voting / vendor app** and **developer tooling**.
 
 The flagship consumer-facing travel booking app for the BookMeBus platform.
 
-- **Scale:** 622 Dart files · ~60,100 LOC · 81 dependencies · **80 screen modules**
+- **Scale:** 622 Dart files · 81 dependencies · **80 screen modules**
 - **Platforms:** Android, iOS, Web
 - **Booking verticals:** bus, ferry, hotel, airport transfer, private taxi
   (includes the **`bxpress`** sub-brand with its own networking/provider stack)
@@ -47,7 +46,7 @@ brands, but **the two you personally built and released to production are:**
 
 Details:
 
-- **Scale:** 560 Dart files · ~52,700 LOC · 51 dependencies · 21 screen modules
+- **Scale:** 560 Dart files · 51 dependencies · 21 screen modules
 - **Platforms:** Android, iOS
 - **Engineering highlight:** flavor-based build system + per-brand theming;
   contributed to the **React Native → Flutter migration**
@@ -59,7 +58,7 @@ Details:
 Multi-tenant vendor app; the live tenant is **Hang Meas**, a TV-show voting &
 event-ticketing app (largest codebase in the workspace).
 
-- **Scale:** 564 Dart files · ~70,500 LOC · 85 dependencies — **the biggest app**
+- **Scale:** 564 Dart files · 85 dependencies — **the biggest app**
 - **Platforms:** Android, iOS, Web, macOS, Windows, Linux (**6 targets**)
 - **Notable features:** YouTube **live-stream** integration with viewer count,
   **interactive vote tap-counter**, event & show details, ticketing, top-up
@@ -77,7 +76,7 @@ Includes documented **performance-optimization** work
 (`OUDONG_EXPRESS_PERFORMANCE_IMPROVEMENTS.md`).
 
 ### Shared `core` package
-`cm-market-vendor-app/packages/core/` — 360 Dart files · ~25,400 LOC of reusable
+`cm-market-vendor-app/packages/core/` — 360 Dart files of reusable
 HTTP clients, models, services and extensions powering every tenant.
 
 ## 5. VisionCareAI Detect & Consult — Full-Stack AI Healthcare Platform
@@ -149,8 +148,5 @@ High-fidelity entertainment streaming application recreating the Netflix mobile 
   Flutter codebase.
 - Integrated **payments (ABA), in-app purchases, social login, push
   notifications, and privacy-compliance** flows.
-- Sole/primary maintainer of a **70K-LOC** app with **358 commits** over ~20 months.
+- Sole/primary author and maintainer with **358 commits** over ~20 months.
 
-> Note on metrics: LOC figures count Dart source under each app's `lib/`
-> (excludes generated `*.g.dart` build artifacts, tests, and platform folders),
-> so they reflect hand-written application code.

@@ -179,7 +179,7 @@ export const site = {
       title: "Oudong Express",
       image: "/assets/oudong_icon.jpg",
       description:
-        "A branded passenger transport operator app proving out the multi-tenant white-label architecture, sharing a common core package with dedicated prod/staging flavors and Firebase configs. Includes documented performance-optimization work across the shared 25K-LOC reusable core of HTTP clients, models, and services.",
+        "A branded passenger transport operator app proving out the multi-tenant white-label architecture, sharing a common core package with dedicated prod/staging flavors and Firebase configs. Includes documented performance-optimization work across the shared reusable core package of HTTP clients, models, and services.",
       tech: ["Flutter", "Dart", "MVVM", "Firebase", "Multi-tenant"],
       demoUrl: null,
       sourceUrl: null,
@@ -337,7 +337,7 @@ export const site = {
       bullets: [
         "Ship and maintain BookMeBus, a multi-vertical travel super-app (bus, ferry, hotel, airport transfer, private taxi) with ABA PayWay payments, live chat, coupons, and multi-language support across 80+ screen modules",
         "Built and shipped 4 production mobile apps at BMB: Hang Meas (live TV voting & event streaming), Oudong Express, iBus, and BS Bus Cambodia from a flavor-based white-label Flutter architecture",
-        "Contributed to the production React Native → Flutter migration of the operator platform and optimized reusable core packages across 25K+ LOC",
+        "Contributed to the production React Native → Flutter migration of the operator platform and optimized reusable shared core packages",
         "Architected observable, testable mobile code using MVVM + Repository pattern, push notifications, and store privacy-compliance flows",
         "Created test cases, conducted QA, and managed production releases to the Google Play Store and Apple App Store",
       ],
