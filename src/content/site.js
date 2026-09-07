@@ -219,13 +219,16 @@ export const site = {
     {
       icon: "🌾",
       title: "CAO Farm Book",
+      image: "/assets/caofarmbook_icon.jpg",
       description:
         "Agricultural farm management and record-keeping mobile application built with Flutter. Enables farmers and agricultural operators to log crop growth cycles, manage livestock records, monitor operational expenses, and synchronize field data with backend APIs.",
       tech: ["Flutter", "Dart", "REST API", "SQLite", "Provider"],
       demoUrl: null,
       sourceUrl: null,
-      playStoreUrl: null,
-      appStoreUrl: null,
+      playStoreUrl:
+        "https://play.google.com/store/apps/details?id=com.cammob.cao.farmbook",
+      appStoreUrl:
+        "https://apps.apple.com/kh/app/cao-farmbook-app/id6499300018",
       company: "CamMob Co., Ltd.",
     },
     {

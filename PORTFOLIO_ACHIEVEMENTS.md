@@ -100,7 +100,7 @@ Digital record-keeping and agricultural tracking mobile application designed for
 
 - **Stack:** Flutter, Dart, RESTful APIs, Local Caching & Sync
 - **Key Features:** Crop cycle logging, financial & yield accounting, field activity scheduling, and offline-first mobile operations for rural connectivity environments
-- **Impact:** Shipped to Google Play Store and Apple App Store, digitizing traditional paper-based farm management
+- **Impact:** Shipped to [Google Play Store](https://play.google.com/store/apps/details?id=com.cammob.cao.farmbook) and [Apple App Store](https://apps.apple.com/kh/app/cao-farmbook-app/id6499300018), digitizing traditional paper-based farm management
 
 ## 7. Trovara — Travel Discovery & Trip Planning
 `trovara-app` · Flutter + Firebase · Personal Project

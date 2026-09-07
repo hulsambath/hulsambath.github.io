@@ -112,6 +112,8 @@ A branded operator app (the `bstransport` flavor) released to production from th
 ### CAO Farm Book — CamMob Co., Ltd.
 Agricultural farm management and record-keeping mobile application built with Flutter. Enables farmers and agricultural operators to log crop growth cycles, manage livestock records, monitor operational expenses, and synchronize field data with backend APIs.
   - Tech: Flutter, Dart, REST API, SQLite, Provider
+  - Play Store: https://play.google.com/store/apps/details?id=com.cammob.cao.farmbook
+  - App Store: https://apps.apple.com/kh/app/cao-farmbook-app/id6499300018
 
 ### VisionCareAI Detect & Consult — School Project (CADT Capstone)
 Full-stack ophthalmic diagnostic and teleconsultation platform featuring a dual-stage ML pipeline (DenseNet disease classification + binary eye verification) with OpenCV CLAHE enhancement. Built with a hybrid inference engine combining cloud REST APIs and on-device TFLite fallback for offline operation, backed by a Laravel 11 Sanctum API and a Cupertino-styled Flutter mobile app with bilingual Khmer/English support.
