@@ -7,7 +7,7 @@ _Compiled 2026-06-10 for Sambath HUL (hulsambath14@gmail.com), Phnom Penh, Cambo
 | Metric | Value |
 |---|---|
 | Production apps built/maintained | **8** (+ 1 shared package) |
-| Operator brands you shipped to stores | **2** — iBus, BS Bus Cambodia |
+| Operator brands you shipped to stores | **2** — iBUS, BS Bus Cambodia |
 | Total Dart source files | **~2,100+** |
 | Platform targets covered | Android, iOS, Web, macOS, Windows, Linux (6 OS) |
 | Your tracked commits across repos | **~431+** |
@@ -39,7 +39,7 @@ A single Flutter codebase with a flavor-based build system that targets multiple
 branded operator apps (bus & ferry themes). The repo contains entrypoints for 10
 brands, but **the two you personally built and released to production are:**
 
-- **iBus** — own configs, signing key, asset set, Android source set, and a run
+- **iBUS** — own configs, signing key, asset set, Android source set, and a run
   of dedicated feature branches (search-trip UI, departure-date scrolling, app
   adjustments)
 - **BS Bus Cambodia** — the `bstransport` flavor (`appName: 'BS Bus Cambodia'`)
@@ -134,7 +134,7 @@ High-fidelity entertainment streaming application recreating the Netflix mobile 
 ## Engineering Themes (for resume bullets)
 
 - Architected and maintained **multi-tenant / white-label Flutter platforms**;
-  on the operator platform, built and **released 2 branded apps (iBus & BS Bus
+  on the operator platform, built and **released 2 branded apps (iBUS & BS Bus
   Cambodia)** from a shared flavor-based codebase.
 - Engineered **hybrid Edge + Cloud AI mobile architectures** with offline on-device
   TFLite fallback and dual-stage computer vision pipelines for healthcare diagnostics.

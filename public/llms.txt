@@ -14,14 +14,14 @@
 
 ## Projects
 - [HangMeas App](https://play.google.com/store/apps/details?id=com.hangmeas.app): An all-in-one entertainment & live-voting platform — YouTube live-stream integration with real-time viewer counts, an interactive vote tap-counter for national TV shows (Got Talent, The Voice Cambodia), event & show details, ticketing, in-app vote top-up, social login, and maps.
-- [Oudong Express](https://play.google.com/store/apps/details?id=com.oudongexpress.app): A branded passenger transport operator app proving out the multi-tenant white-label architecture, sharing a common core package with dedicated prod/staging flavors and Firebase configs.
-- [iBus](https://play.google.com/store/apps/details?id=com.bookmebus.ibus): A branded bus operator app built and released to production from a shared white-label Flutter codebase with a flavor-based build system.
-- [BS Bus Cambodia](https://play.google.com/store/apps/details?id=com.bookmebus.bstransport): A branded operator app (the `bstransport` flavor) released to production from the same shared white-label Flutter codebase, with its own theme, configs, and assets.
+- [Oudong Express](https://play.google.com/store/apps/details?id=com.oudongexpress.app): Get flexibility of rental options from daily, weekly, monthly, yearly with or without driver.
+- [iBUS](https://play.google.com/store/apps/details?id=com.bookmebus.ibus): iBUS offers safe, comfortable, and fast trips from Phnom Penh to Siem Reap.
+- [BS Bus Cambodia](https://play.google.com/store/apps/details?id=com.bookmebus.bstransport): BS Bus Cambodia is equipped with First-Class seating, VIP restrooms, a refreshing and comfortable atmosphere, safe driving, punctual departure times, hygienic meals/snacks, and full passenger insurance.
 - [CAO Farm Book](https://play.google.com/store/apps/details?id=com.cammob.cao.farmbook): Agricultural farm management and record-keeping mobile application built with Flutter.
 - [VisionCareAI Detect & Consult](https://github.com/LengTech11/VisionCareAI-Detect-Consult): Full-stack ophthalmic diagnostic and teleconsultation platform featuring a dual-stage ML pipeline (DenseNet disease classification + binary eye verification) with OpenCV CLAHE enhancement.
 - [Trovara](https://photos.app.goo.gl/6zSm1oMRhwm6ByxFA): AI-powered personal notes app with a full RAG pipeline for semantic chat over your notes — vector search, query rewriting, and multi-LLM support (Gemini / OpenAI / OpenRouter).
 - [Netflix Clone](https://github.com/hulsambath/netflex_api): Feature-rich mobile entertainment streaming interface built with Flutter.
-- [BookMeBus Super-App](https://play.google.com/store/apps/details?id=com.bookmebus.bookmebus): Flagship consumer travel super-app covering five booking verticals — bus, ferry, hotel, airport transfer, and private taxi — across 80+ screen modules.
+- [BookMeBus Super-App](https://play.google.com/store/apps/details?id=com.bookmebus.bookmebus): Leading bus, ferry, and private taxi ticketing portal in Cambodia and Southeast Asia, connecting travelers with over 40 bus operators across Cambodia, Vietnam, Laos, and Thailand for simple, safe, and secure online bookings.
 - [Developer Tooling](https://hulsambath.github.io): AI-assisted development infrastructure: a Dockerized Node.js MCP (Model Context Protocol) HTTP bridge server, a published VS Code extension for copying file references, plus custom Claude Code skills, hooks, and style-guide automation (MVVM, Repository pattern, i18n, tests) across the monorepos.
 - [Portfolio Website](https://github.com/hulsambath/hulsambath.github.io): Modern, responsive portfolio website built with React and Tailwind CSS.
 

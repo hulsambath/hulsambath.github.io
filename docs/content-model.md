@@ -63,9 +63,9 @@ Each button only renders when its URL is a non-null, non-`"#"` value, so a card
 with all store/source/demo URLs null shows no action buttons. Button order in the
 card: Play Store → App Store → Source → Demo.
 
-Current projects (order = display order): BookMeBus, iBus, BS Bus Cambodia,
+Current projects (order = display order): BookMeBus, iBUS, BS Bus Cambodia,
 HangMeas App, Trovara, Oudong Express, Developer Tooling, Portfolio Website.
-(iBus and BS Bus Cambodia are separate cards — both shipped from the shared
+(iBUS and BS Bus Cambodia are separate cards — both shipped from the shared
 white-label operator codebase.)
 
 > Store URLs (`playStoreUrl` / `appStoreUrl`) are present as `null` placeholders

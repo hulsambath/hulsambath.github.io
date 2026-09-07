@@ -179,7 +179,7 @@ export const site = {
       title: "Oudong Express",
       image: "/assets/oudong_icon.jpg",
       description:
-        "A branded passenger transport operator app proving out the multi-tenant white-label architecture, sharing a common core package with dedicated prod/staging flavors and Firebase configs. Includes documented performance-optimization work across the shared reusable core package of HTTP clients, models, and services.",
+        "Get flexibility of rental options from daily, weekly, monthly, yearly with or without driver.",
       tech: ["Flutter", "Dart", "MVVM", "Firebase", "Multi-tenant"],
       demoUrl: null,
       sourceUrl: null,
@@ -190,10 +190,10 @@ export const site = {
     },
     {
       icon: "🚍",
-      title: "iBus",
+      title: "iBUS",
       image: "/assets/ibus_icon.jpg",
       description:
-        "A branded bus operator app built and released to production from a shared white-label Flutter codebase with a flavor-based build system. Owns its configs, signing key, theme, and Android source set, with dedicated feature work (search-trip UI, departure-date scrolling). Built on the React Native → Flutter migration of the operator platform.",
+        "iBUS offers safe, comfortable, and fast trips from Phnom Penh to Siem Reap. Travel in style with VIP Galaxy Vibe buses featuring spacious seats, reliable schedules, and easy online booking.",
       tech: ["Flutter", "Dart", "Flavors", "Firebase", "CI/CD"],
       demoUrl: null,
       sourceUrl: null,
@@ -207,7 +207,7 @@ export const site = {
       title: "BS Bus Cambodia",
       image: "/assets/bsbus_icon.jpg",
       description:
-        "A branded operator app (the `bstransport` flavor) released to production from the same shared white-label Flutter codebase, with its own theme, configs, and assets. Part of the operator platform’s flavor-based multi-brand build system.",
+        "BS Bus Cambodia is equipped with First-Class seating, VIP restrooms, a refreshing and comfortable atmosphere, safe driving, punctual departure times, hygienic meals/snacks, and full passenger insurance.",
       tech: ["Flutter", "Dart", "Flavors", "Firebase"],
       demoUrl: null,
       sourceUrl: null,
@@ -300,7 +300,7 @@ export const site = {
       title: "BookMeBus Super-App",
       image: "/assets/bookmebus_icon.jpg",
       description:
-        "Flagship consumer travel super-app covering five booking verticals — bus, ferry, hotel, airport transfer, and private taxi — across 80+ screen modules. Features ABA PayWay payments, live chat & customer service, coupon/promo codes, multi-language, push notifications, booking & transaction history, and privacy-compliance flows.",
+        "Leading bus, ferry, and private taxi ticketing portal in Cambodia and Southeast Asia, connecting travelers with over 40 bus operators across Cambodia, Vietnam, Laos, and Thailand for simple, safe, and secure online bookings.",
       tech: ["Flutter", "Dart", "ABA PayWay", "Firebase", "Provider"],
       demoUrl: null,
       sourceUrl: null,
@@ -339,7 +339,7 @@ export const site = {
       period: "June 2024 – Present",
       bullets: [
         "Ship and maintain BookMeBus, a multi-vertical travel super-app (bus, ferry, hotel, airport transfer, private taxi) with ABA PayWay payments, live chat, coupons, and multi-language support across 80+ screen modules",
-        "Built and shipped 4 production mobile apps at BMB: Hang Meas (live TV voting & event streaming), Oudong Express, iBus, and BS Bus Cambodia from a flavor-based white-label Flutter architecture",
+        "Built and shipped 4 production mobile apps at BMB: Hang Meas (live TV voting & event streaming), Oudong Express, iBUS, and BS Bus Cambodia from a flavor-based white-label Flutter architecture",
         "Contributed to the production React Native → Flutter migration of the operator platform and optimized reusable shared core packages",
         "Architected observable, testable mobile code using MVVM + Repository pattern, push notifications, and store privacy-compliance flows",
         "Created test cases, conducted QA, and managed production releases to the Google Play Store and Apple App Store",
