@@ -18,7 +18,7 @@ plus a **live TV-show voting / vendor app** and **developer tooling**.
 
 ---
 
-## 1. BookMeBus — Consumer Travel Super-App
+## 1. BookMeBus — Consumer Travel App
 `bookmebus-flutter/` · Flutter · v9.3.8
 
 The flagship consumer-facing travel booking app for the BookMeBus platform.

@@ -297,7 +297,7 @@ export const site = {
     },
     {
       icon: "🚌",
-      title: "BookMeBus Super-App",
+      title: "BookMeBus",
       image: "/assets/bookmebus_icon.jpg",
       description:
         "Leading bus, ferry, and private taxi ticketing portal in Cambodia and Southeast Asia, connecting travelers with over 40 bus operators across Cambodia, Vietnam, Laos, and Thailand for simple, safe, and secure online bookings.",
@@ -338,7 +338,7 @@ export const site = {
       companyUrl: "https://bookmebus.com/en/about_us",
       period: "June 2024 – Present",
       bullets: [
-        "Ship and maintain BookMeBus, a multi-vertical travel super-app (bus, ferry, hotel, airport transfer, private taxi) with ABA PayWay payments, live chat, coupons, and multi-language support across 80+ screen modules",
+        "Ship and maintain BookMeBus, a multi-vertical travel app (bus, ferry, hotel, airport transfer, private taxi) with ABA PayWay payments, live chat, coupons, and multi-language support across 80+ screen modules",
         "Built and shipped 4 production mobile apps at BMB: Hang Meas (live TV voting & event streaming), Oudong Express, iBUS, and BS Bus Cambodia from a flavor-based white-label Flutter architecture",
         "Contributed to the production React Native → Flutter migration of the operator platform and optimized reusable shared core packages",
         "Architected observable, testable mobile code using MVVM + Repository pattern, push notifications, and store privacy-compliance flows",

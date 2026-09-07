@@ -56,7 +56,7 @@ Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 3 years o
 ## Experience
 ### Software Engineer (Mobile) — BookMeBus Co., Ltd. (https://bookmebus.com/en/about_us)
 June 2024 – Present
-- Ship and maintain BookMeBus, a multi-vertical travel super-app (bus, ferry, hotel, airport transfer, private taxi) with ABA PayWay payments, live chat, coupons, and multi-language support across 80+ screen modules
+- Ship and maintain BookMeBus, a multi-vertical travel app (bus, ferry, hotel, airport transfer, private taxi) with ABA PayWay payments, live chat, coupons, and multi-language support across 80+ screen modules
 - Built and shipped 4 production mobile apps at BMB: Hang Meas (live TV voting & event streaming), Oudong Express, iBUS, and BS Bus Cambodia from a flavor-based white-label Flutter architecture
 - Contributed to the production React Native → Flutter migration of the operator platform and optimized reusable shared core packages
 - Architected observable, testable mobile code using MVVM + Repository pattern, push notifications, and store privacy-compliance flows
@@ -130,7 +130,7 @@ Feature-rich mobile entertainment streaming interface built with Flutter. Integr
   - Tech: Flutter, Dart, REST API, CachedNetworkImage, Lottie, CarouselSlider
   - Source: https://github.com/hulsambath/netflex_api
 
-### BookMeBus Super-App — BookMeBus Co., Ltd.
+### BookMeBus — BookMeBus Co., Ltd.
 Leading bus, ferry, and private taxi ticketing portal in Cambodia and Southeast Asia, connecting travelers with over 40 bus operators across Cambodia, Vietnam, Laos, and Thailand for simple, safe, and secure online bookings.
   - Tech: Flutter, Dart, ABA PayWay, Firebase, Provider
   - Play Store: https://play.google.com/store/apps/details?id=com.bookmebus.bookmebus
