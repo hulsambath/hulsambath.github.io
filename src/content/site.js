@@ -253,6 +253,28 @@ export const site = {
       company: "Company Project",
     },
     {
+      icon: "🏥",
+      title: "VisionCareAI Detect & Consult",
+      image: "/assets/visioncareai_icon.png",
+      description:
+        "Full-stack ophthalmic diagnostic and teleconsultation platform featuring a dual-stage ML pipeline (DenseNet disease classification + binary eye verification) with OpenCV CLAHE enhancement. Built with a hybrid inference engine combining cloud REST APIs and on-device TFLite fallback for offline operation, backed by a Laravel 11 Sanctum API and a Cupertino-styled Flutter mobile app with bilingual Khmer/English support.",
+      tech: [
+        "Flutter",
+        "Dart",
+        "TensorFlow Lite",
+        "Python / Flask",
+        "OpenCV",
+        "Laravel 11",
+        "Sanctum",
+        "Provider",
+      ],
+      demoUrl: null,
+      sourceUrl: "https://github.com/LengTech11/VisionCareAI-Detect-Consult",
+      playStoreUrl: null,
+      appStoreUrl: null,
+      company: "Healthcare Project",
+    },
+    {
       icon: "🛠️",
       title: "Developer Tooling",
       description:
@@ -285,6 +307,20 @@ export const site = {
         "Set up projects using MVVM + Repository architecture with a clean, observable, testable code structure; integrated push notifications and privacy-compliance flows",
         "Delivered cross-platform apps spanning up to 6 OS targets from one Flutter codebase, with code-gen pipelines and full i18n",
         "Created test cases, performed QA, and released apps to the Google Play Store",
+      ],
+    },
+    {
+      initials: "VC",
+      role: "Lead Full-Stack & ML Mobile Engineer",
+      company: "VisionCareAI (Healthcare Platform)",
+      companyUrl: "https://github.com/LengTech11/VisionCareAI-Detect-Consult",
+      period: "2024 – 2025",
+      bullets: [
+        "Architected an end-to-end AI healthcare mobile ecosystem combining Flutter 3.38+, Laravel 11 API, and a Python Flask ML microservice",
+        "Engineered a hybrid AI inference architecture (OnDeviceAiService) that queries cloud APIs when connected and falls back to on-device TFLite models for seamless offline diagnosis",
+        "Integrated a dual-stage vision pipeline featuring CLAHE (Contrast Limited Adaptive Histogram Equalization) preprocessing, binary eye verification, and 5-class DenseNet ophthalmic classification",
+        "Built a production-ready Laravel 11 RESTful backend featuring Sanctum bearer token auth, layered Service-Controller architecture, 18 database migrations, and localized Cambodian doctor/clinic seed data",
+        "Designed an iOS Cupertino-first mobile UI with bilingual Khmer/English i18n, zero-overflow typography, photo picker/camera workflows, and dynamic local network host auto-discovery",
       ],
     },
     {

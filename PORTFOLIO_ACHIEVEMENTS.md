@@ -80,6 +80,20 @@ Includes documented **performance-optimization** work
 `cm-market-vendor-app/packages/core/` — 360 Dart files · ~25,400 LOC of reusable
 HTTP clients, models, services and extensions powering every tenant.
 
+## 5. VisionCareAI Detect & Consult — Full-Stack AI Healthcare Platform
+`VisionCareAI-Detect-Consult/` · Flutter + Laravel + Python TFLite
+
+An end-to-end ophthalmic disease detection, doctor consultation, and appointment booking system.
+
+- **Stack:** Flutter 3.38+ (Dart 3.10+), Laravel 11.22+ (PHP 8.3+), Python 3.13 Flask ML microservice, TensorFlow Lite
+- **Dual-Model Vision Pipeline:**
+  - `Eye_or_noteye.tflite`: Binary classification to filter non-eye images with automated retake UX
+  - `DenseNet.tflite`: 5-class disease classification (Diabetic Retinopathy, Glaucoma, Cataract, AMD, Normal)
+  - Preprocessing: OpenCV CLAHE (Contrast Limited Adaptive Histogram Equalization) on LAB color space
+- **Hybrid Edge + Cloud Inference:** `OnDeviceAiService` queries online Flask endpoints when connected and falls back seamlessly to on-device TFLite models for 100% offline edge diagnostic resilience
+- **Backend Architecture:** Layered Service-Repository pattern, Sanctum token authentication, 18 database migrations, standardized JSON `ApiResponse` trait, and Cambodian healthcare seeders (`CambodianDataSeeder`)
+- **Mobile UX & Tooling:** Cupertino-first design system with Khmer/English i18n, zero-overflow typography, dynamic local network host discovery (`AppConfig`), and unified service management CLI (`manage_backend_ml.sh`)
+
 ---
 
 ## Developer Tooling & Infrastructure
@@ -98,6 +112,10 @@ HTTP clients, models, services and extensions powering every tenant.
 - Architected and maintained **multi-tenant / white-label Flutter platforms**;
   on the operator platform, built and **released 2 branded apps (iBus & BS Bus
   Cambodia)** from a shared flavor-based codebase.
+- Engineered **hybrid Edge + Cloud AI mobile architectures** with offline on-device
+  TFLite fallback and dual-stage computer vision pipelines for healthcare diagnostics.
+- Built production-ready **Laravel 11 RESTful APIs** with Sanctum authentication,
+  layered service architecture, and automated database migrations.
 - Contributed to the **React Native → Flutter migration** of a production B2B
   operator app.
 - Built **real-time features**: YouTube live streaming, live viewer counts, and
