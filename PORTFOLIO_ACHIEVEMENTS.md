@@ -6,13 +6,13 @@ _Compiled 2026-06-10 for Sambath HUL (hulsambath14@gmail.com), Phnom Penh, Cambo
 
 | Metric | Value |
 |---|---|
-| Production apps built/maintained | **4** (+ 1 shared package) |
+| Production apps built/maintained | **8** (+ 1 shared package) |
 | Operator brands you shipped to stores | **2** — iBus, BS Bus Cambodia |
-| Total Dart source files | **~2,100** |
-| Total Dart lines of code (lib only) | **~208,000** |
-| Platform targets covered | Android, iOS, Web, macOS, Windows, Linux |
-| Your tracked commits across repos | **~431** |
-| Active span | **Oct 2024 – Jun 2026** |
+| Total Dart source files | **~2,100+** |
+| Total Dart lines of code (lib only) | **~208,000+** |
+| Platform targets covered | Android, iOS, Web, macOS, Windows, Linux (6 OS) |
+| Your tracked commits across repos | **~431+** |
+| Experience span | **3 Years (2023 – 2026)** |
 
 Primary domain: **mobile transportation, ticketing & booking platforms** (Flutter),
 plus a **live TV-show voting / vendor app** and **developer tooling**.
@@ -93,6 +93,31 @@ An end-to-end ophthalmic disease detection, doctor consultation, and appointment
 - **Hybrid Edge + Cloud Inference:** `OnDeviceAiService` queries online Flask endpoints when connected and falls back seamlessly to on-device TFLite models for 100% offline edge diagnostic resilience
 - **Backend Architecture:** Layered Service-Repository pattern, Sanctum token authentication, 18 database migrations, standardized JSON `ApiResponse` trait, and Cambodian healthcare seeders (`CambodianDataSeeder`)
 - **Mobile UX & Tooling:** Cupertino-first design system with Khmer/English i18n, zero-overflow typography, dynamic local network host discovery (`AppConfig`), and unified service management CLI (`manage_backend_ml.sh`)
+
+## 6. CAO Farm Book — Agricultural Management & Tracking
+`cammob/cao-farm-book` · Flutter + REST API · CamMob
+
+Digital record-keeping and agricultural tracking mobile application designed for farmers and agricultural managers.
+
+- **Stack:** Flutter, Dart, RESTful APIs, Local Caching & Sync
+- **Key Features:** Crop cycle logging, financial & yield accounting, field activity scheduling, and offline-first mobile operations for rural connectivity environments
+- **Impact:** Shipped to Google Play Store and Apple App Store, digitizing traditional paper-based farm management
+
+## 7. Trovara — Travel Discovery & Trip Planning
+`trovara-app` · Flutter + Firebase · Personal Project
+
+Modern travel exploration and personalized itinerary planning mobile application.
+
+- **Stack:** Flutter, Firebase Auth, Firestore, Google Maps API, Material 3
+- **Key Features:** Interactive trip planners, destination curation, interactive maps, bookmarking, and collaborative itinerary sharing
+
+## 8. Netflix Clone — Streaming UI Architecture & Media Catalog
+`netflex_api/` · Flutter + TMDB REST API · Personal Project
+
+High-fidelity entertainment streaming application recreating the Netflix mobile experience.
+
+- **Stack:** Flutter, Dart, TMDB REST API, Video Player, Shimmer Loading
+- **Key Features:** Dynamic category carousels, responsive video player integration, multi-genre filtering, fast search with debounce, and custom theme matching Netflix design specifications
 
 ---
 

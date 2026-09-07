@@ -1,6 +1,6 @@
 # Sambath HUL — Software Engineer
 
-> Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 2+ years of hands-on experience designing, building, and shipping production software — primarily cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. He has built and released multiple apps to the Google Play Store and Apple App Store, including white-label / multi-tenant platforms, and works with an MVVM + Repository architecture, full internationalization (English/Khmer), and CI/CD automation. This file is a structured, plain-text representation of his portfolio (https://hulsambath.github.io) for AI agents and LLMs.
+> Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 3 years of hands-on experience designing, building, and shipping production software — primarily cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. He has built and shipped 8 apps across enterprise travel, media voting, agricultural tech, and healthcare AI, releasing to the Google Play Store and Apple App Store, and works with an MVVM + Repository architecture, full internationalization (English/Khmer), and CI/CD automation. This file is a structured, plain-text representation of his portfolio (https://hulsambath.github.io) for AI agents and LLMs.
 
 - Name: Sambath HUL
 - Title: Software Engineer
@@ -13,11 +13,11 @@
 - X (Twitter): https://x.com/hul_sambath
 
 ## Summary
-Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 2+ years of hands-on experience designing, building, and shipping production software — primarily cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. He has built and released multiple apps to the Google Play Store and Apple App Store, including white-label / multi-tenant platforms, and works with an MVVM + Repository architecture, full internationalization (English/Khmer), and CI/CD automation.
+Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 3 years of hands-on experience designing, building, and shipping production software — primarily cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. He has built and shipped 8 apps across enterprise travel, media voting, agricultural tech, and healthcare AI, releasing to the Google Play Store and Apple App Store, and works with an MVVM + Repository architecture, full internationalization (English/Khmer), and CI/CD automation.
 
 ## Highlights
-- 2+ Years Experience
-- 4 Production Apps
+- 3 Years Experience
+- 8 Apps Built & Shipped
 - 6 Platform Targets
 
 ## Education
@@ -57,12 +57,12 @@ Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 2+ years 
 ### Software Engineer (Mobile) — BookMeBus Co., Ltd. (https://bookmebus.com/en/about_us)
 June 2024 – Present
 - Ship and maintain BookMeBus, a multi-vertical travel super-app (bus, ferry, hotel, airport transfer, private taxi) with ABA PayWay payments, live chat, coupons, and multi-language support across 80+ screen modules
-- Built and released two branded operator apps — iBus and BS Bus Cambodia — from a single flavor-based white-label Flutter codebase, and contributed to the React Native → Flutter migration
-- Set up projects using MVVM + Repository architecture with a clean, observable, testable code structure; integrated push notifications and privacy-compliance flows
-- Delivered cross-platform apps spanning up to 6 OS targets from one Flutter codebase, with code-gen pipelines and full i18n
-- Created test cases, performed QA, and released apps to the Google Play Store
+- Built and shipped 4 production mobile apps at BMB: Hang Meas (live TV voting & event streaming), Oudong Express, iBus, and BS Bus Cambodia from a flavor-based white-label Flutter architecture
+- Contributed to the production React Native → Flutter migration of the operator platform and optimized reusable core packages across 25K+ LOC
+- Architected observable, testable mobile code using MVVM + Repository pattern, push notifications, and store privacy-compliance flows
+- Created test cases, conducted QA, and managed production releases to the Google Play Store and Apple App Store
 
-### Lead Full-Stack & ML Mobile Engineer — VisionCareAI (Healthcare Platform) (https://github.com/LengTech11/VisionCareAI-Detect-Consult)
+### Lead Full-Stack & ML Mobile Engineer — VisionCareAI (School Project / CADT Capstone) (https://github.com/LengTech11/VisionCareAI-Detect-Consult)
 2024 – 2025
 - Architected an end-to-end AI healthcare mobile ecosystem combining Flutter 3.38+, Laravel 11 API, and a Python Flask ML microservice
 - Engineered a hybrid AI inference architecture (OnDeviceAiService) that queries cloud APIs when connected and falls back to on-device TFLite models for seamless offline diagnosis
@@ -72,24 +72,30 @@ June 2024 – Present
 
 ### Flutter Developer Intern — CamMob Co., Ltd. (https://www.cam-mob.com/)
 January 2024 – April 2024
-- Assisted in building Flutter mobile applications in a collaborative environment
-- Worked with senior developers on state management, API integration, and UI improvements
-- Improved teamwork, debugging, and development workflows through hands-on mentorship
+- Developed CAO Farm Book, an agricultural farm management mobile application in Flutter for field data logging, crop tracking, and livestock records
+- Worked with senior developers on state management, SQLite offline data caching, REST API integration, and responsive mobile UI improvements
+- Practiced collaborative Agile workflows, code reviews, and cross-functional team debugging
 
-### Software Engineer - Trovara — Personal Project
-2023 - Present
-- Architected and developed Trovara, an AI-powered cross-platform notes app with MVVM + Repository pattern and offline-first ObjectBox storage
-- Built a full RAG pipeline for semantic chat over notes — vector search, query rewriting, and multi-LLM support (Gemini / OpenAI / OpenRouter)
-- Implemented a knowledge graph linking related notes, quiz generation, and an Insights analytics tab; added imports from Obsidian, Notion, and Storypad
-- Delivered bidirectional Google Drive sync with conflict resolution, English/Khmer i18n, and a Pro tier with Google Play billing
-- Set up Shorebird OTA updates and a CI/CD pipeline with automated builds and credential management using SOPS
+### Software Engineer (Mobile & AI) — Personal Projects (Trovara & Netflix Clone)
+2023 – Present
+- Architected and shipped Trovara, an AI-powered cross-platform notes app with MVVM + Repository pattern, offline-first ObjectBox storage, and a full RAG semantic vector search pipeline
+- Built a Flutter Netflix Clone streaming interface integrating TMDb RESTful APIs, high-performance image caching, dynamic carousels, and trailer preview playback
+- Implemented bidirectional Google Drive sync with conflict resolution, knowledge graphs, and quiz generation from user notes
+- Integrated Google Play in-app purchases, bilingual Khmer/English i18n, Shorebird OTA updates, and automated CI/CD pipelines
 
 ## Projects
-### BookMeBus — BookMeBus Co., Ltd.
-Flagship consumer travel super-app covering five booking verticals — bus, ferry, hotel, airport transfer, and private taxi — across 80+ screen modules. Features ABA PayWay payments, live chat & customer service, coupon/promo codes, multi-language, push notifications, booking & transaction history, and privacy-compliance flows.
-  - Tech: Flutter, Dart, ABA PayWay, Firebase, Provider
-  - Play Store: https://play.google.com/store/apps/details?id=com.bookmebus.bookmebus
-  - App Store: https://apps.apple.com/in/app/bookmebus-bus-ferry-and-taxi/id1101077306
+### HangMeas App — BookMeBus Co., Ltd.
+An all-in-one entertainment & live-voting platform — YouTube live-stream integration with real-time viewer counts, an interactive vote tap-counter for national TV shows (Got Talent, The Voice Cambodia), event & show details, ticketing, in-app vote top-up, social login, and maps. Primary author/maintainer (358 commits) across 6 platform targets on a multi-tenant MVVM monorepo.
+  - Tech: Flutter, Dart, Firebase, YouTube Live, In-App Purchase, MVVM
+  - Play Store: https://play.google.com/store/apps/details?id=com.hangmeas.app
+  - App Store: https://apps.apple.com/in/app/hang-meas-mobile/id6748306637
+  - Demo: https://youtube.com/watch?v=PtlsVe9Ljvk
+
+### Oudong Express — BookMeBus Co., Ltd.
+A branded passenger transport operator app proving out the multi-tenant white-label architecture, sharing a common core package with dedicated prod/staging flavors and Firebase configs. Includes documented performance-optimization work across the shared 25K-LOC reusable core of HTTP clients, models, and services.
+  - Tech: Flutter, Dart, MVVM, Firebase, Multi-tenant
+  - Play Store: https://play.google.com/store/apps/details?id=com.oudongexpress.app
+  - App Store: https://apps.apple.com/us/app/oudong-express/id6761469150
 
 ### iBus — BookMeBus Co., Ltd.
 A branded bus operator app built and released to production from a shared white-label Flutter codebase with a flavor-based build system. Owns its configs, signing key, theme, and Android source set, with dedicated feature work (search-trip UI, departure-date scrolling). Built on the React Native → Flutter migration of the operator platform.
@@ -103,28 +109,30 @@ A branded operator app (the `bstransport` flavor) released to production from th
   - Play Store: https://play.google.com/store/apps/details?id=com.bookmebus.bstransport
   - App Store: https://apps.apple.com/in/app/bs-bus-cambodia/id6754649294
 
-### HangMeas App — Company Project
-An all-in-one entertainment & live-voting platform — YouTube live-stream integration with real-time viewer counts, an interactive vote tap-counter for national TV shows (Got Talent, The Voice Cambodia), event & show details, ticketing, in-app vote top-up, social login, and maps. Primary author/maintainer (358 commits) across 6 platform targets on a multi-tenant MVVM monorepo.
-  - Tech: Flutter, Dart, Firebase, YouTube Live, In-App Purchase, MVVM
-  - Play Store: https://play.google.com/store/apps/details?id=com.hangmeas.app
-  - App Store: https://apps.apple.com/in/app/hang-meas-mobile/id6748306637
-  - Demo: https://youtube.com/watch?v=PtlsVe9Ljvk
+### CAO Farm Book — CamMob Co., Ltd.
+Agricultural farm management and record-keeping mobile application built with Flutter. Enables farmers and agricultural operators to log crop growth cycles, manage livestock records, monitor operational expenses, and synchronize field data with backend APIs.
+  - Tech: Flutter, Dart, REST API, SQLite, Provider
 
-### Trovara
+### VisionCareAI Detect & Consult — School Project (CADT Capstone)
+Full-stack ophthalmic diagnostic and teleconsultation platform featuring a dual-stage ML pipeline (DenseNet disease classification + binary eye verification) with OpenCV CLAHE enhancement. Built with a hybrid inference engine combining cloud REST APIs and on-device TFLite fallback for offline operation, backed by a Laravel 11 Sanctum API and a Cupertino-styled Flutter mobile app with bilingual Khmer/English support.
+  - Tech: Flutter, Dart, TensorFlow Lite, Python / Flask, OpenCV, Laravel 11, Sanctum, Provider
+  - Source: https://github.com/LengTech11/VisionCareAI-Detect-Consult
+
+### Trovara — Personal Project
 AI-powered personal notes app with a full RAG pipeline for semantic chat over your notes — vector search, query rewriting, and multi-LLM support (Gemini / OpenAI / OpenRouter). Builds a knowledge graph linking related notes, generates quizzes from your content, and surfaces analytics in an Insights tab. Imports from Obsidian, Notion, and Storypad; bidirectional Google Drive sync; offline-first ObjectBox storage; English/Khmer i18n; and a Pro tier with Google Play billing. Built with MVVM and Shorebird OTA updates.
   - Tech: Flutter, Dart, ObjectBox, RAG, Knowledge Graph, Google Drive API, In-App Purchase, MVVM
   - Demo: https://photos.app.goo.gl/6zSm1oMRhwm6ByxFA
 
-### Oudong Express — Company Project
-A second tenant proving out the multi-tenant white-label architecture, sharing a common core package with dedicated prod/staging flavors and Firebase configs. Includes documented performance-optimization work across the shared 25K-LOC reusable core of HTTP clients, models, and services.
-  - Tech: Flutter, Dart, MVVM, Firebase, Multi-tenant
-  - Play Store: https://play.google.com/store/apps/details?id=com.oudongexpress.app
-  - App Store: https://apps.apple.com/us/app/oudong-express/id6761469150
+### Netflix Clone — Personal Project
+Feature-rich mobile entertainment streaming interface built with Flutter. Integrates TMDb RESTful APIs for trending movie discovery, category carousels, detailed synopsis modals, high-resolution poster caching, and video trailer playback.
+  - Tech: Flutter, Dart, REST API, CachedNetworkImage, Lottie, CarouselSlider
+  - Source: https://github.com/hulsambath/netflex_api
 
-### VisionCareAI Detect & Consult — Healthcare Project
-Full-stack ophthalmic diagnostic and teleconsultation platform featuring a dual-stage ML pipeline (DenseNet disease classification + binary eye verification) with OpenCV CLAHE enhancement. Built with a hybrid inference engine combining cloud REST APIs and on-device TFLite fallback for offline operation, backed by a Laravel 11 Sanctum API and a Cupertino-styled Flutter mobile app with bilingual Khmer/English support.
-  - Tech: Flutter, Dart, TensorFlow Lite, Python / Flask, OpenCV, Laravel 11, Sanctum, Provider
-  - Source: https://github.com/LengTech11/VisionCareAI-Detect-Consult
+### BookMeBus Super-App — BookMeBus Co., Ltd.
+Flagship consumer travel super-app covering five booking verticals — bus, ferry, hotel, airport transfer, and private taxi — across 80+ screen modules. Features ABA PayWay payments, live chat & customer service, coupon/promo codes, multi-language, push notifications, booking & transaction history, and privacy-compliance flows.
+  - Tech: Flutter, Dart, ABA PayWay, Firebase, Provider
+  - Play Store: https://play.google.com/store/apps/details?id=com.bookmebus.bookmebus
+  - App Store: https://apps.apple.com/in/app/bookmebus-bus-ferry-and-taxi/id1101077306
 
 ### Developer Tooling
 AI-assisted development infrastructure: a Dockerized Node.js MCP (Model Context Protocol) HTTP bridge server, a published VS Code extension for copying file references, plus custom Claude Code skills, hooks, and style-guide automation (MVVM, Repository pattern, i18n, tests) across the monorepos.

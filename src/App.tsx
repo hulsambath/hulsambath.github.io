@@ -153,9 +153,9 @@ export default function App() {
                   <strong className="text-foreground font-medium">
                     Edge AI (TensorFlow Lite)
                   </strong>
-                  , and resilient full-stack backends. Shipped 4+ production apps
-                  across travel super-apps, live event voting, and ophthalmic
-                  healthcare.
+                  , and resilient full-stack backends. Shipped & developed 8 apps
+                  across enterprise travel, media voting, agricultural tech, and
+                  ophthalmic healthcare.
                 </p>
 
                 {/* Actions & Social Links */}
@@ -315,7 +315,7 @@ export default function App() {
                       <div className="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-background/90 backdrop-blur-md border border-border/80 shadow-md text-xs font-semibold">
                         <span className="text-sm">📱</span>
                         <span className="tracking-tight text-foreground">
-                          4+ Store Apps
+                          8 Apps Built
                         </span>
                       </div>
 
@@ -343,9 +343,9 @@ export default function App() {
             {/* Quick Stats Metric Strip */}
             <div className="mt-16 w-full grid grid-cols-2 sm:grid-cols-4 gap-4 p-3 sm:p-4 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md shadow-sm">
               {[
+                { label: "Hands-on Experience", value: "3 Years", icon: "⏱️" },
+                { label: "Apps Built & Shipped", value: "8 Apps", icon: "🚀" },
                 { label: "Production Dart LOC", value: "208K+", icon: "💻" },
-                { label: "Live Store Apps", value: "4 Apps", icon: "🚀" },
-                { label: "Target OS Platforms", value: "6 OS", icon: "🌐" },
                 { label: "Edge AI Diagnosis", value: "100% Offline", icon: "⚡" },
               ].map((stat) => (
                 <div
@@ -401,7 +401,7 @@ export default function App() {
                 <p>
                   I have{" "}
                   <strong className="text-foreground">
-                    2+ years of hands-on experience
+                    3 years of hands-on experience
                   </strong>{" "}
                   designing, building, and shipping production software — from
                   cross-platform mobile apps with Flutter and Firebase to web
