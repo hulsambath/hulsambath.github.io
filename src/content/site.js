@@ -398,7 +398,7 @@ export const site = {
       issuedDate: "November 24, 2025",
       signatory: "President of the Scientific Board",
       verificationUrl:
-        "https://verify.gov.kh/verify/izC4l0BmDNOTbZdvzAxa5FaXPztdNcN?key=1e2b0a933763e5c59f6a9c04f8660ee5110f6da282cf69f04189f567f1fcb1a4",
+        "https://verify.gov.kh/verify/izC4l0B_mDNOTbZdvzAxa5FaXPztdNcN?key=1e2b0a933763e5c59f6a9c04f8660ee5110f6da282cf69f04189f567f1fcb1a4",
       image: "/assets/documents/cadt_bachelor_degree.jpg",
       description:
         "Four-year specialized degree in Software Engineering. Digitally signed and cryptographically verifiable on the National Digital Government Committee verification platform (verify.gov.kh).",
