@@ -75,6 +75,16 @@ white-label operator codebase.)
 ### `experience`
 Timeline entries: `{ initials, role, company, companyUrl, period, bullets[] }`.
 
+### `credentials`
+Array of verified credentials & institutional proof. Each entry:
+`{ id, title, issuer, issuerUrl, category, badge, certificateNo, awardedDate, issuedDate, signatory, verificationUrl, image, description }`.
+- `image`: Web-optimized certificate preview under `/assets/documents/*.jpg`.
+- `verificationUrl`: Optional official cryptographic verification link (e.g. `https://verify.gov.kh/...`).
+- Rendered in `#credentials` with high-resolution lightbox inspection.
+
+### `supportingDocumentsBundle`
+`{ title, filename, url, pages, size }` for the official 4-page submission dossier (`/Sambath_HUL_Supporting_Documents.pdf`).
+
 ### `testimonials`
 `{ quote, author, role }`. **Currently placeholder/sample data** — review before
 relying on it publicly.

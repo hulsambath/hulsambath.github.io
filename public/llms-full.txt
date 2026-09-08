@@ -145,5 +145,28 @@ Modern, responsive portfolio website built with React and Tailwind CSS. Features
   - Tech: React, Tailwind CSS, Vite, GitHub Actions
   - Source: https://github.com/hulsambath/hulsambath.github.io
 
+## Verified Credentials & Supporting Documents
+> Official submission dossier: https://hulsambath.github.io/Sambath_HUL_Supporting_Documents.pdf (4 pages, 1.0 MB PDF)
+
+### Bachelor of Computer Science (Software Engineering) — Cambodia Academy of Digital Technology (CADT)
+- Category: Academic Degree
+- Certificate/Ref No: 0574/IDT
+- Issued: November 24, 2025
+- Signatory: President of the Scientific Board
+- Verification (Official Digital Gov Platform): https://verify.gov.kh/verify/izC4l0BmDNOTbZdvzAxa5FaXPztdNcN?key=1e2b0a933763e5c59f6a9c04f8660ee5110f6da282cf69f04189f567f1fcb1a4
+- Description: Four-year specialized degree in Software Engineering. Digitally signed and cryptographically verifiable on the National Digital Government Committee verification platform (verify.gov.kh).
+
+### Certificate of Appreciation — BookMeBus Co., Ltd. / BookMe+
+- Category: Industry Recognition
+- Issued: May 30, 2025
+- Signatory: LY Channa, Chief Technology Officer
+- Description: Presented by BookMeBus executive leadership in recognition of dedication, technical excellence, and impactful contributions across the company's production mobile platforms and business ventures.
+
+### Certificate of Completion — Flutter Mobile Development — Institute of Science and Technology Advanced Development (ISTAD)
+- Category: Professional Certification
+- Issued: June 02, 2025
+- Signatory: CHEN Phirum, Director of ISTAD
+- Description: Advanced 80-hour intensive professional training covering enterprise Flutter architecture, state management patterns, RESTful integrations, and production deployment.
+
 ## Contact
 Reach Sambath HUL at hulsambath14@gmail.com or via the links above.

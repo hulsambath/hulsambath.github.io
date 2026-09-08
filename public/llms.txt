@@ -25,6 +25,12 @@
 - [Developer Tooling](https://hulsambath.github.io): AI-assisted development infrastructure: a Dockerized Node.js MCP (Model Context Protocol) HTTP bridge server, a published VS Code extension for copying file references, plus custom Claude Code skills, hooks, and style-guide automation (MVVM, Repository pattern, i18n, tests) across the monorepos.
 - [Portfolio Website](https://github.com/hulsambath/hulsambath.github.io): Modern, responsive portfolio website built with React and Tailwind CSS.
 
+## Verified Credentials
+- [Bachelor of Computer Science (Software Engineering)](https://verify.gov.kh/verify/izC4l0BmDNOTbZdvzAxa5FaXPztdNcN?key=1e2b0a933763e5c59f6a9c04f8660ee5110f6da282cf69f04189f567f1fcb1a4): Cambodia Academy of Digital Technology (CADT) (Academic Degree)
+- [Certificate of Appreciation](https://hulsambath.github.io/assets/documents/bookmebus_appreciation_cert.jpg): BookMeBus Co., Ltd. / BookMe+ (Industry Recognition)
+- [Certificate of Completion — Flutter Mobile Development](https://hulsambath.github.io/assets/documents/istad_flutter_cert.jpg): Institute of Science and Technology Advanced Development (ISTAD) (Professional Certification)
+- [Official Supporting Documents PDF](https://hulsambath.github.io/Sambath_HUL_Supporting_Documents.pdf): 4-page verified dossier
+
 ## Full details
 - [Complete portfolio (plain text)](https://hulsambath.github.io/llms-full.txt)
 - [Portfolio website](https://hulsambath.github.io)

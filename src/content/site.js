@@ -385,6 +385,62 @@ export const site = {
       ],
     },
   ],
+  credentials: [
+    {
+      id: "cadt-degree",
+      title: "Bachelor of Computer Science (Software Engineering)",
+      issuer: "Cambodia Academy of Digital Technology (CADT)",
+      issuerUrl: "https://cadt.edu.kh",
+      category: "Academic Degree",
+      badge: "Government Verified",
+      certificateNo: "0574/IDT",
+      awardedDate: "October 08, 2025",
+      issuedDate: "November 24, 2025",
+      signatory: "President of the Scientific Board",
+      verificationUrl:
+        "https://verify.gov.kh/verify/izC4l0BmDNOTbZdvzAxa5FaXPztdNcN?key=1e2b0a933763e5c59f6a9c04f8660ee5110f6da282cf69f04189f567f1fcb1a4",
+      image: "/assets/documents/cadt_bachelor_degree.jpg",
+      description:
+        "Four-year specialized degree in Software Engineering. Digitally signed and cryptographically verifiable on the National Digital Government Committee verification platform (verify.gov.kh).",
+    },
+    {
+      id: "bookmebus-appreciation",
+      title: "Certificate of Appreciation",
+      issuer: "BookMeBus Co., Ltd. / BookMe+",
+      issuerUrl: "https://bookmebus.com/en/about_us",
+      category: "Industry Recognition",
+      badge: "Executive Endorsement",
+      certificateNo: null,
+      issuedDate: "May 30, 2025",
+      signatory: "LY Channa, Chief Technology Officer",
+      verificationUrl: null,
+      image: "/assets/documents/bookmebus_appreciation_cert.jpg",
+      description:
+        "Presented by BookMeBus executive leadership in recognition of dedication, technical excellence, and impactful contributions across the company's production mobile platforms and business ventures.",
+    },
+    {
+      id: "istad-flutter",
+      title: "Certificate of Completion — Flutter Mobile Development",
+      issuer: "Institute of Science and Technology Advanced Development (ISTAD)",
+      issuerUrl: "https://istad.edu.kh",
+      category: "Professional Certification",
+      badge: "80-Hour Course",
+      certificateNo: null,
+      issuedDate: "June 02, 2025",
+      signatory: "CHEN Phirum, Director of ISTAD",
+      verificationUrl: null,
+      image: "/assets/documents/istad_flutter_cert.jpg",
+      description:
+        "Advanced 80-hour intensive professional training covering enterprise Flutter architecture, state management patterns, RESTful integrations, and production deployment.",
+    },
+  ],
+  supportingDocumentsBundle: {
+    title: "Supporting Documents Dossier",
+    filename: "Sambath_HUL_Supporting_Documents.pdf",
+    url: "/Sambath_HUL_Supporting_Documents.pdf",
+    pages: 4,
+    size: "1.0 MB",
+  },
   testimonials: [
     {
       quote:

@@ -27,7 +27,7 @@ const bio =
   "releasing to the Google Play Store and Apple App Store, and works with an MVVM + Repository architecture, " +
   "full internationalization (English/Khmer), and CI/CD automation.";
 
-const { author, stats, skills, technologies, experience, projects } = site;
+const { author, stats, skills, technologies, experience, projects, credentials, supportingDocumentsBundle } = site;
 
 const contactLines = [
   `- Name: ${author.name}`,
@@ -107,6 +107,27 @@ function buildFull() {
     L.push("");
   }
 
+  if (credentials?.length) {
+    L.push("## Verified Credentials & Supporting Documents");
+    if (supportingDocumentsBundle) {
+      L.push(
+        `> Official submission dossier: ${SITE_URL}${supportingDocumentsBundle.url} (${supportingDocumentsBundle.pages} pages, ${supportingDocumentsBundle.size} PDF)`
+      );
+      L.push("");
+    }
+    for (const c of credentials) {
+      L.push(`### ${c.title} — ${c.issuer}`);
+      L.push(`- Category: ${c.category}`);
+      if (c.certificateNo) L.push(`- Certificate/Ref No: ${c.certificateNo}`);
+      if (c.issuedDate) L.push(`- Issued: ${c.issuedDate}`);
+      L.push(`- Signatory: ${c.signatory}`);
+      if (c.verificationUrl)
+        L.push(`- Verification (Official Digital Gov Platform): ${c.verificationUrl}`);
+      L.push(`- Description: ${c.description}`);
+      L.push("");
+    }
+  }
+
   L.push("## Contact");
   L.push(`Reach ${author.name} at ${author.email} or via the links above.`);
   L.push("");
@@ -135,6 +156,20 @@ function buildIndex() {
     L.push(`- [${p.title}](${link}): ${firstSentence}`);
   }
   L.push("");
+
+  if (credentials?.length) {
+    L.push("## Verified Credentials");
+    for (const c of credentials) {
+      const link = c.verificationUrl || `${SITE_URL}${c.image}`;
+      L.push(`- [${c.title}](${link}): ${c.issuer} (${c.category})`);
+    }
+    if (supportingDocumentsBundle) {
+      L.push(
+        `- [Official Supporting Documents PDF](${SITE_URL}${supportingDocumentsBundle.url}): ${supportingDocumentsBundle.pages}-page verified dossier`
+      );
+    }
+    L.push("");
+  }
 
   L.push("## Full details");
   L.push(`- [Complete portfolio (plain text)](${SITE_URL}/llms-full.txt)`);

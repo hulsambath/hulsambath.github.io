@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import { site } from "./content/site.js";
+import { CredentialsSection } from "./components/CredentialsSection";
 
 const mcpLogo = "/assets/mcp_logo.png";
 const sections = [
@@ -9,6 +10,7 @@ const sections = [
   "skills",
   "projects",
   "experience",
+  "credentials",
   "contact",
 ] as const;
 type SectionId = (typeof sections)[number];
@@ -433,7 +435,29 @@ export default function App() {
 
               <div className="md:col-span-2 space-y-8">
                 <div className="rounded-xl border bg-card p-6 shadow-sm">
-                  <h3 className="text-lg font-semibold mb-4">Education</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">Education</h3>
+                    <button
+                      type="button"
+                      onClick={() => scrollToSection("credentials")}
+                      className="text-xs font-semibold text-primary hover:underline underline-offset-4 inline-flex items-center gap-1"
+                    >
+                      <span>Verified Degree</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="11"
+                        height="11"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M7 17l9.2-9.2M17 17V8H8" />
+                      </svg>
+                    </button>
+                  </div>
                   <div className="space-y-1">
                     <p className="font-medium text-foreground">
                       Bachelor of Computer Science (Software Engineering)
@@ -778,8 +802,20 @@ export default function App() {
         {/* Divider */}
         <div className="w-full h-px bg-border/50 max-w-6xl mx-auto"></div>
 
+        {/* Credentials Section */}
+        {site.credentials && site.credentials.length > 0 && (
+          <>
+            <CredentialsSection
+              credentials={site.credentials}
+              bundle={site.supportingDocumentsBundle}
+            />
+            {/* Divider */}
+            <div className="w-full h-px bg-border/50 max-w-6xl mx-auto"></div>
+          </>
+        )}
+
         {/* Contact Section */}
-        <section id="contact" className="px-6 py-24 bg-muted/30">
+        <section id="contact" className="px-6 py-24">
           <div className="mx-auto max-w-5xl">
             <div className="space-y-4 mb-16 text-center">
               <h2 className="text-3xl font-bold tracking-tight">
