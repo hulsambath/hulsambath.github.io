@@ -15,6 +15,13 @@ describe("clampOptions", () => {
     expect(clampOptions({ ...DEFAULT_OPTIONS, size: 300.6 }).size).toBe(301);
   });
 
+  it("clamps logo scale between 0.1 and 0.25", () => {
+    expect(clampOptions({ ...DEFAULT_OPTIONS, logoScale: 0.9 }).logoScale).toBe(0.25);
+    expect(clampOptions({ ...DEFAULT_OPTIONS, logoScale: 0 }).logoScale).toBe(0.1);
+    expect(clampOptions({ ...DEFAULT_OPTIONS, logoScale: NaN }).logoScale).toBe(DEFAULT_OPTIONS.logoScale);
+    expect(clampOptions({ ...DEFAULT_OPTIONS, logoScale: 0.2 }).logoScale).toBe(0.2);
+  });
+
   it("falls back to defaults for NaN (empty number input)", () => {
     expect(clampOptions({ ...DEFAULT_OPTIONS, size: NaN, margin: NaN })).toMatchObject({
       size: DEFAULT_OPTIONS.size,
@@ -40,6 +47,14 @@ describe("renderQr", () => {
   it("encodes Khmer text", async () => {
     const r = await renderQr("សួស្តី ពិភពលោក 👋", DEFAULT_OPTIONS);
     expect(r.ok).toBe(true);
+  });
+
+  it("transparent background drops the background fill", async () => {
+    const r = await renderQr("hi", { ...DEFAULT_OPTIONS, bg: "#ffffff", transparent: true });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.svg.toLowerCase()).not.toContain("#ffffff");
+    expect(r.svg).toContain("<path");
   });
 
   it("returns empty for a blank payload", async () => {

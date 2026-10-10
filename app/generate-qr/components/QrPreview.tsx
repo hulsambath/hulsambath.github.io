@@ -13,6 +13,7 @@ const ERRORS = {
   empty: "Enter something to encode.",
   "too-long": "Too much data for a QR code at this error-correction level. Shorten it or pick a lower level.",
   failed: "Couldn't generate this QR code.",
+  logo: "Couldn't draw that logo. Try a different PNG or JPG.",
 } as const;
 
 const WARNINGS: Record<Exclude<ColorWarning, null>, string> = {
@@ -21,13 +22,22 @@ const WARNINGS: Record<Exclude<ColorWarning, null>, string> = {
   inverted: "Light-on-dark codes aren't supported by every scanner.",
 };
 
+// Classic transparency pattern so a transparent background is visible in the preview.
+const CHECKERBOARD = {
+  backgroundImage:
+    "conic-gradient(hsl(var(--muted)) 25%, hsl(var(--background)) 0 50%, hsl(var(--muted)) 0 75%, hsl(var(--background)) 0)",
+  backgroundSize: "16px 16px",
+};
+
 export function QrPreview({
   result,
   warning,
+  transparent,
   filenameFor,
 }: {
   result: RenderResult | null;
   warning: ColorWarning;
+  transparent: boolean;
   filenameFor: (ext: "png" | "svg") => string;
 }) {
   const [copyable, setCopyable] = useState(false);
@@ -39,7 +49,10 @@ export function QrPreview({
 
   return (
     <div className="grid gap-4">
-      <div className="grid aspect-square w-full place-items-center rounded-2xl border border-border bg-muted p-4">
+      <div
+        className="grid aspect-square w-full place-items-center rounded-2xl border border-border bg-muted p-4"
+        style={transparent && ok ? CHECKERBOARD : undefined}
+      >
         {ok ? (
           <img
             src={svgToDataUrl(result.svg)}
@@ -52,6 +65,12 @@ export function QrPreview({
           </p>
         )}
       </div>
+
+      {ok && transparent && (
+        <p className="text-sm text-muted-foreground" role="status">
+          Transparent background — place it on a light surface so it still scans.
+        </p>
+      )}
 
       {ok && warning && (
         <p className="flex items-start gap-2 text-sm text-destructive" role="status">

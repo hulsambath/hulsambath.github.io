@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 import { colorWarning, isHexColor } from "./colors";
 import { ContentForm } from "./components/ContentForm";
+import { LogoOptions } from "./components/LogoOptions";
 import { QrPreview } from "./components/QrPreview";
 import { StyleOptions } from "./components/StyleOptions";
 import { qrFilename } from "./download";
@@ -17,6 +18,7 @@ import { useQrRender } from "./useQrRender";
 export default function GenerateQrPage() {
   const [input, setInput] = useState<QrInput>(() => emptyInput("url"));
   const [options, setOptions] = useState<QrOptions>(DEFAULT_OPTIONS);
+  const [logo, setLogo] = useState<string | null>(null);
 
   // Keep half-typed colours in the form, but only render with valid ones.
   const renderOptions: QrOptions = {
@@ -24,7 +26,7 @@ export default function GenerateQrPage() {
     fg: isHexColor(options.fg) ? options.fg : DEFAULT_OPTIONS.fg,
     bg: isHexColor(options.bg) ? options.bg : DEFAULT_OPTIONS.bg,
   };
-  const result = useQrRender(buildPayload(input), renderOptions);
+  const result = useQrRender(buildPayload(input), renderOptions, logo);
 
   return (
     <main className="mx-auto min-h-screen max-w-5xl px-4 py-10 sm:py-16">
@@ -52,7 +54,16 @@ export default function GenerateQrPage() {
               <CardTitle>Style</CardTitle>
             </CardHeader>
             <CardContent>
-              <StyleOptions value={options} onChange={setOptions} />
+              <StyleOptions value={options} onChange={setOptions} eccLocked={logo !== null} />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Logo</CardTitle>
+              <CardDescription>Optional image in the centre of the code.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LogoOptions logo={logo} onLogo={setLogo} value={options} onChange={setOptions} />
             </CardContent>
           </Card>
         </div>
@@ -61,7 +72,9 @@ export default function GenerateQrPage() {
           <CardContent className="pt-6">
             <QrPreview
               result={result}
-              warning={colorWarning(options.fg, options.bg)}
+              // Transparent codes are assumed to sit on a light surface.
+              warning={colorWarning(options.fg, options.transparent ? "#ffffff" : options.bg)}
+              transparent={options.transparent}
               filenameFor={(ext) => qrFilename(input, ext)}
             />
           </CardContent>
