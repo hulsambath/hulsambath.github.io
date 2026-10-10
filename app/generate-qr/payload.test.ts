@@ -16,6 +16,11 @@ describe("buildPayload", () => {
     expect(buildPayload({ kind: "url", url: "tel:+85512345678" })).toBe("tel:+85512345678");
   });
 
+  it("url: adds https:// to host:port addresses", () => {
+    expect(buildPayload({ kind: "url", url: "example.com:8080/x" })).toBe("https://example.com:8080/x");
+    expect(buildPayload({ kind: "url", url: "localhost:3000" })).toBe("https://localhost:3000");
+  });
+
   it("url: blank input encodes nothing", () => {
     expect(buildPayload({ kind: "url", url: "   " })).toBe("");
   });

@@ -9,6 +9,10 @@ describe("qrFilename", () => {
     );
   });
 
+  it("slugs host:port urls", () => {
+    expect(qrFilename({ kind: "url", url: "example.com:8080/x" }, "png")).toBe("qr-example-com-x.png");
+  });
+
   it("uses the ssid for wifi and a generic name otherwise", () => {
     expect(
       qrFilename({ kind: "wifi", ssid: "Home 5G", password: "", security: "WPA", hidden: false }, "svg"),

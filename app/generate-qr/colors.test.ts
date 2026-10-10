@@ -34,7 +34,8 @@ describe("colorWarning", () => {
     expect(colorWarning("#ffffff", "#000000")).toBe("inverted");
   });
 
-  it("treats invalid colours as low contrast rather than throwing", () => {
-    expect(colorWarning("nope", "#ffffff")).toBe("low-contrast");
+  it("flags invalid colours rather than throwing", () => {
+    expect(colorWarning("nope", "#ffffff")).toBe("invalid");
+    expect(colorWarning("#000000", "#12")).toBe("invalid");
   });
 });

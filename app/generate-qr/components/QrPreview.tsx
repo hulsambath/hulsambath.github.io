@@ -16,6 +16,7 @@ const ERRORS = {
 } as const;
 
 const WARNINGS: Record<Exclude<ColorWarning, null>, string> = {
+  invalid: "Invalid colour — using the default until it's a valid hex like #1e3a8a.",
   "low-contrast": "Low contrast — some scanners may not read this.",
   inverted: "Light-on-dark codes aren't supported by every scanner.",
 };

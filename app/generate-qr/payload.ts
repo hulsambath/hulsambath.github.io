@@ -25,7 +25,9 @@ function escapeWifi(value: string): string {
   return value.replace(/([\\;,":])/g, "\\$1");
 }
 
-const HAS_SCHEME = /^[a-z][a-z0-9+.-]*:/i;
+// "host:port" looks like a scheme to a naive regex, so only treat "x://" or a
+// known opaque scheme as already having one.
+const HAS_SCHEME = /^(?:[a-z][a-z0-9+.-]*:\/\/|(?:mailto|tel|sms|geo|wifi):)/i;
 
 /** The exact string to encode, or "" when there is nothing to encode yet. */
 export function buildPayload(input: QrInput): string {

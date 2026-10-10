@@ -1,4 +1,4 @@
-import type { QrInput } from "./payload";
+import { buildPayload, type QrInput } from "./payload";
 
 function slug(value: string): string {
   return value
@@ -8,9 +8,9 @@ function slug(value: string): string {
     .slice(0, 48);
 }
 
-function urlSlug(raw: string): string {
+function urlSlug(input: QrInput): string {
   try {
-    const u = new URL(/^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : `https://${raw}`);
+    const u = new URL(buildPayload(input));
     return slug(`${u.hostname}${u.pathname}`);
   } catch {
     return "";
@@ -19,7 +19,7 @@ function urlSlug(raw: string): string {
 
 export function qrFilename(input: QrInput, ext: "png" | "svg"): string {
   const detail =
-    input.kind === "url" ? urlSlug(input.url.trim())
+    input.kind === "url" ? urlSlug(input)
     : input.kind === "wifi" ? (slug(input.ssid) ? `wifi-${slug(input.ssid)}` : "")
     : "";
   return `qr-${detail || input.kind}.${ext}`;

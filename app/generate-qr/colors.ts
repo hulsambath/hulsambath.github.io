@@ -3,7 +3,7 @@ const HEX = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
 // Below this ratio many phone scanners struggle; black-on-white is 21.
 const MIN_SCANNABLE_CONTRAST = 4;
 
-export type ColorWarning = "low-contrast" | "inverted" | null;
+export type ColorWarning = "invalid" | "low-contrast" | "inverted" | null;
 
 export function isHexColor(value: string): boolean {
   return HEX.test(value);
@@ -30,7 +30,7 @@ export function contrastRatio(fg: string, bg: string): number {
 }
 
 export function colorWarning(fg: string, bg: string): ColorWarning {
-  if (!isHexColor(fg) || !isHexColor(bg)) return "low-contrast";
+  if (!isHexColor(fg) || !isHexColor(bg)) return "invalid";
   if (contrastRatio(fg, bg) < MIN_SCANNABLE_CONTRAST) return "low-contrast";
   if (luminance(fg) > luminance(bg)) return "inverted";
   return null;
