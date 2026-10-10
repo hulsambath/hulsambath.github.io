@@ -58,7 +58,14 @@ appears only when its URL is non-null and not `"#"`. See
 ## `/generate-qr` page
 - Client-only QR generator (URL, text, Wi‑Fi, email) using the `qrcode` package —
   encoding happens in the browser; no network calls, so no CSP changes.
-- Pure logic is unit-tested in `app/generate-qr/{payload,colors,render,download}.ts`.
+- Pure logic is unit-tested in `app/generate-qr/{payload,colors,render,download,logo}.ts`.
+- **Transparent background:** renders with a fully transparent light colour, so qrcode
+  omits the background in SVG and writes alpha 0 in PNG. The preview shows a checkerboard.
+- **Logo:** an uploaded image (PNG/JPG/WebP/GIF/SVG, ≤ 2 MB, read locally as a data URL)
+  is centred over the code. The SVG gets an `<image>`, and the PNG is composited on a canvas.
+  A logo forces error correction to H, and its width is capped at 25% of the code (30% stopped
+  scanning in testing). An optional rounded plate in the background colour (white when
+  transparent) sits behind it.
 - Deliberately unlisted: not in the nav or `public/sitemap.xml`, and its layout sets
   `robots: noindex`. To make it public, remove the `robots` metadata and add a sitemap entry.
 - Clipboard copy converts the PNG data URL to a Blob locally — never `fetch()` a
