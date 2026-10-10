@@ -1,6 +1,6 @@
 # Routing & Page Structure
 
-The site is a Next.js App Router project with **2 routes**. The home route is a
+The site is a Next.js App Router project with **5 routes**. The home route is a
 single-page app; its nav links are in-page scroll anchors, not routes.
 
 ## Routes
@@ -9,6 +9,9 @@ single-page app; its nav links are in-page scroll anchors, not routes.
 |---|---|---|
 | `/` | `app/page.tsx` → `src/App.tsx` | Main portfolio (single scrolling page) |
 | `/kp-trip` | `app/kp-trip/page.tsx` | Standalone Kampot/Kep/Bokor motorbike trip guide |
+| `/predictor` | `app/predictor/page.tsx` | Matchday Board — football-predictor portal (see `PREDICTOR_SUBDOMAIN.md`) |
+| `/predictor/match` | `app/predictor/match/` | Predictor match-detail page |
+| `/generate-qr` | `app/generate-qr/page.tsx` | Personal QR code generator (client-only, `noindex`) |
 
 `app/layout.tsx` is the shared root layout (not a route). There is no `route.ts`
 API handler in the Next app — the only backend is the separate `server/`
@@ -51,6 +54,15 @@ appears only when its URL is non-null and not `"#"`. See
 - Consumes trip photos from `public/trip-images/<place>/...`, which are populated
   at build time by `setup_kp_trip_images.mjs` (copies from `src/assets`) and a
   generated `manifest.json`.
+
+## `/generate-qr` page
+- Client-only QR generator (URL, text, Wi‑Fi, email) using the `qrcode` package —
+  encoding happens in the browser; no network calls, so no CSP changes.
+- Pure logic is unit-tested in `app/generate-qr/{payload,colors,render,download}.ts`.
+- Deliberately unlisted: not in the nav or `public/sitemap.xml`, and its layout sets
+  `robots: noindex`. To make it public, remove the `robots` metadata and add a sitemap entry.
+- Clipboard copy converts the PNG data URL to a Blob locally — never `fetch()` a
+  `data:` URL here, because CSP `connect-src` doesn't allow it.
 
 ## Extra static HTML (not Next routes)
 These live in `public/` and ship as-is to the static site root:
