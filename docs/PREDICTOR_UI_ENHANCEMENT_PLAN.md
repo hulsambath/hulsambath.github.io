@@ -74,19 +74,23 @@ Current limitation: production has no visible odds or predictions after mock cle
 - Desktop behaves like a data board; mobile behaves like a compact live-score app.
 - The visual language is inspired by SofaScore/1xBet information structure, not their branding.
 
-## UI v2 — Neumorphism (2026-10-12)
+## UI v2 — Neubrutalism (2026-10-12)
 
-The portal uses a neumorphic ("soft UI") look and is always light, even when
-the rest of the site or the OS is in dark mode. Plan:
-`docs/superpowers/plans/2026-10-12-predictor-neumorphism-v2.md`.
+The portal uses a neubrutalist look — cream page, white cards, 2px ink
+borders, hard unblurred offset shadows, yellow active fill, cyan hover — and is
+always light, even when the rest of the site or the OS is in dark mode. It
+replaced a short-lived neumorphic v2; the plan for that pass
+(`docs/superpowers/plans/2026-10-12-predictor-neumorphism-v2.md`) still
+describes the structure, only the visual tokens changed.
 
 - Tokens and classes live in `app/predictor/predictor.css`, scoped to the
   `.predictor-shell` wrapper from `app/predictor/layout.tsx` (covers `/predictor`
-  and `/predictor/match`). Every surface shares `--neu-surface`; depth comes only
-  from the `--neu-light` / `--neu-shade` shadow pair.
-- Components use `neu.*` and `neuPressable(active)` from `app/predictor/neu.ts`
-  instead of borders. Active controls are inset and use the `--neu-accent`
-  text colour, so state never relies on shadow alone.
+  and `/predictor/match`): `--neu-ink`, `--neu-page`, `--neu-card`,
+  `--neu-well`, `--neu-accent`, `--neu-hover`.
+- Components use `neu.*` (`raised`, `raisedSm`, `inset`, `insetSm`,
+  `pressable`) and `neuPressable(active)` from `app/predictor/neu.ts` instead of
+  hand-written borders/shadows. Active controls are pressed flat and filled with
+  the accent; the live status filter fills with `--live` instead.
 - Desktop rows stack home/away in one column (`ROW_GRID` in `page.tsx`, shared
   with the sticky column header). The table appears from `lg`, the detail
   sidebar from `xl`; below those, cards and the full-screen drawer are used.

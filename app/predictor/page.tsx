@@ -125,7 +125,7 @@ function MarketCell({ label, value, accent }: { label: string; value: number | n
   return (
     <div className={`${accent ? neu.insetSm : neu.raisedSm} group flex min-h-11 cursor-default flex-col items-center justify-center px-2 py-1`}>
       <span className={`font-data text-[10px] uppercase tracking-wide transition-colors ${accent ? "text-[hsl(var(--edge))]" : "text-muted-foreground group-hover:text-foreground"}`}>{label}</span>
-      <span className={`font-data text-sm font-bold transition-colors ${accent ? "text-[hsl(var(--edge))]" : "text-foreground group-hover:text-[hsl(var(--neu-accent))]"}`}>{odd(value)}</span>
+      <span className={`font-data text-sm font-bold transition-colors ${accent ? "text-[hsl(var(--edge))]" : "text-foreground"}`}>{odd(value)}</span>
     </div>
   );
 }
@@ -688,7 +688,7 @@ export default function PredictorPage() {
                 </div>
               )}
               {oddsShown && competitions.length > 0 && (
-                <div className={`sticky top-[9.5rem] z-[5] mb-3 hidden ${ROW_GRID} items-center gap-3 rounded-xl bg-[hsl(var(--neu-surface))] px-3 py-2 font-data text-[10px] uppercase tracking-wide text-muted-foreground shadow-[inset_3px_3px_7px_hsl(var(--neu-shade)),inset_-3px_-3px_7px_hsl(var(--neu-light))] lg:grid lg:px-5`}>
+                <div className={`sticky top-[9.5rem] z-[5] mb-3 hidden ${ROW_GRID} items-center gap-3 ${neu.inset} px-3 py-2 font-data text-[10px] font-semibold uppercase tracking-wide text-foreground lg:grid lg:px-5`}>
                   <span>Status</span>
                   <span>Match</span>
                   <span className="text-center">Score / xG</span>

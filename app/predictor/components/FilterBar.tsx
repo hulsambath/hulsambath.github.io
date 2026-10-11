@@ -38,8 +38,9 @@ export function FilterBar({
             return (
               <button key={t.key} onClick={() => onStatus(t.key)} aria-pressed={active}
                 className={neuPressable(active, `flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-display text-sm font-semibold uppercase tracking-wide${
-                  active && isLive ? " !text-[hsl(var(--live))]" : ""}`)}>
-                {isLive && <span className="live-dot inline-block h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--live))" }} />}
+                  active && isLive ? " !bg-[hsl(var(--live))] !text-white" : ""}`)}>
+                {isLive && <span className="live-dot inline-block h-2 w-2 rounded-full border border-current"
+                  style={{ background: active ? "currentColor" : "hsl(var(--live))" }} />}
                 {t.label}{isLive && liveCount > 0 ? ` (${liveCount})` : ""}
               </button>
             );
@@ -50,7 +51,7 @@ export function FilterBar({
           Odds
           <span className={`${neu.insetSm} relative inline-flex h-6 w-11 items-center rounded-full`}>
             <span className={`${neu.raisedSm} inline-block h-4 w-4 rounded-full transition-transform ${
-              oddsShown ? "translate-x-6 !bg-[hsl(var(--neu-accent))]" : "translate-x-1"}`} />
+              oddsShown ? "translate-x-5 !bg-[hsl(var(--neu-accent))]" : "translate-x-0.5"}`} />
           </span>
         </button>
       </div>

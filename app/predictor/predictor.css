@@ -1,44 +1,46 @@
-@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap");
 
 /* Scoped tokens for the predictor pages (board + match detail), light theme
-   only. The tri-band colors encode the model's three outcomes; they are data colors, not
-   decoration. The --neu-* tokens drive the neumorphic surfaces: every card,
-   chip and control shares the page surface and gets its depth only from a
-   light shadow (top-left) and a dark shadow (bottom-right). */
+   only. The tri-band colors encode the model's three outcomes; they are data
+   colors, not decoration. The --neu-* tokens drive the neubrutalist surfaces:
+   flat fills, thick ink borders and hard, unblurred offset shadows. */
 .predictor-shell {
-  --home: 217 91% 60%; /* Blue */
-  --draw: 240 5% 65%;  /* Slate Gray */
-  --away: 25 95% 53%;  /* Orange */
-  --live: 142 71% 40%; /* Emerald Green */
-  --edge: 142 71% 40%;
+  --home: 221 83% 53%; /* Blue */
+  --draw: 240 5% 60%;  /* Slate Gray */
+  --away: 22 94% 52%;  /* Orange */
+  --live: 142 72% 40%; /* Emerald Green */
+  --edge: 142 72% 34%;
   --font-display: "Barlow Condensed", "Arial Narrow", sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, monospace;
 
-  --neu-surface: 220 23% 92%;
-  --neu-light: 0 0% 100%;
-  --neu-shade: 220 18% 76%;
-  --neu-accent: var(--home);
+  --neu-ink: 0 0% 7%;
+  --neu-page: 46 100% 95%;   /* cream */
+  --neu-card: 0 0% 100%;
+  --neu-well: 46 70% 89%;    /* recessed / informational areas */
+  --neu-accent: 50 100% 58%; /* active fill — yellow */
+  --neu-hover: 192 90% 82%;  /* hover fill — cyan */
+  --neu-border: 2px solid hsl(var(--neu-ink));
 
-  --background: var(--neu-surface);
-  --card: var(--neu-surface);
-  --popover: var(--neu-surface);
-  --secondary: 220 20% 87%;
-  --muted: 220 20% 87%;
-  --border: 220 16% 82%;
-  --input: 220 16% 82%;
+  --background: var(--neu-page);
+  --card: var(--neu-card);
+  --popover: var(--neu-card);
+  --secondary: var(--neu-well);
+  --muted: var(--neu-well);
+  --border: var(--neu-ink);
+  --input: var(--neu-ink);
 
   /* The predictor is always light, even when the site or OS is dark: these
      override the .dark values inherited from <html>. */
-  --foreground: 240 10% 3.9%;
-  --card-foreground: 240 10% 3.9%;
-  --popover-foreground: 240 10% 3.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted-foreground: 240 3.8% 42%;
-  --destructive: 0 72% 48%;
+  --foreground: 0 0% 7%;
+  --card-foreground: 0 0% 7%;
+  --popover-foreground: 0 0% 7%;
+  --secondary-foreground: 0 0% 7%;
+  --muted-foreground: 0 0% 30%;
+  --destructive: 0 80% 45%;
   color-scheme: light;
 
   min-height: 100vh;
-  background: hsl(var(--neu-surface));
+  background: hsl(var(--neu-page));
   color: hsl(var(--foreground));
 }
 
@@ -52,53 +54,63 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------------------------------------------------------- neumorphism */
+/* -------------------------------------------------------- neubrutalism */
 
 .predictor-shell .neu-surface {
-  background: hsl(var(--neu-surface));
+  background: hsl(var(--neu-page));
 }
 
 .predictor-shell .neu-raised {
-  background: hsl(var(--neu-surface));
-  border-radius: 14px;
-  box-shadow: 6px 6px 14px hsl(var(--neu-shade)), -6px -6px 14px hsl(var(--neu-light));
+  background: hsl(var(--neu-card));
+  border: var(--neu-border);
+  border-radius: 10px;
+  box-shadow: 5px 5px 0 hsl(var(--neu-ink));
 }
 
 .predictor-shell .neu-raised-sm {
-  background: hsl(var(--neu-surface));
-  border-radius: 10px;
-  box-shadow: 3px 3px 7px hsl(var(--neu-shade)), -3px -3px 7px hsl(var(--neu-light));
+  background: hsl(var(--neu-card));
+  border: var(--neu-border);
+  border-radius: 6px;
+  box-shadow: 2px 2px 0 hsl(var(--neu-ink));
 }
 
 .predictor-shell .neu-inset {
-  background: hsl(var(--neu-surface));
-  border-radius: 12px;
-  box-shadow: inset 4px 4px 9px hsl(var(--neu-shade)), inset -4px -4px 9px hsl(var(--neu-light));
+  background: hsl(var(--neu-well));
+  border: var(--neu-border);
+  border-radius: 8px;
 }
 
 .predictor-shell .neu-inset-sm {
-  background: hsl(var(--neu-surface));
-  border-radius: 10px;
-  box-shadow: inset 2px 2px 5px hsl(var(--neu-shade)), inset -2px -2px 5px hsl(var(--neu-light));
+  background: hsl(var(--neu-well));
+  border: var(--neu-border);
+  border-radius: 6px;
 }
 
 .predictor-shell .neu-pressable {
-  background: hsl(var(--neu-surface));
-  border-radius: 10px;
-  box-shadow: 3px 3px 7px hsl(var(--neu-shade)), -3px -3px 7px hsl(var(--neu-light));
-  transition: box-shadow 160ms ease, transform 160ms ease, color 160ms ease;
+  background: hsl(var(--neu-card));
+  border: var(--neu-border);
+  border-radius: 6px;
+  font-weight: 700;
+  box-shadow: 3px 3px 0 hsl(var(--neu-ink));
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
 }
 .predictor-shell .neu-pressable:hover {
-  transform: translateY(-1px);
+  background: hsl(var(--neu-hover));
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 hsl(var(--neu-ink));
 }
 .predictor-shell .neu-pressable:active,
 .predictor-shell .neu-pressable.is-active {
-  transform: none;
-  box-shadow: inset 2px 2px 5px hsl(var(--neu-shade)), inset -2px -2px 5px hsl(var(--neu-light));
+  background: hsl(var(--neu-accent));
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 hsl(var(--neu-ink));
+}
+.predictor-shell .neu-pressable:disabled {
+  cursor: not-allowed;
 }
 .predictor-shell .neu-pressable:focus-visible,
 .predictor-shell .neu-focus:focus-visible {
-  outline: 2px solid hsl(var(--neu-accent));
+  outline: 3px solid hsl(var(--home));
   outline-offset: 2px;
 }
 
@@ -109,6 +121,11 @@
 .predictor-shell .rounded-full.neu-inset-sm,
 .predictor-shell .rounded-full.neu-pressable {
   border-radius: 9999px;
+}
+
+/* Desktop match rows: flat inside their competition card, highlighted on hover. */
+.predictor-shell .match-row:hover {
+  background: hsl(var(--neu-accent) / 0.25);
 }
 
 /* ---------------------------------------------------------- board bits */
@@ -139,5 +156,7 @@
   .predictor-shell .band-segment { transition: none; }
   .predictor-shell .live-dot { animation: none; }
   .predictor-shell .neu-pressable { transition: none; }
-  .predictor-shell .neu-pressable:hover { transform: none; }
+  .predictor-shell .neu-pressable:hover,
+  .predictor-shell .neu-pressable:active,
+  .predictor-shell .neu-pressable.is-active { transform: none; }
 }

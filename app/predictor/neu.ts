@@ -1,4 +1,4 @@
-/** Class names for the predictor's neumorphic surfaces; styles live in predictor.css. */
+/** Class names for the predictor's neubrutalist surfaces; styles live in predictor.css. */
 export const neu = {
   surface: "neu-surface",
   raised: "neu-raised",
@@ -8,10 +8,9 @@ export const neu = {
   pressable: "neu-pressable",
 } as const;
 
-/** A soft button: raised at rest, pressed-in and accent-coloured when active. */
+/** A chunky button: ink border and hard shadow at rest, pressed flat and
+ *  filled with the accent colour when active. */
 export function neuPressable(active: boolean, extra = ""): string {
-  const state = active
-    ? "is-active text-[hsl(var(--neu-accent))]"
-    : "text-muted-foreground hover:text-foreground";
+  const state = active ? "is-active text-foreground" : "text-foreground";
   return [neu.pressable, state, extra].filter(Boolean).join(" ");
 }
