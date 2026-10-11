@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 
-/* Scoped tokens for the predictor pages (board + match detail). The tri-band
-   colors encode the model's three outcomes; they are data colors, not
+/* Scoped tokens for the predictor pages (board + match detail), light theme
+   only. The tri-band colors encode the model's three outcomes; they are data colors, not
    decoration. The --neu-* tokens drive the neumorphic surfaces: every card,
    chip and control shares the page surface and gets its depth only from a
    light shadow (top-left) and a dark shadow (bottom-right). */
@@ -25,27 +25,21 @@
   --secondary: 220 20% 87%;
   --muted: 220 20% 87%;
   --border: 220 16% 82%;
+  --input: 220 16% 82%;
+
+  /* The predictor is always light, even when the site or OS is dark: these
+     override the .dark values inherited from <html>. */
+  --foreground: 240 10% 3.9%;
+  --card-foreground: 240 10% 3.9%;
+  --popover-foreground: 240 10% 3.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted-foreground: 240 3.8% 42%;
+  --destructive: 0 72% 48%;
+  color-scheme: light;
 
   min-height: 100vh;
   background: hsl(var(--neu-surface));
   color: hsl(var(--foreground));
-}
-
-.dark .predictor-shell {
-  --home: 217 91% 65%;
-  --draw: 240 5% 55%;
-  --away: 25 95% 58%;
-  --live: 142 71% 50%;
-  --edge: 142 71% 50%;
-
-  --neu-surface: 222 28% 15%;
-  --neu-light: 222 24% 21%;
-  --neu-shade: 224 34% 8%;
-
-  --secondary: 222 24% 19%;
-  --muted: 222 24% 19%;
-  --border: 222 22% 22%;
-  --input: 222 22% 22%;
 }
 
 .predictor-shell .font-display {

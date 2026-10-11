@@ -76,7 +76,8 @@ Current limitation: production has no visible odds or predictions after mock cle
 
 ## UI v2 — Neumorphism (2026-10-12)
 
-The portal uses a neumorphic ("soft UI") look in light and dark themes. Plan:
+The portal uses a neumorphic ("soft UI") look and is always light, even when
+the rest of the site or the OS is in dark mode. Plan:
 `docs/superpowers/plans/2026-10-12-predictor-neumorphism-v2.md`.
 
 - Tokens and classes live in `app/predictor/predictor.css`, scoped to the
