@@ -5,11 +5,12 @@ import * as React from "react";
 import { fetchMatchDetail, predictMatch, predictionErrorMessage } from "../../client";
 import { isLive } from "../../board";
 import { neu, neuPressable } from "../../neu";
-import type { MatchDetail, Match, Prediction } from "../../types";
+import type { MatchDetail, Match, Odds, Prediction } from "../../types";
 import { DetailHeader } from "./DetailHeader";
 import { HeadToHead } from "./HeadToHead";
 import { Lineups } from "./Lineups";
 import { MatchStatsBars } from "./MatchStatsBars";
+import { OddsMarkets } from "./OddsMarkets";
 import { TeamForm } from "./TeamForm";
 import { Timeline } from "./Timeline";
 
@@ -26,19 +27,6 @@ type PanelPrediction = {
   exp_corners?: number | null;
   corners_lines?: Record<string, { over: number; under: number }> | null;
 };
-type PanelOdds = {
-  bookmaker?: string | null;
-  captured_at?: string;
-  is_closing?: boolean;
-  home_win?: number | null;
-  draw?: number | null;
-  away_win?: number | null;
-  over_25?: number | null;
-  under_25?: number | null;
-  btts_yes?: number | null;
-  btts_no?: number | null;
-};
-
 type DetailTab = "summary" | "stats" | "odds" | "lineups" | "h2h";
 
 const TABS: { key: DetailTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
@@ -50,7 +38,6 @@ const TABS: { key: DetailTab; label: string; icon: React.ComponentType<{ classNa
 ];
 
 const pct = (p: number | null | undefined) => p == null ? "-" : `${Math.round(p * 100)}%`;
-const odd = (v: number | null | undefined) => v == null ? "-" : v.toFixed(2);
 const timestamp = (value: string | null | undefined) => value
   ? new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })
   : null;
@@ -147,41 +134,6 @@ function PredictionSummary({ prediction, predicting, predictError, canPredict, o
   );
 }
 
-function OddsSummary({ odds }: { odds: PanelOdds | null }) {
-  if (!odds) {
-    return <p className={`${neu.inset} p-3 text-sm text-muted-foreground`}>Odds unavailable for this match.</p>;
-  }
-  const cells = [
-    ["1", odds.home_win],
-    ["X", odds.draw],
-    ["2", odds.away_win],
-    ["O2.5", odds.over_25],
-    ["U2.5", odds.under_25],
-    ["BTTS", odds.btts_yes],
-  ] as const;
-  return (
-    <section className="mb-4">
-      <div className="mb-2 flex items-center justify-between">
-        <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-muted-foreground">Market odds</h3>
-        <span className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">
-          {odds.bookmaker ?? "bookmaker"}{odds.is_closing ? " · closing" : ""}
-        </span>
-      </div>
-      {odds.captured_at && (
-        <p className="mb-2 font-data text-[10px] text-muted-foreground">Captured {timestamp(odds.captured_at)}</p>
-      )}
-      <div className="grid grid-cols-3 gap-2">
-        {cells.map(([label, value]) => (
-          <div key={label} className={`${neu.raisedSm} px-2 py-2 text-center`}>
-            <div className="font-data text-[10px] text-muted-foreground">{label}</div>
-            <div className="font-data text-base font-semibold">{odd(value)}</div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
   matchId: number;
   onClose: () => void;
@@ -234,7 +186,7 @@ export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
 
   const m = detail?.match as PanelMatch | undefined;
   const prediction = (predictionOverride ?? detail?.prediction ?? null) as PanelPrediction | null;
-  const odds = (detail?.odds ?? null) as PanelOdds | null;
+  const odds: Odds | null = detail?.odds ?? null;
   const canPredict = m?.status === "NS";
   const hasPrediction = prediction != null;
 
@@ -295,7 +247,7 @@ export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
             </>
           )}
           {tab === "stats" && <MatchStatsBars stats={detail.stats} />}
-          {tab === "odds" && <OddsSummary odds={odds} />}
+          {tab === "odds" && <OddsMarkets odds={odds} />}
           {tab === "lineups" && <Lineups lineups={detail.lineups} />}
           {tab === "h2h" && <HeadToHead h2h={detail.h2h} />}
         </div>

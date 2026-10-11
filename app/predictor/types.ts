@@ -30,6 +30,19 @@ export type Odds = {
   under_25: number | null;
   btts_yes?: number | null;
   btts_no?: number | null;
+  over_15?: number | null;
+  under_15?: number | null;
+  over_35?: number | null;
+  under_35?: number | null;
+  dc_1x?: number | null;
+  dc_x2?: number | null;
+  dc_12?: number | null;
+  dnb_home?: number | null;
+  dnb_away?: number | null;
+  /** exact final score ("2-1") → decimal price */
+  correct_score?: Record<string, number> | null;
+  /** corners line ("9.5") → over/under decimal prices */
+  corners_lines?: Record<string, { over?: number | null; under?: number | null }> | null;
   is_closing?: boolean;
 };
 
