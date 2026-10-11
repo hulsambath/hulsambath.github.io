@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function PredictorLayout({ children }: { children: ReactNode }) {
-  return children;
+  return <div className="predictor-shell">{children}</div>;
 }

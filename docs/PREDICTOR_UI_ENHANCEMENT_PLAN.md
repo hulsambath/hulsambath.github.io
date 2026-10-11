@@ -73,3 +73,19 @@ Current limitation: production has no visible odds or predictions after mock cle
 - Missing predictions or odds are visibly explained, not silently blank.
 - Desktop behaves like a data board; mobile behaves like a compact live-score app.
 - The visual language is inspired by SofaScore/1xBet information structure, not their branding.
+
+## UI v2 — Neumorphism (2026-10-12)
+
+The portal uses a neumorphic ("soft UI") look in light and dark themes. Plan:
+`docs/superpowers/plans/2026-10-12-predictor-neumorphism-v2.md`.
+
+- Tokens and classes live in `app/predictor/predictor.css`, scoped to the
+  `.predictor-shell` wrapper from `app/predictor/layout.tsx` (covers `/predictor`
+  and `/predictor/match`). Every surface shares `--neu-surface`; depth comes only
+  from the `--neu-light` / `--neu-shade` shadow pair.
+- Components use `neu.*` and `neuPressable(active)` from `app/predictor/neu.ts`
+  instead of borders. Active controls are inset and use the `--neu-accent`
+  text colour, so state never relies on shadow alone.
+- Desktop rows stack home/away in one column (`ROW_GRID` in `page.tsx`, shared
+  with the sticky column header). The table appears from `lg`, the detail
+  sidebar from `xl`; below those, cards and the full-screen drawer are used.

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import type { BoardLeague } from "../board";
+import { neu, neuPressable } from "../neu";
 import { CountryFlag } from "./CountryFlag";
 
 export function CompetitionsTab({
@@ -25,13 +26,13 @@ export function CompetitionsTab({
       <input
         value={q} onChange={(e) => setQ(e.target.value)}
         placeholder="Search competitions…"
-        className="mb-3 w-full rounded-lg border border-border bg-background px-3 py-2 font-data text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
+        className={`${neu.inset} neu-focus mb-4 w-full px-4 py-2.5 font-data text-sm placeholder:text-muted-foreground`}
       />
-      <ul className="space-y-1">
+      <ul className="space-y-2.5 p-1">
         {filtered.map((l) => (
           <li key={l.id}>
             <button onClick={() => onPick(l.id)}
-              className="flex w-full items-center gap-2 rounded-lg border border-transparent px-2 py-2 text-left hover:border-border hover:bg-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring">
+              className={neuPressable(false, "flex w-full items-center gap-2 px-3 py-2 text-left")}>
               <CountryFlag country={l.country} name={l.name} />
               <span className="min-w-0 flex-1 truncate font-display text-sm font-semibold">{l.name}</span>
               {l.country && <span className="shrink-0 text-[11px] text-muted-foreground/70">{l.country}</span>}

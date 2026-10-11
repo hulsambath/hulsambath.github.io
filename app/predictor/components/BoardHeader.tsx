@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { neu, neuPressable } from "../neu";
 
 export type BoardTab = "all" | "favourites" | "competitions";
 
@@ -21,16 +22,14 @@ export function BoardHeader({
   return (
     <div className="mb-4">
       <div className="mb-3 flex items-end justify-between gap-3">
-        <nav className="flex gap-4" aria-label="Board view">
+        <nav className={`${neu.inset} inline-flex gap-1 p-1`} aria-label="Board view">
           {TABS.map((t) => {
             const active = tab === t.key;
             return (
               <button key={t.key} onClick={() => onTab(t.key)} aria-pressed={active}
-                className={`relative pb-1 font-display text-lg font-bold uppercase tracking-wide transition-colors ${
-                  active ? "text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                className={neuPressable(active, "px-4 py-1.5 font-display text-base font-bold uppercase tracking-wide")}>
                 {t.label}
                 {t.key === "favourites" && favouriteCount > 0 ? ` (${favouriteCount})` : ""}
-                {active && <span className="absolute inset-x-0 -bottom-px h-0.5 rounded-full bg-foreground" />}
               </button>
             );
           })}

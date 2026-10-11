@@ -3,6 +3,7 @@ import * as React from "react";
 import { crestUrl } from "../../apiBase";
 import { isFinished, isLive } from "../../board";
 import type { MatchDetail } from "../../detail";
+import { neu } from "../../neu";
 
 type DetailTeam = { api_team_id: number; name: string; logo_url?: string | null };
 type DetailMatch = {
@@ -23,7 +24,7 @@ function TeamCrest({ team }: { team: DetailTeam }) {
   React.useEffect(() => setBroken(false), [src]);
   if (broken) {
     return (
-      <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary font-display text-xs font-bold text-muted-foreground">
+      <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full font-display text-xs font-bold text-muted-foreground">
         {initialsFor(team.name)}
       </span>
     );
@@ -46,14 +47,14 @@ export function DetailHeader({ detail }: { detail: MatchDetail }) {
   const hasScore = isLive(m.status) || isFinished(m.status);
   const Side = ({ team }: { team: DetailTeam }) => (
     <div className="flex flex-1 flex-col items-center gap-1 text-center">
-      <TeamCrest team={team} />
-      <span className="text-sm font-semibold leading-tight">{team.name}</span>
+      <span className={`${neu.raised} rounded-full p-2`}><TeamCrest team={team} /></span>
+      <span className="mt-1 text-sm font-semibold leading-tight">{team.name}</span>
     </div>
   );
   return (
-    <div className="mb-4 flex items-center justify-between gap-3 border-b border-border pb-4">
+    <div className="mb-5 flex items-center justify-between gap-3 pt-1">
       <Side team={m.home_team} />
-      <div className="min-w-16 text-center font-data tabular-nums">
+      <div className={`${neu.inset} min-w-20 px-4 py-2 text-center font-data tabular-nums`}>
         {hasScore ? (
           <div className="text-2xl font-bold">{m.home_goals ?? 0}–{m.away_goals ?? 0}</div>
         ) : (

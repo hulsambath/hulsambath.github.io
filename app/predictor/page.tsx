@@ -25,6 +25,7 @@ import { FilterBar } from "./components/FilterBar";
 import { crestUrl } from "./apiBase";
 import { MatchDetailPanel } from "./components/detail/MatchDetailPanel";
 import type { DateBucket, League, Match, Odds, Prediction, ScoreProb, Team, CornersLine } from "./types";
+import { neu, neuPressable } from "./neu";
 import { useFavourites } from "./useFavourites";
 import { usePredictorSocket } from "./usePredictorSocket";
 
@@ -110,12 +111,8 @@ function BadgeRow({ match }: { match: Match }) {
     <div className="flex flex-wrap gap-1.5">
       {dataBadges(match).map((badge) => (
         <span key={badge}
-          className={`rounded-full border px-2 py-0.5 font-data text-[10px] uppercase tracking-wide ${
-            badge === "Live"
-              ? "border-[hsl(var(--live)/0.4)] bg-[hsl(var(--live)/0.12)] text-[hsl(var(--live))]"
-              : badge === "Pending"
-                ? "border-border bg-muted/40 text-muted-foreground"
-                : "border-border bg-secondary/50 text-muted-foreground"
+          className={`${badge === "Pending" ? neu.insetSm : neu.raisedSm} rounded-full px-2 py-0.5 font-data text-[10px] uppercase tracking-wide ${
+            badge === "Live" ? "text-[hsl(var(--live))]" : "text-muted-foreground"
           }`}>
           {badge}
         </span>
@@ -126,13 +123,9 @@ function BadgeRow({ match }: { match: Match }) {
 
 function MarketCell({ label, value, accent }: { label: string; value: number | null | undefined; accent?: boolean }) {
   return (
-    <div className={`odds-cell group flex min-h-11 cursor-default flex-col items-center justify-center rounded-md border px-2 py-1 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
-      accent
-        ? "border-[hsl(var(--edge))] bg-[hsl(var(--edge)/0.12)]"
-        : "border-border/60 bg-secondary/60 hover:border-primary/40 hover:bg-primary/10"
-    }`}>
+    <div className={`${accent ? neu.insetSm : neu.raisedSm} group flex min-h-11 cursor-default flex-col items-center justify-center px-2 py-1`}>
       <span className={`font-data text-[10px] uppercase tracking-wide transition-colors ${accent ? "text-[hsl(var(--edge))]" : "text-muted-foreground group-hover:text-foreground"}`}>{label}</span>
-      <span className={`font-data text-sm font-bold transition-colors ${accent ? "text-[hsl(var(--edge))]" : "text-foreground group-hover:text-primary"}`}>{odd(value)}</span>
+      <span className={`font-data text-sm font-bold transition-colors ${accent ? "text-[hsl(var(--edge))]" : "text-foreground group-hover:text-[hsl(var(--neu-accent))]"}`}>{odd(value)}</span>
     </div>
   );
 }
@@ -146,7 +139,7 @@ function MarketCells({ odds, fav, compact = false }: { odds?: Odds | null | unde
     ["U2.5", odds?.under_25 ?? null],
   ] as const;
   return (
-    <div className={`grid gap-1.5 ${compact ? "grid-cols-5" : "grid-cols-5"}`}>
+    <div className={`grid grid-cols-5 ${compact ? "gap-2" : "gap-1.5"}`}>
       {cells.map(([label, value]) => (
         <MarketCell key={label} label={label} value={value} accent={fav === label} />
       ))}
@@ -183,10 +176,10 @@ function TriBand({ p1, px, p2, from }: { p1: number; px: number; p2: number; fro
           ))}
         </span>
       </div>
-      <div className="flex h-2 w-full overflow-hidden rounded-full bg-muted" role="img"
+      <div className={`${neu.insetSm} flex h-2.5 w-full overflow-hidden rounded-full p-0.5`} role="img"
         aria-label={`${from} probabilities — home ${pct(p1)}, draw ${pct(px)}, away ${pct(p2)}`}>
         {seg.map((s) => (
-          <div key={s.key} className="band-segment h-full"
+          <div key={s.key} className="band-segment h-full first:rounded-l-full last:rounded-r-full"
             style={{ width: `${s.value * 100}%`, background: s.color }} />
         ))}
       </div>
@@ -199,14 +192,14 @@ function ModelEdgeStrip({ match }: { match: Match }) {
   const market = marketImplied(match.odds);
   if (!edge) {
     return (
-      <div className="rounded-md border border-dashed border-border px-2.5 py-2 text-xs text-muted-foreground">
+      <div className={`${neu.inset} px-3 py-2 text-xs text-muted-foreground`}>
         Prediction pending
       </div>
     );
   }
   const isPositive = edge.edge != null && edge.edge > 0;
   return (
-    <div className="grid grid-cols-3 gap-1.5 rounded-lg border border-border/60 bg-secondary/40 p-1.5 shadow-sm">
+    <div className={`${neu.inset} grid grid-cols-3 gap-1.5 p-2`}>
       <div className="px-1.5 py-1">
         <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Model pick</div>
         <div className="font-display text-lg font-bold leading-none">{edge.pick} <span className="font-data text-sm text-muted-foreground">{pct(edge.probability)}</span></div>
@@ -217,7 +210,7 @@ function ModelEdgeStrip({ match }: { match: Match }) {
       </div>
       <div className="px-1.5 py-1">
         <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Edge</div>
-        <div className={`font-data text-lg font-bold leading-none ${isPositive ? "text-[hsl(var(--edge))] drop-shadow-[0_0_8px_hsla(var(--edge)/0.4)]" : "text-muted-foreground"}`}>
+        <div className={`font-data text-lg font-bold leading-none ${isPositive ? "text-[hsl(var(--edge))]" : "text-muted-foreground"}`}>
           {edge.edge == null ? "No odds" : `${edge.edge > 0 ? "+" : ""}${Math.round(edge.edge * 100)} pts`}
         </div>
       </div>
@@ -232,7 +225,7 @@ function ModelEdgeStrip({ match }: { match: Match }) {
 
 function StatChip({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-border bg-secondary/50 px-2.5 py-1.5">
+    <div className={`${neu.raisedSm} px-2.5 py-1.5`}>
       <div className="text-[10px] uppercase tracking-wide text-muted-foreground">{label}</div>
       <div className="font-data text-sm">{value}</div>
     </div>
@@ -245,7 +238,7 @@ function CornerSummary({ prediction, compact = false }: { prediction?: Predictio
     ? Object.entries(prediction.corners_lines).find(([line]) => line === "9.5") ?? Object.entries(prediction.corners_lines)[0]
     : null;
   return (
-    <div className={`mt-1.5 rounded-md border border-border bg-secondary/25 px-2 py-1 font-data text-[10px] text-muted-foreground ${compact ? "inline-flex items-center gap-1.5" : ""}`}>
+    <div className={`${neu.insetSm} mt-2 px-2 py-1 font-data text-[10px] text-muted-foreground ${compact ? "inline-flex items-center gap-1.5" : ""}`}>
       <span className="inline-flex items-center gap-1 uppercase tracking-wide">
         <CornerDownRight className="h-3 w-3" />
         Corners
@@ -262,7 +255,7 @@ function CornerSummary({ prediction, compact = false }: { prediction?: Predictio
 function StatusPill({ match }: { match: Match }) {
   if (isLive(match.status))
     return (
-      <span className="flex items-center gap-1.5 rounded-full bg-[hsl(var(--live)/0.14)] px-2 py-0.5 font-data text-[11px] font-semibold uppercase tracking-wide text-[hsl(var(--live))]">
+      <span className={`${neu.insetSm} flex items-center gap-1.5 rounded-full px-2 py-0.5 font-data text-[11px] font-semibold uppercase tracking-wide text-[hsl(var(--live))]`}>
         <span className="live-dot inline-block h-1.5 w-1.5 rounded-full" style={{ background: "hsl(var(--live))" }} />
         {match.status === "HT" ? "HT" : "Live"}
       </span>
@@ -297,15 +290,15 @@ function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
   const fav = favouriteOutcome(probs);
 
   return (
-    <div className={`rounded-xl border bg-card transition-colors md:hidden ${isLive(match.status) ? "border-[hsl(var(--live)/0.5)]" : "border-border"}`}>
+    <div className={`${neu.raised} lg:hidden ${isLive(match.status) ? "ring-1 ring-[hsl(var(--live)/0.5)]" : ""}`}>
       <button
-        className="w-full px-4 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring"
+        className="neu-focus w-full rounded-[14px] px-4 py-3 text-left"
         onClick={() => setOpen(!open)} aria-expanded={open}>
         <div className="mb-3 flex items-center justify-between text-xs text-muted-foreground">
           <span className="flex items-center gap-2">
             <StatusPill match={match} />
             {league && (
-              <span className="truncate rounded-full border border-border/60 bg-secondary/30 px-2 py-0.5 text-[10px] uppercase tracking-wide">
+              <span className={`${neu.insetSm} truncate rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wide`}>
                 {league.name}
               </span>
             )}
@@ -343,13 +336,13 @@ function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
       </button>
 
       {open && p && (
-        <div className="border-t border-border px-4 py-3">
+        <div className="px-4 py-3">
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <h4 className="mb-1.5 text-[10px] uppercase tracking-wide text-muted-foreground">Most likely scores</h4>
               <div className="flex flex-wrap gap-1.5">
                 {(p.top_scores ?? []).map((s) => (
-                  <span key={s.score} className="rounded-md border border-border px-2 py-1 font-data text-xs">
+                  <span key={s.score} className={`${neu.raisedSm} px-2 py-1 font-data text-xs`}>
                     {s.score} <span className="text-muted-foreground">{pct(s.p)}</span>
                   </span>
                 ))}
@@ -382,17 +375,20 @@ function MatchCardMobile({ match, league, oddsShown = true, onSelect }: {
         </div>
       )}
       {open && !p && (
-        <div className="border-t border-border px-4 py-3 text-xs text-muted-foreground">
+        <div className="px-4 py-3 text-xs text-muted-foreground">
           Model prediction pending — this league doesn&apos;t have enough result history yet.
         </div>
       )}
       <button onClick={onSelect}
-        className="w-full border-t border-border px-4 py-2 text-left font-display text-sm font-semibold uppercase tracking-wide text-muted-foreground hover:text-foreground">
+        className={neuPressable(false, "mx-4 mb-4 w-[calc(100%-2rem)] px-4 py-2 text-center font-display text-sm font-semibold uppercase tracking-wide")}>
         Open match details
       </button>
     </div>
   );
 }
+
+/** Shared by the desktop rows and their sticky column header; keep in sync. */
+const ROW_GRID = "grid-cols-[4.75rem_minmax(8rem,1fr)_3.75rem_3.5rem_8.5rem_15rem_5.5rem]";
 
 function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
   match: Match;
@@ -406,32 +402,38 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
   const edge = modelEdge(match.prediction, match.odds);
   const fav = favouriteOutcome(probs);
   const showScore = isLive(match.status) || isFinished(match.status);
+  const live = isLive(match.status);
+  const sides = [
+    [match.home_team, match.home_goals, p?.home_exp_goals],
+    [match.away_team, match.away_goals, p?.away_exp_goals],
+  ] as const;
   return (
     <div
-      className={`match-row hidden w-full grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_3.5rem_minmax(0,1fr)_9rem_18rem_5rem_auto] items-center gap-3 border-b border-border/70 px-3 py-2 text-left transition-colors hover:bg-secondary/35 md:grid ${
-        selected ? "bg-secondary/50 ring-1 ring-ring" : ""
+      className={`match-row hidden w-full ${ROW_GRID} items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-shadow lg:grid ${
+        selected ? neu.insetSm : ""
       }`}>
-      <div className="space-y-1">
+      <div className="min-w-0 space-y-1">
         <StatusPill match={match} />
-        <div className="font-data text-[10px] text-muted-foreground">{league?.country ?? "Competition"}</div>
+        <div className="truncate font-data text-[10px] text-muted-foreground">{league?.country ?? "Competition"}</div>
       </div>
-      <div className="flex min-w-0 items-center gap-2">
-        <TeamBadge team={match.home_team} />
-        <span className="truncate font-display text-base font-semibold">{match.home_team.name}</span>
-      </div>
-      <div className="text-center">
-        {showScore ? (
-          <span className={`font-data text-lg font-bold tabular-nums ${isLive(match.status) ? "text-[hsl(var(--live))]" : ""}`}>
-            {match.home_goals ?? 0}–{match.away_goals ?? 0}
-          </span>
-        ) : (
-          <div>
-            <div className="font-data text-sm">{timeLabel(match.kickoff_utc)}</div>
-            <div className="font-data text-[10px] text-muted-foreground">
-              {p?.home_exp_goals != null && p.away_exp_goals != null ? `${p.home_exp_goals.toFixed(1)}-${p.away_exp_goals.toFixed(1)} xG` : "kickoff"}
-            </div>
+      <div className="min-w-0 space-y-1.5">
+        {sides.map(([team]) => (
+          <div key={team.api_team_id} className="flex min-w-0 items-center gap-2">
+            <TeamBadge team={team} />
+            <span className="truncate font-display text-base font-semibold leading-none">{team.name}</span>
           </div>
-        )}
+        ))}
+      </div>
+      <div className="space-y-1.5 text-center font-data tabular-nums">
+        {sides.map(([team, goals, xg]) => (
+          <div key={team.api_team_id} className="flex h-7 items-center justify-center">
+            {showScore ? (
+              <span className={`text-lg font-bold leading-none ${live ? "text-[hsl(var(--live))]" : ""}`}>{goals ?? 0}</span>
+            ) : (
+              <span className="text-xs text-muted-foreground">{xg != null ? xg.toFixed(1) : "–"}</span>
+            )}
+          </div>
+        ))}
       </div>
       <div className="text-center font-data tabular-nums text-sm text-muted-foreground">
         {match.home_corners != null && match.away_corners != null ? (
@@ -439,18 +441,14 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
             {match.home_corners}–{match.away_corners}
           </span>
         ) : p?.exp_corners != null ? (
-          <span>{p.exp_corners.toFixed(1)} <span className="text-[10px] text-muted-foreground/60">exp</span></span>
+          <span>{p.exp_corners.toFixed(1)} <span className="block text-[10px] text-muted-foreground/70">exp</span></span>
         ) : (
           <span>–</span>
         )}
       </div>
-      <div className="flex min-w-0 items-center justify-end gap-2">
-        <span className="truncate text-right font-display text-base font-semibold">{match.away_team.name}</span>
-        <TeamBadge team={match.away_team} />
-      </div>
       <div>
         {edge ? (
-          <div className={`rounded-md border px-2 py-1 transition-colors ${edge.edge != null && edge.edge > 0 ? "border-[hsl(var(--edge))/0.4] bg-[hsl(var(--edge))/0.08]" : "border-border bg-secondary/35"}`}>
+          <div className={`${neu.insetSm} px-2 py-1`}>
             <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Model pick</div>
             <div className="font-data text-sm font-bold">{edge.pick} {pct(edge.probability)}</div>
             <div className={`font-data text-[10px] font-semibold ${edge.edge != null && edge.edge > 0 ? "text-[hsl(var(--edge))]" : "text-muted-foreground"}`}>
@@ -467,11 +465,8 @@ function MatchRowDesktop({ match, league, oddsShown, selected, onSelect }: {
         )}
       </div>
       <div>
-        <BadgeRow match={match} />
-      </div>
-      <div>
         <button onClick={onSelect}
-          className="rounded bg-secondary px-3 py-1.5 font-display text-sm font-semibold uppercase tracking-wide text-foreground hover:bg-secondary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring">
+          className={neuPressable(selected, "px-3 py-1.5 font-display text-sm font-semibold uppercase tracking-wide")}>
           Details
         </button>
       </div>
@@ -488,20 +483,18 @@ function DateStrip({ days, selected, onSelect }: {
   return (
     <div className="relative flex items-center gap-1">
       <button aria-label="Earlier days" onClick={() => nudge(-1)}
-        className="hidden shrink-0 rounded-full border border-border p-1 text-muted-foreground hover:text-foreground sm:block">
+        className={neuPressable(false, "hidden shrink-0 rounded-full p-1.5 sm:block")}>
         <ChevronLeft className="h-4 w-4" />
       </button>
-      <div ref={scroller} className="date-strip flex flex-1 gap-1.5 overflow-x-auto scroll-smooth py-1">
+      <div ref={scroller} className="date-strip flex flex-1 gap-2 overflow-x-auto scroll-smooth px-2 py-2.5">
         {days.map((d) => {
           const { top, sub } = relativeLabel(d.date);
           const active = d.date === selected;
           const empty = d.count === 0;
           return (
             <button key={d.date} onClick={() => onSelect(d.date)} aria-pressed={active}
-              className={`flex shrink-0 snap-start flex-col items-center rounded-lg border px-3.5 py-1.5 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring ${
-                active ? "border-foreground bg-foreground text-background"
-                       : empty ? "border-border/60 text-muted-foreground/50"
-                               : "border-border text-foreground hover:border-foreground/60"}`}>
+              className={neuPressable(active, `flex shrink-0 snap-start flex-col items-center px-3.5 py-1.5 ${
+                empty && !active ? "opacity-50" : ""}`)}>
               <span className="font-display text-sm font-semibold uppercase leading-none">{top}</span>
               <span className="mt-0.5 font-data text-[10px] leading-none opacity-70">{sub}</span>
             </button>
@@ -509,7 +502,7 @@ function DateStrip({ days, selected, onSelect }: {
         })}
       </div>
       <button aria-label="Later days" onClick={() => nudge(1)}
-        className="hidden shrink-0 rounded-full border border-border p-1 text-muted-foreground hover:text-foreground sm:block">
+        className={neuPressable(false, "hidden shrink-0 rounded-full p-1.5 sm:block")}>
         <ChevronRight className="h-4 w-4" />
       </button>
     </div>
@@ -574,7 +567,7 @@ export default function PredictorPage() {
   // lock body scroll while the mobile detail drawer is open
   React.useEffect(() => {
     if (selectedMatchId == null) return;
-    const mql = window.matchMedia("(max-width: 1023px)");
+    const mql = window.matchMedia("(max-width: 1279px)");
     if (!mql.matches) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -621,7 +614,7 @@ export default function PredictorPage() {
 
   if (!mounted) {
     return (
-      <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12 lg:max-w-6xl flex items-center justify-center">
+      <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12 lg:max-w-6xl xl:max-w-7xl flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground/60" />
           <p className="font-data text-xs text-muted-foreground/60">Loading matchday board…</p>
@@ -631,7 +624,7 @@ export default function PredictorPage() {
   }
 
   return (
-    <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12 lg:max-w-6xl">
+    <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12 lg:max-w-6xl xl:max-w-7xl">
       <header className="mb-5">
         <p className="font-data text-xs text-muted-foreground">hulsambath.me / predictor</p>
         <h1 className="font-display text-4xl font-bold uppercase leading-none sm:text-5xl">
@@ -657,18 +650,18 @@ export default function PredictorPage() {
       </header>
 
       {error && (
-        <div className="mb-6 rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-sm">
+        <div className={`${neu.inset} mb-6 p-4 text-sm text-destructive`}>
           {error} Check that the API is running and CORS allows this origin.
         </div>
       )}
 
-      <div className="sticky top-0 z-10 -mx-4 mb-4 border-b border-border/80 bg-background/75 px-4 pb-2 pt-3 backdrop-blur-md">
+      <div className="neu-surface sticky top-0 z-10 -mx-4 mb-4 px-4 pb-2 pt-3">
         <BoardHeader tab={tab} onTab={(t) => { setTab(t); setLeagueId(null); }} favouriteCount={favourites.size}>
           <DateStrip days={days} selected={selectedDate} onSelect={setSelectedDate} />
         </BoardHeader>
       </div>
 
-      <div className="lg:grid lg:grid-cols-[1fr_22rem] lg:items-start lg:gap-6">
+      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_20rem] xl:items-start xl:gap-6">
         <div>
           {tab === "competitions" ? (
             <CompetitionsTab
@@ -683,36 +676,34 @@ export default function PredictorPage() {
               {matches && matches.length > 0 && (predictionCount === 0 || oddsCount === 0) && (
                 <div className="mb-4 grid gap-2 sm:grid-cols-2">
                   {predictionCount === 0 && (
-                    <div className="rounded-xl border border-border bg-secondary/35 p-3 text-sm text-muted-foreground">
+                    <div className={`${neu.inset} p-3 text-sm text-muted-foreground`}>
                       <span className="font-semibold text-foreground">Predictions pending.</span> The board is still usable for fixtures and live scores; model probabilities will appear after backend coverage is restored.
                     </div>
                   )}
                   {oddsCount === 0 && (
-                    <div className="rounded-xl border border-border bg-secondary/35 p-3 text-sm text-muted-foreground">
+                    <div className={`${neu.inset} p-3 text-sm text-muted-foreground`}>
                       <span className="font-semibold text-foreground">Market odds unavailable.</span> Real bookmaker prices are not visible for this day yet, so market columns show dashes.
                     </div>
                   )}
                 </div>
               )}
               {oddsShown && competitions.length > 0 && (
-                <div className="sticky top-[8.75rem] z-[5] mb-2 hidden grid-cols-[5.25rem_minmax(0,1fr)_4.5rem_3.5rem_minmax(0,1fr)_9rem_18rem_5rem_auto] items-center gap-3 rounded-lg border border-border bg-background/90 px-3 py-2 font-data text-[10px] uppercase tracking-wide text-muted-foreground backdrop-blur md:grid">
+                <div className={`sticky top-[9.5rem] z-[5] mb-3 hidden ${ROW_GRID} items-center gap-3 rounded-xl bg-[hsl(var(--neu-surface))] px-3 py-2 font-data text-[10px] uppercase tracking-wide text-muted-foreground shadow-[inset_3px_3px_7px_hsl(var(--neu-shade)),inset_-3px_-3px_7px_hsl(var(--neu-light))] lg:grid lg:px-5`}>
                   <span>Status</span>
-                  <span>Home</span>
-                  <span className="text-center">Score</span>
+                  <span>Match</span>
+                  <span className="text-center">Score / xG</span>
                   <span className="text-center">Corners</span>
-                  <span className="text-right">Away</span>
                   <span>Model</span>
                   <span className="grid grid-cols-5 gap-1.5 text-center"><span>1</span><span>X</span><span>2</span><span>O2.5</span><span>U2.5</span></span>
-                  <span>Data</span>
                   <span></span>
                 </div>
               )}
-              <section aria-label="Competitions">
+              <section aria-label="Competitions" className="space-y-4">
                 {matches === null && !error && (
                   <p className="py-8 text-center text-sm text-muted-foreground">Loading fixtures…</p>
                 )}
                 {matches !== null && competitions.length === 0 && (
-                  <div className="rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
+                  <div className={`${neu.inset} p-8 text-center text-sm text-muted-foreground`}>
                     No {status} matches{tab === "favourites" ? " in your favourites" : ""} for this day. Try another day or filter.
                   </div>
                 )}
@@ -744,7 +735,7 @@ export default function PredictorPage() {
           )}
         </div>
 
-        <aside className="sticky top-24 hidden max-h-[calc(100vh-7rem)] overflow-hidden rounded-xl border border-border bg-card p-4 lg:block">
+        <aside className={`${neu.raised} sticky top-24 hidden max-h-[calc(100vh-7rem)] overflow-hidden p-4 xl:block`}>
           {selectedMatchId
             ? <MatchDetailPanel matchId={selectedMatchId} onPrediction={applyPrediction} onClose={() => {
               setSelectedMatchId(null);
@@ -755,7 +746,7 @@ export default function PredictorPage() {
       </div>
 
       {selectedMatchId != null && (
-        <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background p-4 lg:hidden">
+        <div className="neu-surface fixed inset-0 z-50 flex flex-col overflow-y-auto p-4 xl:hidden">
           <MatchDetailPanel matchId={selectedMatchId} onPrediction={applyPrediction} onClose={() => {
             setSelectedMatchId(null);
             router.replace("/predictor", { scroll: false });
@@ -763,8 +754,8 @@ export default function PredictorPage() {
         </div>
       )}
 
-      <footer className="mt-12 border-t border-border pt-4 text-xs text-muted-foreground">
-        FastAPI + PostgreSQL football analytics, with provider-attributed fixtures and odds.{" "}
+      <footer className="mt-12 pt-4 text-xs text-muted-foreground">
+        FastAPI + Firestore football analytics, with provider-attributed fixtures and odds.{" "}
         <a className="underline underline-offset-2 hover:text-foreground" href="https://hulsambath.me">
           ← back to hulsambath.me
         </a>

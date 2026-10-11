@@ -4,6 +4,7 @@ import { BarChart3, ClipboardList, LineChart, ListTree, Loader2, Sparkles, Sword
 import * as React from "react";
 import { fetchMatchDetail, predictMatch, predictionErrorMessage } from "../../client";
 import { isLive } from "../../board";
+import { neu, neuPressable } from "../../neu";
 import type { MatchDetail, Match, Prediction } from "../../types";
 import { DetailHeader } from "./DetailHeader";
 import { HeadToHead } from "./HeadToHead";
@@ -63,7 +64,7 @@ function PredictButton({ hasPrediction, predicting, canPredict, onPredict }: {
   if (!canPredict) return null;
   return (
     <button onClick={onPredict} disabled={predicting}
-      className="flex items-center gap-1.5 rounded-md border border-border bg-background/60 px-2.5 py-1.5 font-data text-[11px] uppercase tracking-wide text-foreground hover:bg-secondary disabled:opacity-60">
+      className={neuPressable(false, "flex items-center gap-1.5 px-2.5 py-1.5 font-data text-[11px] uppercase tracking-wide disabled:opacity-60")}>
       {predicting
         ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
         : <Sparkles className="h-3.5 w-3.5" />}
@@ -81,7 +82,7 @@ function PredictionSummary({ prediction, predicting, predictError, canPredict, o
 }) {
   if (!prediction) {
     return (
-      <section className="mb-4 rounded-lg border border-dashed border-border p-3">
+      <section className={`${neu.inset} mb-4 p-3`}>
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm text-muted-foreground">
             {canPredict ? "No prediction yet for this match." : "Prediction pending for this match."}
@@ -99,7 +100,7 @@ function PredictionSummary({ prediction, predicting, predictError, canPredict, o
     ["2", prediction.p_away],
   ] as const;
   return (
-    <section className="mb-4 rounded-xl border border-border bg-secondary/30 p-3">
+    <section className={`${neu.raised} mb-4 p-4`}>
       <div className="mb-2 flex items-center justify-between gap-2">
         <h3 className="font-display text-sm font-semibold uppercase tracking-wide text-muted-foreground">Model probability</h3>
         <PredictButton hasPrediction predicting={predicting}
@@ -114,28 +115,28 @@ function PredictionSummary({ prediction, predicting, predictError, canPredict, o
       )}
       <div className="grid grid-cols-3 gap-2">
         {outcomes.map(([label, value]) => (
-          <div key={label} className="rounded-md border border-border bg-background/50 px-2 py-2 text-center">
+          <div key={label} className={`${neu.insetSm} px-2 py-2 text-center`}>
             <div className="font-data text-[10px] text-muted-foreground">{label}</div>
             <div className="font-data text-base font-semibold">{pct(value)}</div>
           </div>
         ))}
       </div>
-      <div className="mt-3 flex flex-wrap gap-1.5">
+      <div className="mt-3 flex flex-wrap gap-2">
         {(prediction.top_scores ?? []).slice(0, 5).map((score) => (
-          <span key={score.score} className="rounded-md border border-border px-2 py-1 font-data text-xs">
+          <span key={score.score} className={`${neu.raisedSm} px-2 py-1 font-data text-xs`}>
             {score.score} <span className="text-muted-foreground">{pct(score.p)}</span>
           </span>
         ))}
       </div>
       {(prediction.exp_corners != null || prediction.corners_lines) && (
-        <div className="mt-3 rounded-lg border border-border bg-background/40 p-2">
+        <div className={`${neu.inset} mt-3 p-2.5`}>
           <div className="font-data text-[10px] uppercase tracking-wide text-muted-foreground">Corner prediction</div>
-          <div className="mt-1 flex flex-wrap gap-1.5">
-            <span className="rounded-md border border-border px-2 py-1 font-data text-xs">
+          <div className="mt-1.5 flex flex-wrap gap-2">
+            <span className={`${neu.raisedSm} px-2 py-1 font-data text-xs`}>
               Expected <span className="text-foreground">{prediction.exp_corners?.toFixed(1) ?? "-"}</span>
             </span>
             {Object.entries(prediction.corners_lines ?? {}).map(([line, value]) => (
-              <span key={line} className="rounded-md border border-border px-2 py-1 font-data text-xs">
+              <span key={line} className={`${neu.raisedSm} px-2 py-1 font-data text-xs`}>
                 O{line} <span className="text-foreground">{pct(value.over)}</span>
               </span>
             ))}
@@ -148,7 +149,7 @@ function PredictionSummary({ prediction, predicting, predictError, canPredict, o
 
 function OddsSummary({ odds }: { odds: PanelOdds | null }) {
   if (!odds) {
-    return <p className="rounded-lg border border-dashed border-border p-3 text-sm text-muted-foreground">Odds unavailable for this match.</p>;
+    return <p className={`${neu.inset} p-3 text-sm text-muted-foreground`}>Odds unavailable for this match.</p>;
   }
   const cells = [
     ["1", odds.home_win],
@@ -171,7 +172,7 @@ function OddsSummary({ odds }: { odds: PanelOdds | null }) {
       )}
       <div className="grid grid-cols-3 gap-2">
         {cells.map(([label, value]) => (
-          <div key={label} className="rounded-md border border-border bg-secondary/35 px-2 py-2 text-center">
+          <div key={label} className={`${neu.raisedSm} px-2 py-2 text-center`}>
             <div className="font-data text-[10px] text-muted-foreground">{label}</div>
             <div className="font-data text-base font-semibold">{odd(value)}</div>
           </div>
@@ -255,33 +256,33 @@ export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
   return (
     <div className="flex h-full flex-col">
       <button onClick={onClose} aria-label="Close details"
-        className="mb-2 ml-auto rounded-full p-1 text-muted-foreground hover:text-foreground lg:hidden">
+        className={neuPressable(false, "mb-3 ml-auto rounded-full p-1.5 xl:hidden")}>
         <X className="h-5 w-5" />
       </button>
       {error && <p className="py-8 text-center text-sm text-muted-foreground">Details unavailable right now.</p>}
       {!error && !detail && <p className="py-8 text-center text-sm text-muted-foreground">Loading details…</p>}
       {detail && (
-        <div className="overflow-y-auto">
+        <div className="-mx-2 overflow-y-auto px-3 pb-4">
           <DetailHeader detail={detail} />
           <div className="-mt-2 mb-4 flex flex-wrap gap-x-2 gap-y-1 font-data text-[10px] uppercase tracking-wide text-muted-foreground">
             <span>Source: {m?.source ?? "unknown"}</span>
             {m?.provider_updated_at && <span>Feed: {timestamp(m.provider_updated_at)}</span>}
             {detail.detail_fetched_at && <span>Details: {timestamp(detail.detail_fetched_at)}</span>}
           </div>
-          <div className="sticky top-0 z-10 mb-4 flex gap-1 overflow-x-auto border-b border-border bg-card/95 pb-2 backdrop-blur">
+          <div className="neu-surface sticky top-0 z-10 mb-4 py-1">
+            <div className={`${neu.inset} flex gap-1 overflow-x-auto p-1`}>
             {TABS.map((item) => {
               const Icon = item.icon;
               const active = tab === item.key;
               return (
                 <button key={item.key} onClick={() => setTab(item.key)} aria-pressed={active}
-                  className={`flex shrink-0 items-center gap-1.5 rounded-md px-2.5 py-1.5 font-data text-[11px] uppercase tracking-wide ${
-                    active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                  }`}>
+                  className={neuPressable(active, "flex shrink-0 items-center gap-1.5 px-2.5 py-1.5 font-data text-[11px] uppercase tracking-wide")}>
                   <Icon className="h-3.5 w-3.5" />
                   {item.label}
                 </button>
               );
             })}
+            </div>
           </div>
           {tab === "summary" && (
             <>
