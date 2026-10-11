@@ -1,15 +1,19 @@
 export type StatusFilter = "live" | "finished" | "upcoming";
 export type QuickFilter = "top" | "predictions" | "odds" | "soon";
 
+// In-play statuses are listed explicitly: an unknown or paused status
+// (SUSP, INT, TBD…) must never show a pulsing "Live" badge.
+export const LIVE = new Set(["1H", "HT", "2H", "ET", "BT", "P", "LIVE"]);
 export const FINISHED = new Set(["FT", "AET", "PEN"]);
-export const NOT_LIVE = new Set(["NS", "PST", "CANC", "FT", "AET", "PEN"]);
+// Terminal without a normal result; grouped with finished matches.
+const ENDED = new Set([...FINISHED, "ABD", "AWD", "WO"]);
 
 export const isFinished = (s: string): boolean => FINISHED.has(s);
-export const isLive = (s: string): boolean => !NOT_LIVE.has(s);
+export const isLive = (s: string): boolean => LIVE.has(s);
 
 export function classify(status: string): StatusFilter {
   if (isLive(status)) return "live";
-  if (isFinished(status)) return "finished";
+  if (ENDED.has(status)) return "finished";
   return "upcoming";
 }
 

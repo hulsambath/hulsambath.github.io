@@ -9,8 +9,8 @@ single-page app; its nav links are in-page scroll anchors, not routes.
 |---|---|---|
 | `/` | `app/page.tsx` → `src/App.tsx` | Main portfolio (single scrolling page) |
 | `/kp-trip` | `app/kp-trip/page.tsx` | Standalone Kampot/Kep/Bokor motorbike trip guide |
-| `/predictor` | `app/predictor/page.tsx` | Matchday Board — football-predictor portal (see `PREDICTOR_SUBDOMAIN.md`) |
-| `/predictor/match` | `app/predictor/match/` | Predictor match-detail page |
+| `/predictor` | `app/predictor/page.tsx` | Matchday Board — balling-predictor portal (see `PREDICTOR_SUBDOMAIN.md`). URL state: `?date=YYYY-MM-DD&match=<id>` (`app/predictor/routes.ts`); `match` opens the detail sidebar/drawer in place, Back closes it |
+| `/predictor/match` | `app/predictor/match/` | Legacy `?id=` links — redirects to `/predictor?match=<id>` |
 | `/generate-qr` | `app/generate-qr/page.tsx` | Personal QR code generator (client-only, `noindex`) |
 
 `app/layout.tsx` is the shared root layout (not a route). There is no `route.ts`

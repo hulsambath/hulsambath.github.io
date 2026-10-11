@@ -2,7 +2,7 @@
 
 import { Activity, ChevronDown, ChevronLeft, ChevronRight, Clock3, CornerDownRight, RefreshCw, ShieldCheck, WifiOff } from "lucide-react";
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   dataBadges,
   groupByCompetition,
@@ -26,6 +26,7 @@ import { crestUrl } from "./apiBase";
 import { MatchDetailPanel } from "./components/detail/MatchDetailPanel";
 import type { DateBucket, League, Match, Odds, Prediction, ScoreProb, Team, CornersLine } from "./types";
 import { neu, neuPressable } from "./neu";
+import { boardHref, parseBoardParams } from "./routes";
 import { useFavourites } from "./useFavourites";
 import { usePredictorSocket } from "./usePredictorSocket";
 
@@ -262,6 +263,8 @@ function StatusPill({ match }: { match: Match }) {
     );
   if (isFinished(match.status))
     return <span className="font-data text-[11px] uppercase tracking-wide text-muted-foreground">FT</span>;
+  if (match.status !== "NS")  // postponed, cancelled, abandoned, suspended…
+    return <span className="font-data text-[11px] font-semibold uppercase tracking-wide text-destructive">{match.status}</span>;
   return <span className="font-data text-xs text-muted-foreground">{timeLabel(match.kickoff_utc)}</span>;
 }
 
@@ -512,20 +515,42 @@ function DateStrip({ days, selected, onSelect }: {
 /* ----------------------------------------------------------------- page */
 
 export default function PredictorPage() {
+  // useSearchParams needs a Suspense boundary in a static export.
+  return (
+    <React.Suspense fallback={<BoardLoading />}>
+      <PredictorBoard />
+    </React.Suspense>
+  );
+}
+
+function BoardLoading() {
+  return (
+    <main className="predictor-page mx-auto flex min-h-screen max-w-3xl items-center justify-center px-4 py-8 sm:py-12 lg:max-w-6xl xl:max-w-7xl">
+      <div className="flex flex-col items-center gap-3">
+        <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground/60" />
+        <p className="font-data text-xs text-muted-foreground/60">Loading matchday board…</p>
+      </div>
+    </main>
+  );
+}
+
+function PredictorBoard() {
   const router = useRouter();
+  const url = parseBoardParams(useSearchParams());
+  // The open match lives in the URL (?match=), so Back closes it and links share it.
+  const selectedMatchId = url.matchId;
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => {
     setMounted(true);
   }, []);
   const [leagues, setLeagues] = React.useState<League[]>([]);
   const [buckets, setBuckets] = React.useState<DateBucket[]>([]);
-  const [selectedDate, setSelectedDate] = React.useState<string>(() => isoDay(new Date()));
+  const [selectedDate, setSelectedDate] = React.useState<string>(() => url.date ?? isoDay(new Date()));
   const [tab, setTab] = React.useState<BoardTab>("all");
   const [status, setStatus] = React.useState<StatusFilter>("live");
   const [oddsShown, setOddsShown] = React.useState(true);
   const [quickFilters, setQuickFilters] = React.useState<Set<QuickFilter>>(() => new Set());
   const [leagueId, setLeagueId] = React.useState<number | null>(null);
-  const [selectedMatchId, setSelectedMatchId] = React.useState<number | null>(null);
   const [matches, setMatches] = React.useState<Match[] | null>(null);
   const { favourites, isFavourite, toggle } = useFavourites();
   const [error, setError] = React.useState<string | null>(null);
@@ -534,11 +559,16 @@ export default function PredictorPage() {
   const today = isoDay(new Date());
 
   const autoFilteredDate = React.useRef<string | null>(null);
+  const latestDay = React.useRef<string | null>(null);
 
   const loadDay = React.useCallback((date: string) => {
+    latestDay.current = date;
     fetchMatchesByDate(date)
       .then((data) => {
+        // Ignore a slow response for a day the viewer has already left.
+        if (latestDay.current !== date) return;
         setMatches(data);
+        setError(null);
         setLastUpdated(new Date());
         if (autoFilteredDate.current !== date) {
           const live = data.filter((m) => isLive(m.status)).length;
@@ -547,7 +577,9 @@ export default function PredictorPage() {
           autoFilteredDate.current = date;
         }
       })
-      .catch(() => setError("The prediction server is not reachable right now."));
+      .catch(() => {
+        if (latestDay.current === date) setError("The prediction server is not reachable right now.");
+      });
   }, []);
 
   // initial: leagues + available dates; default to today or nearest fixtures
@@ -555,14 +587,36 @@ export default function PredictorPage() {
     fetchLeagues().then(setLeagues).catch(() => {});
     fetchDateBuckets().then((bs: DateBucket[]) => {
       setBuckets(bs);
-      if (!bs.some((b) => b.date === today) && bs.length) {
+      // Only pick a day for the viewer when the URL did not ask for one.
+      if (!url.date && !bs.some((b) => b.date === today) && bs.length) {
         const next = bs.find((b) => b.date >= today) ?? bs[bs.length - 1];
         if (next) setSelectedDate(next.date);
       }
     }).catch(() => setError("The prediction server is not reachable right now."));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- first load only
   }, [today]);
 
-  React.useEffect(() => { loadDay(selectedDate); }, [selectedDate, loadDay]);
+  // Back/forward across ?date= changes.
+  React.useEffect(() => {
+    if (url.date && url.date !== selectedDate) setSelectedDate(url.date);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- follow the URL, not local edits
+  }, [url.date]);
+
+  React.useEffect(() => {
+    setMatches(null);
+    loadDay(selectedDate);
+  }, [selectedDate, loadDay]);
+
+  const selectDate = React.useCallback((date: string) => {
+    setSelectedDate(date);
+    router.replace(boardHref({ date }), { scroll: false });
+  }, [router]);
+  const openMatch = React.useCallback((matchId: number) => {
+    router.push(boardHref({ date: selectedDate, matchId }), { scroll: false });
+  }, [router, selectedDate]);
+  const closeMatch = React.useCallback(() => {
+    router.replace(boardHref({ date: selectedDate }), { scroll: false });
+  }, [router, selectedDate]);
 
   // lock body scroll while the mobile detail drawer is open
   React.useEffect(() => {
@@ -612,16 +666,7 @@ export default function PredictorPage() {
     });
   }, []);
 
-  if (!mounted) {
-    return (
-      <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12 lg:max-w-6xl xl:max-w-7xl flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground/60" />
-          <p className="font-data text-xs text-muted-foreground/60">Loading matchday board…</p>
-        </div>
-      </main>
-    );
-  }
+  if (!mounted) return <BoardLoading />;
 
   return (
     <main className="predictor-page mx-auto min-h-screen max-w-3xl px-4 py-8 sm:py-12 lg:max-w-6xl xl:max-w-7xl">
@@ -657,7 +702,7 @@ export default function PredictorPage() {
 
       <div className="neu-surface sticky top-0 z-10 -mx-4 mb-4 px-4 pb-2 pt-3">
         <BoardHeader tab={tab} onTab={(t) => { setTab(t); setLeagueId(null); }} favouriteCount={favourites.size}>
-          <DateStrip days={days} selected={selectedDate} onSelect={setSelectedDate} />
+          <DateStrip days={days} selected={selectedDate} onSelect={selectDate} />
         </BoardHeader>
       </div>
 
@@ -717,16 +762,10 @@ export default function PredictorPage() {
                         <MatchRowDesktop match={m}
                           {...(leagueById.get(m.league_id) ? { league: leagueById.get(m.league_id) } : {})}
                           oddsShown={oddsShown} selected={selectedMatchId === m.id}
-                          onSelect={() => {
-                            setSelectedMatchId(m.id);
-                            router.replace(`/predictor/match?id=${m.id}`, { scroll: false });
-                          }} />
+                          onSelect={() => openMatch(m.id)} />
                         <MatchCardMobile match={m}
                           {...(leagueById.get(m.league_id) ? { league: leagueById.get(m.league_id) } : {})}
-                          oddsShown={oddsShown} onSelect={() => {
-                            setSelectedMatchId(m.id);
-                            router.replace(`/predictor/match?id=${m.id}`, { scroll: false });
-                          }} />
+                          oddsShown={oddsShown} onSelect={() => openMatch(m.id)} />
                       </React.Fragment>
                     )} />
                 ))}
@@ -737,20 +776,14 @@ export default function PredictorPage() {
 
         <aside className={`${neu.raised} sticky top-24 hidden max-h-[calc(100vh-7rem)] overflow-hidden p-4 xl:block`}>
           {selectedMatchId
-            ? <MatchDetailPanel matchId={selectedMatchId} onPrediction={applyPrediction} onClose={() => {
-              setSelectedMatchId(null);
-              router.replace("/predictor", { scroll: false });
-            }} />
+            ? <MatchDetailPanel matchId={selectedMatchId} onPrediction={applyPrediction} onClose={closeMatch} />
             : <p className="py-12 text-center text-sm text-muted-foreground">Select a match to see details.</p>}
         </aside>
       </div>
 
       {selectedMatchId != null && (
         <div className="neu-surface fixed inset-0 z-50 flex flex-col overflow-y-auto p-4 xl:hidden">
-          <MatchDetailPanel matchId={selectedMatchId} onPrediction={applyPrediction} onClose={() => {
-            setSelectedMatchId(null);
-            router.replace("/predictor", { scroll: false });
-          }} />
+          <MatchDetailPanel matchId={selectedMatchId} onPrediction={applyPrediction} onClose={closeMatch} />
         </div>
       )}
 

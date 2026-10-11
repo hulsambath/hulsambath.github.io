@@ -163,3 +163,13 @@ describe("board display helpers", () => {
     expect(latestRefreshLabel(new Date("2026-07-15T09:00:00Z"), new Date("2026-07-15T10:00:00Z"))).toBe("Updated 1h ago");
   });
 });
+
+describe("status sets", () => {
+  it("never shows suspended, abandoned or awarded matches as live", async () => {
+    const { isLive, classify } = await import("./board");
+    for (const s of ["SUSP", "INT", "ABD", "AWD", "WO", "TBD"]) expect(isLive(s)).toBe(false);
+    for (const s of ["1H", "HT", "2H", "ET", "BT", "P", "LIVE"]) expect(isLive(s)).toBe(true);
+    expect(classify("ABD")).toBe("finished");
+    expect(classify("SUSP")).toBe("upcoming");
+  });
+});
