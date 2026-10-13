@@ -6,11 +6,13 @@ import { fetchMatchDetail, predictMatch, predictionErrorMessage } from "../../cl
 import { isLive } from "../../board";
 import { useBetSlip } from "../../useBetSlip";
 import { neu, neuPressable } from "../../neu";
-import type { MatchDetail, Match, Odds, Prediction } from "../../types";
+import { modelProbabilityByCell } from "../../modelMarkets";
+import type { MatchDetail, Match, ModelMarkets, Odds, Prediction } from "../../types";
 import { BetSlip } from "./BetSlip";
 import { DetailHeader } from "./DetailHeader";
 import { HeadToHead } from "./HeadToHead";
 import { Lineups } from "./Lineups";
+import { ModelMarketsPanel } from "./ModelMarkets";
 import { MatchStatsBars } from "./MatchStatsBars";
 import { OddsMarkets } from "./OddsMarkets";
 import { TeamForm } from "./TeamForm";
@@ -28,6 +30,7 @@ type PanelPrediction = {
   top_scores?: { score: string; p: number }[] | null;
   exp_corners?: number | null;
   corners_lines?: Record<string, { over: number; under: number }> | null;
+  markets?: ModelMarkets | null;
 };
 type DetailTab = "summary" | "stats" | "odds" | "lineups" | "h2h";
 
@@ -192,6 +195,10 @@ export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
   const odds: Odds | null = detail?.odds ?? null;
   const canPredict = m?.status === "NS";
   const hasPrediction = prediction != null;
+  const homeName = m?.home_team?.name ?? "Home";
+  const awayName = m?.away_team?.name ?? "Away";
+  const names = React.useMemo(() => ({ home: homeName, away: awayName }), [homeName, awayName]);
+  const model = React.useMemo(() => modelProbabilityByCell(prediction?.markets), [prediction?.markets]);
 
   const handlePredict = React.useCallback(async () => {
     setPredicting(true);
@@ -244,6 +251,7 @@ export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
               <PredictionSummary prediction={prediction} predicting={predicting}
                 predictError={predictError} canPredict={canPredict}
                 onPredict={handlePredict} />
+              <ModelMarketsPanel markets={prediction?.markets} names={names} />
               <Timeline incidents={detail.incidents} />
               <TeamForm home={detail.home_form} away={detail.away_form}
                 homeName={m?.home_team?.name ?? ""} awayName={m?.away_team?.name ?? ""} />
@@ -251,7 +259,7 @@ export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
           )}
           {tab === "stats" && <MatchStatsBars stats={detail.stats} />}
           {tab === "odds" && (
-            <OddsMarkets odds={odds} matchId={matchId} picks={slip.picks} onPick={slip.toggle}
+            <OddsMarkets odds={odds} model={model} matchId={matchId} picks={slip.picks} onPick={slip.toggle}
               matchLabel={`${m?.home_team?.name ?? "Home"} v ${m?.away_team?.name ?? "Away"}`} />
           )}
           {tab === "lineups" && <Lineups lineups={detail.lineups} />}

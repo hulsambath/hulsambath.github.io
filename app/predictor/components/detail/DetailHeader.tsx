@@ -1,9 +1,9 @@
-import * as React from "react";
 
 import { crestUrl } from "../../apiBase";
 import { isFinished, isLive } from "../../board";
 import type { MatchDetail } from "../../detail";
 import { neu } from "../../neu";
+import { Crest } from "../Crest";
 
 type DetailTeam = { api_team_id: number; name: string; logo_url?: string | null };
 type DetailMatch = {
@@ -13,41 +13,12 @@ type DetailMatch = {
   status: string;
 };
 
-function initialsFor(name: string) {
-  return name.replace(/[^A-Za-z0-9 ]/g, "").split(" ")
-    .filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("") || "?";
-}
-
-function TeamCrest({ team }: { team: DetailTeam }) {
-  const [broken, setBroken] = React.useState(false);
-  const src = crestUrl(team.api_team_id, team.logo_url);
-  React.useEffect(() => setBroken(false), [src]);
-  if (broken) {
-    return (
-      <span aria-hidden className="flex h-10 w-10 items-center justify-center rounded-full font-display text-xs font-bold text-muted-foreground">
-        {initialsFor(team.name)}
-      </span>
-    );
-  }
-  // eslint-disable-next-line @next/next/no-img-element
-  return (
-    <img
-      src={src}
-      alt=""
-      width={40}
-      height={40}
-      className="h-10 w-10 object-contain"
-      onError={() => setBroken(true)}
-    />
-  );
-}
-
 export function DetailHeader({ detail }: { detail: MatchDetail }) {
   const m = detail.match as DetailMatch;
   const hasScore = isLive(m.status) || isFinished(m.status);
   const Side = ({ team }: { team: DetailTeam }) => (
     <div className="flex flex-1 flex-col items-center gap-1 text-center">
-      <span className={`${neu.raised} rounded-full p-2`}><TeamCrest team={team} /></span>
+      <span className={`${neu.raised} rounded-full p-2`}><Crest src={crestUrl(team.api_team_id, team.logo_url)} name={team.name} size={40} /></span>
       <span className="mt-1 text-sm font-semibold leading-tight">{team.name}</span>
     </div>
   );

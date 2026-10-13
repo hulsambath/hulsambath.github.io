@@ -1,13 +1,14 @@
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 import { neuPressable } from "../../neu";
+import { isValue } from "../../modelMarkets";
 import { MARKET_GROUPS, oddsMarkets, type MarketGroup, type OddsCell, type OddsMarket } from "../../odds";
 import type { SlipPick } from "../../slip";
 import type { Odds } from "../../types";
 
 // Narrow side panel (xl+) keeps the base column count; the full-screen view
 // below xl gets room for more prices per row.
-const COLS = {
+export const COLS = {
   1: "grid-cols-1 sm:grid-cols-2 xl:grid-cols-1",
   2: "grid-cols-2",
   3: "grid-cols-3",
@@ -19,22 +20,29 @@ const timestamp = (value: string | null | undefined) => value
   ? new Date(value).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })
   : null;
 
-function PriceButton({ cell, selected, onPick }: {
+function PriceButton({ cell, p, selected, onPick }: {
   cell: OddsCell;
+  p: number | undefined;
   selected: boolean;
   onPick: (cell: OddsCell) => void;
 }) {
   return (
     <button type="button" className="odds-btn" aria-pressed={selected}
+      data-value={isValue(cell.price, p) ? "true" : undefined}
+      data-model={p != null ? "true" : undefined}
       disabled={cell.price == null} onClick={() => onPick(cell)}>
-      <span className="odds-btn-label">{cell.label}</span>
-      <span className="odds-btn-price">{odd(cell.price)}</span>
+      <span className="odds-btn-row">
+        <span className="odds-btn-label">{cell.label}</span>
+        <span className="odds-btn-price">{odd(cell.price)}</span>
+      </span>
+      {p != null && <span className="odds-btn-model">model {Math.round(p * 100)}%</span>}
     </button>
   );
 }
 
-function MarketBlock({ market, open, selectedId, onToggle, onPick }: {
+function MarketBlock({ market, model, open, selectedId, onToggle, onPick }: {
   market: OddsMarket;
+  model: Map<string, number> | undefined;
   open: boolean;
   selectedId: string | undefined;
   onToggle: () => void;
@@ -52,7 +60,7 @@ function MarketBlock({ market, open, selectedId, onToggle, onPick }: {
       {open && (
         <div id={bodyId} className={`grid ${COLS[market.cols]} gap-1.5 p-2`}>
           {market.cells.map((cell) => (
-            <PriceButton key={cell.id} cell={cell} selected={cell.id === selectedId}
+            <PriceButton key={cell.id} cell={cell} p={model?.get(cell.id)} selected={cell.id === selectedId}
               onPick={(c) => onPick(market, c)} />
           ))}
         </div>
@@ -61,8 +69,10 @@ function MarketBlock({ market, open, selectedId, onToggle, onPick }: {
   );
 }
 
-export function OddsMarkets({ odds, matchId, matchLabel, picks, onPick }: {
+export function OddsMarkets({ odds, model, matchId, matchLabel, picks, onPick }: {
   odds: Partial<Odds> | null;
+  /** cell id → model probability (modelProbabilityByCell) */
+  model?: Map<string, number>;
   matchId: number;
   matchLabel: string;
   picks: SlipPick[];
@@ -116,7 +126,7 @@ export function OddsMarkets({ odds, matchId, matchLabel, picks, onPick }: {
       </div>
       <div className="grid items-start gap-3 md:grid-cols-2 xl:grid-cols-1">
         {shown.map((market) => (
-          <MarketBlock key={market.key} market={market} open={!collapsed.has(market.key)}
+          <MarketBlock key={market.key} market={market} model={model} open={!collapsed.has(market.key)}
             selectedId={selectedId} onToggle={() => toggleMarket(market.key)} onPick={pick} />
         ))}
       </div>

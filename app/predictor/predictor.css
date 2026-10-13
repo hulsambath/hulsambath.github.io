@@ -225,6 +225,48 @@
   font-size: 0.9rem;
   font-weight: 700;
 }
+/* With a model line the button stacks: label + price on top, model below,
+   so the label keeps its full width in three-column markets. */
+.predictor-shell .odds-btn-row {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+.predictor-shell .odds-btn[data-model="true"] {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+.predictor-shell .odds-btn-model {
+  align-self: flex-end;
+  line-height: 1.1;
+  font-family: var(--font-data);
+  font-size: 0.65rem;
+  color: hsl(var(--muted-foreground));
+}
+.predictor-shell .odds-btn[data-value="true"] .odds-btn-model {
+  color: hsl(var(--home));
+  font-weight: 700;
+}
+.predictor-shell .model-cell {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0 0.4rem;
+  padding: 0.35rem 0.55rem;
+  border: 2px solid hsl(var(--neu-ink));
+  border-radius: 6px;
+  background: hsl(var(--neu-page));
+}
+.predictor-shell .model-cell-fair {
+  grid-column: 2;
+  justify-self: end;
+  font-family: var(--font-data);
+  font-size: 0.65rem;
+  color: hsl(var(--muted-foreground));
+}
 .predictor-shell .odds-btn:hover:not(:disabled) {
   background: hsl(var(--neu-hover));
 }

@@ -19,10 +19,10 @@ export const MARKET_GROUPS: { key: MarketGroup; label: string }[] = [
 export const CORRECT_SCORE_LIMIT = 12;
 export const SCORER_LIMIT = 20;
 
-const HT_FT_ORDER = ["1/1", "1/X", "1/2", "X/1", "X/X", "X/2", "2/1", "2/X", "2/2"];
+export const HT_FT_ORDER = ["1/1", "1/X", "1/2", "X/1", "X/X", "X/2", "2/1", "2/X", "2/2"];
 
-const lineValue = (line: string) => Number.parseFloat(line);
-const byLine = <T,>(entries: [string, T][]) => entries.sort(([a], [b]) => lineValue(a) - lineValue(b));
+export const lineValue = (line: string) => Number.parseFloat(line);
+export const byLine = <T,>(entries: [string, T][]) => entries.sort(([a], [b]) => lineValue(a) - lineValue(b));
 const byPrice = (entries: [string, number][]) => entries.filter(([, price]) => price != null).sort(([, a], [, b]) => a - b);
 
 /** "+0.5" / "-1" / "0": the sign is always shown so a handicap reads at a glance. */

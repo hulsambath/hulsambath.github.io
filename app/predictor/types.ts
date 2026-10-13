@@ -3,6 +3,25 @@ export type Team = { id: number; api_team_id: number; name: string; logo_url: st
 export type ScoreProb = { score: string; p: number };
 export type CornersLine = { over: number; under: number };
 
+export type OverUnder = { over: number; under: number };
+
+/** Model probability per betting market, keyed like Odds / odds.ts cells. */
+export type ModelMarkets = {
+  result?: Record<string, number>;
+  double_chance?: Record<string, number>;
+  draw_no_bet?: Record<string, number>;
+  btts?: Record<string, number>;
+  /** total-goals line ("2.5") → over/under */
+  goals?: Record<string, OverUnder>;
+  /** team totals (TO/TU) per side */
+  home_goals?: Record<string, OverUnder>;
+  away_goals?: Record<string, OverUnder>;
+  /** home handicap line ("-0.5") → push-excluded probabilities */
+  asian_handicap?: Record<string, { home: number; away: number }>;
+  ht_ft?: Record<string, number>;
+  correct_score?: Record<string, number>;
+};
+
 export type Prediction = {
   model_version: string;
   created_at: string;
@@ -18,6 +37,8 @@ export type Prediction = {
   top_scores: ScoreProb[] | null;
   exp_corners: number | null;
   corners_lines: Record<string, CornersLine> | null;
+  /** every market the model prices; detail endpoints only */
+  markets?: ModelMarkets | null;
 };
 
 export type Odds = {
@@ -77,7 +98,12 @@ export type DateBucket = { date: string; count: number };
 
 export type FormResult = "W" | "D" | "L";
 export type Incident = { minute: number | null; type: "goal" | "card"; team: "home" | "away"; player: string | null; detail: string | null };
-export type H2HMatch = { date: string | null; homeName: string | null; awayName: string | null; homeGoals: number | null; awayGoals: number | null };
+export type H2HMatch = {
+  date: string | null; homeName: string | null; awayName: string | null;
+  homeGoals: number | null; awayGoals: number | null;
+  /** provider crest URL; absent on rows stored before crests were added */
+  homeLogo?: string | null; awayLogo?: string | null;
+};
 export type LineupPlayer = { name: string | null; number: number | null; position: string | null; isStarter: boolean };
 export type Lineups = { formationHome: string | null; formationAway: string | null; home: LineupPlayer[]; away: LineupPlayer[] };
 export type TeamForm = { recent: { date: string | null; opp: string | null; gf: number | null; ga: number | null; result: FormResult }[]; next: { date: string | null; opp: string | null } | null };
