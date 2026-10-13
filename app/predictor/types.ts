@@ -43,6 +43,12 @@ export type Odds = {
   correct_score?: Record<string, number> | null;
   /** corners line ("9.5") → over/under decimal prices */
   corners_lines?: Record<string, { over?: number | null; under?: number | null }> | null;
+  /** home side's handicap line ("-0.5") → home/away decimal prices */
+  asian_handicap?: Record<string, { home?: number | null; away?: number | null }> | null;
+  /** half-time/full-time pair ("1/X") → decimal price */
+  ht_ft?: Record<string, number> | null;
+  /** player name → price to score at any time */
+  anytime_scorer?: Record<string, number> | null;
   is_closing?: boolean;
 };
 

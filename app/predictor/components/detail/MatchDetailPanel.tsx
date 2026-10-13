@@ -4,8 +4,10 @@ import { BarChart3, ClipboardList, LineChart, ListTree, Loader2, Sparkles, Sword
 import * as React from "react";
 import { fetchMatchDetail, predictMatch, predictionErrorMessage } from "../../client";
 import { isLive } from "../../board";
+import { useBetSlip } from "../../useBetSlip";
 import { neu, neuPressable } from "../../neu";
 import type { MatchDetail, Match, Odds, Prediction } from "../../types";
+import { BetSlip } from "./BetSlip";
 import { DetailHeader } from "./DetailHeader";
 import { HeadToHead } from "./HeadToHead";
 import { Lineups } from "./Lineups";
@@ -145,6 +147,7 @@ export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
   const [predictionOverride, setPredictionOverride] = React.useState<PanelPrediction | null>(null);
   const [predicting, setPredicting] = React.useState(false);
   const [predictError, setPredictError] = React.useState<string | null>(null);
+  const slip = useBetSlip();
 
   React.useEffect(() => {
     let active = true;
@@ -206,7 +209,7 @@ export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
     }
   }, [matchId, hasPrediction, onPrediction]);
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-h-0 flex-col">
       <button onClick={onClose} aria-label="Close details"
         className={neuPressable(false, "mb-3 ml-auto rounded-full p-1.5 xl:hidden")}>
         <X className="h-5 w-5" />
@@ -214,7 +217,7 @@ export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
       {error && <p className="py-8 text-center text-sm text-muted-foreground">Details unavailable right now.</p>}
       {!error && !detail && <p className="py-8 text-center text-sm text-muted-foreground">Loading details…</p>}
       {detail && (
-        <div className="-mx-2 overflow-y-auto px-3 pb-4">
+        <div className="-mx-2 min-h-0 flex-1 overflow-y-auto px-3 pb-4">
           <DetailHeader detail={detail} />
           <div className="-mt-2 mb-4 flex flex-wrap gap-x-2 gap-y-1 font-data text-[10px] uppercase tracking-wide text-muted-foreground">
             <span>Source: {m?.source ?? "unknown"}</span>
@@ -247,11 +250,15 @@ export function MatchDetailPanel({ matchId, onClose, onPrediction }: {
             </>
           )}
           {tab === "stats" && <MatchStatsBars stats={detail.stats} />}
-          {tab === "odds" && <OddsMarkets odds={odds} />}
+          {tab === "odds" && (
+            <OddsMarkets odds={odds} matchId={matchId} picks={slip.picks} onPick={slip.toggle}
+              matchLabel={`${m?.home_team?.name ?? "Home"} v ${m?.away_team?.name ?? "Away"}`} />
+          )}
           {tab === "lineups" && <Lineups lineups={detail.lineups} />}
           {tab === "h2h" && <HeadToHead h2h={detail.h2h} />}
         </div>
       )}
+      <BetSlip picks={slip.picks} onRemove={slip.remove} onClear={slip.clear} />
     </div>
   );
 }

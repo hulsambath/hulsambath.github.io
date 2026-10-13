@@ -774,7 +774,7 @@ function PredictorBoard() {
           )}
         </div>
 
-        <aside className={`${neu.raised} sticky top-24 hidden max-h-[calc(100vh-7rem)] overflow-hidden p-4 xl:block`}>
+        <aside className={`${neu.raised} sticky top-24 hidden max-h-[calc(100vh-7rem)] flex-col overflow-hidden p-4 xl:flex`}>
           {selectedMatchId
             ? <MatchDetailPanel matchId={selectedMatchId} onPrediction={applyPrediction} onClose={closeMatch} />
             : <p className="py-12 text-center text-sm text-muted-foreground">Select a match to see details.</p>}
@@ -782,7 +782,7 @@ function PredictorBoard() {
       </div>
 
       {selectedMatchId != null && (
-        <div className="neu-surface fixed inset-0 z-50 flex flex-col overflow-y-auto p-4 xl:hidden">
+        <div className="neu-surface fixed inset-0 z-50 flex flex-col overflow-hidden p-4 xl:hidden">
           <MatchDetailPanel matchId={selectedMatchId} onPrediction={applyPrediction} onClose={closeMatch} />
         </div>
       )}
