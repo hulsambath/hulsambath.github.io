@@ -1,3 +1,15 @@
+/* global process */ // only process.env.BUILD_DATE, inlined by Next
+import { experienceDuration, formatDuration } from "./experience.js";
+
+// First professional role: CamMob internship, January 2024. BUILD_DATE is
+// inlined by next.config.js so the prerendered HTML and the client bundle
+// agree; Node scripts (generate_llms.mjs) fall back to the current date.
+const careerStart = "2024-01";
+const buildDate = process.env.BUILD_DATE
+  ? new Date(process.env.BUILD_DATE)
+  : new Date();
+const careerDuration = experienceDuration(careerStart, buildDate);
+
 export const site = {
   author: {
     name: "Sambath HUL",
@@ -5,82 +17,74 @@ export const site = {
     email: "hulsambath14@gmail.com",
     phones: ["+855 88 708 5187", "+855 76 708 5187"],
     location: "Phnom Penh, Cambodia",
-    age: 22,
     social: {
       github: "https://github.com/hulsambath",
       linkedin: "https://www.linkedin.com/in/hulsambath/",
       x: "https://x.com/hul_sambath",
     },
   },
+  career: {
+    start: careerStart,
+    short: formatDuration(careerDuration),
+    long: formatDuration(careerDuration, "long"),
+  },
   stats: [
-    { label: "Years Experience", value: "3" },
-    { label: "Apps Built & Shipped", value: "8" },
-    { label: "Platform Targets", value: "6" },
+    { label: "Experience", value: formatDuration(careerDuration) },
+    { label: "Apps Built", value: "8" },
+    { label: "Apps on the Stores", value: "6" },
   ],
   skills: {
     mobile: [
       {
         name: "Flutter",
-        years: "3 yrs",
         icon: "/assets/flutter_logo.svg",
       },
       {
         name: "Dart",
-        years: "3 yrs",
         icon: "/assets/dart_logo.svg",
       },
       {
         name: "MVVM Architecture",
-        years: "2 yrs",
         icon: "/assets/android_logo.svg",
       },
       {
         name: "Firebase",
-        years: "2 yrs",
         icon: "/assets/firebase_logo.svg",
       },
     ],
     web: [
       {
         name: "React",
-        years: "2 yrs",
         icon: "/assets/react_logo.svg",
       },
       {
         name: "JavaScript",
-        years: "3 yrs",
         icon: "/assets/javascript_logo.svg",
       },
       {
         name: "Tailwind CSS",
-        years: "1 yr",
         icon: "/assets/tailwindcss_logo.svg",
       },
       {
         name: "Vite",
-        years: "1 yr",
         icon: "/assets/vite_logo.svg",
       },
     ],
     tools: [
       {
         name: "Git & GitHub",
-        years: "3 yrs",
         icon: "/assets/github_logo.svg",
       },
       {
         name: "CI/CD (GitHub Actions)",
-        years: "2 yrs",
         icon: "/assets/githubactions_logo.svg",
       },
       {
         name: "Figma",
-        years: "2 yrs",
         icon: "/assets/figma_logo.svg",
       },
       {
         name: "Testing & QA",
-        years: "2 yrs",
         icon: "/assets/testinglibrary_logo.svg",
       },
     ],
@@ -324,8 +328,8 @@ export const site = {
       title: "Portfolio Website",
       image: "/assets/portfolio_icon.svg",
       description:
-        "Modern, responsive portfolio website built with React and Tailwind CSS. Features smooth animations, dark mode, mobile-first design, SEO optimization, and automated GitHub Pages deployment.",
-      tech: ["React", "Tailwind CSS", "Vite", "GitHub Actions"],
+        "Statically exported Next.js portfolio with light and dark themes, deployed to GitHub Pages by GitHub Actions. The same site hosts a live football-predictor portal and a QR code generator.",
+      tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "GitHub Actions"],
       demoUrl: null,
       sourceUrl: "https://github.com/hulsambath/hulsambath.github.io",
     },
@@ -346,20 +350,6 @@ export const site = {
       ],
     },
     {
-      initials: "VC",
-      role: "Lead Full-Stack & ML Mobile Engineer",
-      company: "VisionCareAI (School Project / CADT Capstone)",
-      companyUrl: "https://github.com/LengTech11/VisionCareAI-Detect-Consult",
-      period: "2024 – 2025",
-      bullets: [
-        "Architected an end-to-end AI healthcare mobile ecosystem combining Flutter 3.38+, Laravel 11 API, and a Python Flask ML microservice",
-        "Engineered a hybrid AI inference architecture (OnDeviceAiService) that queries cloud APIs when connected and falls back to on-device TFLite models for seamless offline diagnosis",
-        "Integrated a dual-stage vision pipeline featuring CLAHE (Contrast Limited Adaptive Histogram Equalization) preprocessing, binary eye verification, and 5-class DenseNet ophthalmic classification",
-        "Built a production-ready Laravel 11 RESTful backend featuring Sanctum bearer token auth, layered Service-Controller architecture, 18 database migrations, and localized Cambodian doctor/clinic seed data",
-        "Designed an iOS Cupertino-first mobile UI with bilingual Khmer/English i18n, zero-overflow typography, photo picker/camera workflows, and dynamic local network host auto-discovery",
-      ],
-    },
-    {
       initials: "CM",
       role: "Flutter Developer Intern",
       company: "CamMob Co., Ltd.",
@@ -369,19 +359,6 @@ export const site = {
         "Developed CAO Farm Book, an agricultural farm management mobile application in Flutter for field data logging, crop tracking, and livestock records",
         "Worked with senior developers on state management, SQLite offline data caching, REST API integration, and responsive mobile UI improvements",
         "Practiced collaborative Agile workflows, code reviews, and cross-functional team debugging",
-      ],
-    },
-    {
-      initials: "P",
-      role: "Software Engineer (Mobile & AI)",
-      company: "Personal Projects (Trovara & Netflix Clone)",
-      companyUrl: null,
-      period: "2023 – Present",
-      bullets: [
-        "Architected and shipped Trovara, an AI-powered cross-platform notes app with MVVM + Repository pattern, offline-first ObjectBox storage, and a full RAG semantic vector search pipeline",
-        "Built a Flutter Netflix Clone streaming interface integrating TMDb RESTful APIs, high-performance image caching, dynamic carousels, and trailer preview playback",
-        "Implemented bidirectional Google Drive sync with conflict resolution, knowledge graphs, and quiz generation from user notes",
-        "Integrated Google Play in-app purchases, bilingual Khmer/English i18n, Shorebird OTA updates, and automated CI/CD pipelines",
       ],
     },
   ],
@@ -440,23 +417,5 @@ export const site = {
     url: "/Sambath_HUL_Supporting_Documents.pdf",
     pages: 4,
     size: "1.0 MB",
-  },
-  testimonials: [
-    {
-      quote:
-        "Sambath delivered our app on time with outstanding quality. Highly recommend.",
-      author: "Chan Sophea",
-      role: "Product Manager, TechCorp Solutions",
-    },
-    {
-      quote:
-        "Great collaborator and problem solver. Elevated our codebase and release cadence.",
-      author: "Kim Dara",
-      role: "Engineering Lead, MobileFirst Inc",
-    },
-  ],
-  resume: {
-    href: "/resume.pdf",
-    filename: "Sambath-Resume.pdf",
   },
 };

@@ -7,7 +7,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { site } from "./src/content/site.js";
 
-const SITE_URL = "https://hulsambath.github.io";
+const SITE_URL = "https://hulsambath.me";
 const PUBLIC_DIR = path.resolve("public");
 
 // Education is rendered in the About section of App.tsx (not in site.js); mirror it here.
@@ -20,11 +20,11 @@ const education = {
 };
 
 const bio =
-  "Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 3 years of " +
+  `Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with ${site.career.long} of ` +
   "hands-on experience designing, building, and shipping production software — primarily " +
   "cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. " +
-  "He has built and shipped 8 apps across enterprise travel, media voting, agricultural tech, and healthcare AI, " +
-  "releasing to the Google Play Store and Apple App Store, and works with an MVVM + Repository architecture, " +
+  "He has built 8 apps across enterprise travel, media voting, agricultural tech, and healthcare AI, " +
+  "6 of them released on the Google Play Store and Apple App Store, and works with an MVVM + Repository architecture, " +
   "full internationalization (English/Khmer), and CI/CD automation.";
 
 const { author, stats, skills, technologies, experience, projects, credentials, supportingDocumentsBundle } = site;

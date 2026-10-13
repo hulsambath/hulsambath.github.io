@@ -9,33 +9,41 @@ section from it. To update the portfolio's text, edit this file — not the JSX.
 ```js
 export const site = {
   author,          // identity + contact + socials
+  career,          // experience duration, computed from the start month
   stats,           // headline numbers (About section grid)
-  skills,          // skill bars by category
+  skills,          // skills by category
   technologies,    // technology chips by category
   projects,        // project cards
-  experience,      // work-history timeline
-  testimonials,    // quotes (currently placeholder)
-  resume,          // resume download link
+  experience,      // work-history timeline (employers only)
+  credentials,     // degree + certificates
+  supportingDocumentsBundle,
 };
 ```
 
 ## Fields
 
 ### `author`
-`name`, `title`, `email`, `phones[]`, `location`, `age`, and
+`name`, `title`, `email`, `phones[]`, `location`, and
 `social { github, linkedin, x }`.
+
+### `career`
+`{ start, short, long }`. `start` is the `"YYYY-MM"` of the first professional
+role (CamMob internship, January 2024). `short` ("2 yrs 9 mo") and `long`
+("2 years 9 months") are computed by `src/content/experience.js`, which floors
+partial months so the figure is never rounded up. The date used is
+`process.env.BUILD_DATE` (inlined by `next.config.js`) or the current date in
+Node scripts. **Never hardcode an experience duration anywhere**;
+`src/content/experience.test.ts` guards this.
 
 ### `stats`
 Array of `{ label, value }`. Rendered in a `grid-cols-2 sm:grid-cols-4` grid.
-Current values (3 items): `2+ Years Experience`, `4 Production Apps`,
-`6 Platform Targets`.
+Current values: computed `Experience`, `8 Apps Built`, `6 Apps on the Stores`.
 
 ### `skills`
-Grouped `{ mobile[], web[], tools[] }`. Each entry:
-`{ name, years, icon }` where `years` is a free-text experience label
-(e.g. `"3 yrs"`, `"6 mo"`) shown next to the skill, and `icon` is a local asset
-path under `/assets/*_logo.svg` (all tech logos are self-hosted — no CDN).
-(No progress bars/percentages — replaced by `years`.)
+Grouped `{ mobile[], web[], tools[] }`. Each entry is `{ name, icon }`, where
+`icon` is a local asset path under `/assets/*_logo.svg` (all tech logos are
+self-hosted, no CDN). Per-skill years were removed because they overstated
+experience.
 
 ### `technologies`
 Grouped chips: `languages[]`, `frameworks[]`, `backend[]`, `tools[]`,
@@ -74,6 +82,8 @@ white-label operator codebase.)
 
 ### `experience`
 Timeline entries: `{ initials, role, company, companyUrl, period, bullets[] }`.
+Employers only. The CADT capstone (VisionCareAI) and personal projects
+(Trovara, Netflix clone) live in `projects`, not here.
 
 ### `credentials`
 Array of verified credentials & institutional proof. Each entry:
@@ -85,18 +95,7 @@ Array of verified credentials & institutional proof. Each entry:
 ### `supportingDocumentsBundle`
 `{ title, filename, url, pages, size }` for the official 4-page submission dossier (`/Sambath_HUL_Supporting_Documents.pdf`).
 
-### `testimonials`
-`{ quote, author, role }`. **Currently placeholder/sample data** — review before
-relying on it publicly.
-
-### `resume`
-`{ href, filename }` for the resume download button. Note: `href` is
-`/resume.pdf`, while the committed CV in `public/` is `Sambath_HUL_CV.pdf` —
-verify the served path exists.
-
-## Known stale content to review
-- The **Portfolio Website** project entry and parts of the tech list still say
-  *"React … automated GitHub Pages deployment"*. The site is now **Next.js 16**;
-  GitHub Pages is still accurate but the framework label is outdated.
-- `testimonials` are sample data.
-- `resume.href` (`/resume.pdf`) vs the actual `public/Sambath_HUL_CV.pdf`.
+## Removed fields
+`testimonials` (placeholder quotes), `resume` (pointed at a non-existent
+`/resume.pdf`; the CV is `public/Sambath_HUL_CV.pdf`) and `author.age` were
+removed. Add testimonials back only with real, permitted quotes.

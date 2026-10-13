@@ -1,13 +1,13 @@
 # Sambath HUL — Software Engineer
 
-> 3 years experience, 8 apps built & shipped, 6 platform targets. Software Engineer in Phnom Penh, Cambodia. Designs, builds, and ships production software — mobile apps with Flutter and Firebase, web apps, and developer tooling.
+> 2 yrs 9 mo experience, 8 apps built, 6 apps on the stores. Software Engineer in Phnom Penh, Cambodia. Designs, builds, and ships production software — mobile apps with Flutter and Firebase, web apps, and developer tooling.
 
 - Name: Sambath HUL
 - Title: Software Engineer
 - Location: Phnom Penh, Cambodia
 - Email: hulsambath14@gmail.com
 - Phone: +855 88 708 5187, +855 76 708 5187
-- Website: https://hulsambath.github.io
+- Website: https://hulsambath.me
 - GitHub: https://github.com/hulsambath
 - LinkedIn: https://www.linkedin.com/in/hulsambath/
 - X (Twitter): https://x.com/hul_sambath
@@ -22,15 +22,15 @@
 - [Trovara](https://photos.app.goo.gl/6zSm1oMRhwm6ByxFA): AI-powered personal notes app with a full RAG pipeline for semantic chat over your notes — vector search, query rewriting, and multi-LLM support (Gemini / OpenAI / OpenRouter).
 - [Netflix Clone](https://github.com/hulsambath/netflex_api): Feature-rich mobile entertainment streaming interface built with Flutter.
 - [BookMeBus](https://play.google.com/store/apps/details?id=com.bookmebus.bookmebus): Leading bus, ferry, and private taxi ticketing portal in Cambodia and Southeast Asia, connecting travelers with over 40 bus operators across Cambodia, Vietnam, Laos, and Thailand for simple, safe, and secure online bookings.
-- [Developer Tooling](https://hulsambath.github.io): AI-assisted development infrastructure: a Dockerized Node.js MCP (Model Context Protocol) HTTP bridge server, a published VS Code extension for copying file references, plus custom Claude Code skills, hooks, and style-guide automation (MVVM, Repository pattern, i18n, tests) across the monorepos.
-- [Portfolio Website](https://github.com/hulsambath/hulsambath.github.io): Modern, responsive portfolio website built with React and Tailwind CSS.
+- [Developer Tooling](https://hulsambath.me): AI-assisted development infrastructure: a Dockerized Node.js MCP (Model Context Protocol) HTTP bridge server, a published VS Code extension for copying file references, plus custom Claude Code skills, hooks, and style-guide automation (MVVM, Repository pattern, i18n, tests) across the monorepos.
+- [Portfolio Website](https://github.com/hulsambath/hulsambath.github.io): Statically exported Next.js portfolio with light and dark themes, deployed to GitHub Pages by GitHub Actions.
 
 ## Verified Credentials
 - [Bachelor of Computer Science (Software Engineering)](https://verify.gov.kh/verify/izC4l0B_mDNOTbZdvzAxa5FaXPztdNcN?key=1e2b0a933763e5c59f6a9c04f8660ee5110f6da282cf69f04189f567f1fcb1a4): Cambodia Academy of Digital Technology (CADT) (Academic Degree)
-- [Certificate of Appreciation](https://hulsambath.github.io/assets/documents/bookmebus_appreciation_cert.jpg): BookMeBus Co., Ltd. / BookMe+ (Industry Recognition)
-- [Certificate of Completion — Flutter Mobile Development](https://hulsambath.github.io/assets/documents/istad_flutter_cert.jpg): Institute of Science and Technology Advanced Development (ISTAD) (Professional Certification)
-- [Official Supporting Documents PDF](https://hulsambath.github.io/Sambath_HUL_Supporting_Documents.pdf): 4-page verified dossier
+- [Certificate of Appreciation](https://hulsambath.me/assets/documents/bookmebus_appreciation_cert.jpg): BookMeBus Co., Ltd. / BookMe+ (Industry Recognition)
+- [Certificate of Completion — Flutter Mobile Development](https://hulsambath.me/assets/documents/istad_flutter_cert.jpg): Institute of Science and Technology Advanced Development (ISTAD) (Professional Certification)
+- [Official Supporting Documents PDF](https://hulsambath.me/Sambath_HUL_Supporting_Documents.pdf): 4-page verified dossier
 
 ## Full details
-- [Complete portfolio (plain text)](https://hulsambath.github.io/llms-full.txt)
-- [Portfolio website](https://hulsambath.github.io)
+- [Complete portfolio (plain text)](https://hulsambath.me/llms-full.txt)
+- [Portfolio website](https://hulsambath.me)

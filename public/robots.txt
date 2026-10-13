@@ -1,10 +1,10 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://hulsambath.github.io/sitemap.xml
+Sitemap: https://hulsambath.me/sitemap.xml
 
 # LLM-friendly plain-text portfolio (https://llmstxt.org)
-# https://hulsambath.github.io/llms.txt
-# https://hulsambath.github.io/llms-full.txt
+# https://hulsambath.me/llms.txt
+# https://hulsambath.me/llms-full.txt
 
 

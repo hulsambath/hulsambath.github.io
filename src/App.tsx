@@ -144,7 +144,7 @@ export default function App() {
                     </span>
                   </h1>
                   <p className="text-xl sm:text-2xl font-semibold text-foreground/90 tracking-tight">
-                    Mobile & Applied AI Software Engineer
+                    {site.author.title}
                   </p>
                 </div>
 
@@ -155,9 +155,9 @@ export default function App() {
                   <strong className="text-foreground font-medium">
                     Edge AI (TensorFlow Lite)
                   </strong>
-                  , and resilient full-stack backends. Shipped & developed 8 apps
-                  across enterprise travel, media voting, agricultural tech, and
-                  ophthalmic healthcare.
+                  , and resilient full-stack backends. Built 8 apps, 6 of them
+                  released on Google Play and the App Store, across travel,
+                  media voting, agricultural tech, and ophthalmic healthcare.
                 </p>
 
                 {/* Actions & Social Links */}
@@ -345,10 +345,10 @@ export default function App() {
             {/* Quick Stats Metric Strip */}
             <div className="mt-16 w-full grid grid-cols-2 sm:grid-cols-4 gap-4 p-3 sm:p-4 rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md shadow-sm">
               {[
-                { label: "Hands-on Experience", value: "3 Years", icon: "⏱️" },
-                { label: "Apps Built & Shipped", value: "8 Apps", icon: "🚀" },
-                { label: "Target OS Platforms", value: "6 OS", icon: "🌐" },
-                { label: "Edge AI Diagnosis", value: "100% Offline", icon: "⚡" },
+                { label: "Hands-on Experience", value: site.career.short, icon: "⏱️" },
+                { label: "Apps Built", value: "8 Apps", icon: "🚀" },
+                { label: "On Google Play & App Store", value: "6 Apps", icon: "🌐" },
+                { label: "BSc Software Engineering", value: "CADT '25", icon: "🎓" },
               ].map((stat) => (
                 <div
                   key={stat.label}
@@ -403,7 +403,7 @@ export default function App() {
                 <p>
                   I have{" "}
                   <strong className="text-foreground">
-                    3 years of hands-on experience
+                    {site.career.long} of hands-on experience
                   </strong>{" "}
                   designing, building, and shipping production software — from
                   cross-platform mobile apps with Flutter and Firebase to web
@@ -548,11 +548,6 @@ export default function App() {
                           )}
                           {sk.name}
                         </div>
-                        {sk.years && (
-                          <span className="text-xs font-medium text-primary whitespace-nowrap">
-                            {sk.years}
-                          </span>
-                        )}
                       </div>
                     ))}
                   </div>

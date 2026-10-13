@@ -1,24 +1,24 @@
 # Sambath HUL — Software Engineer
 
-> Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 3 years of hands-on experience designing, building, and shipping production software — primarily cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. He has built and shipped 8 apps across enterprise travel, media voting, agricultural tech, and healthcare AI, releasing to the Google Play Store and Apple App Store, and works with an MVVM + Repository architecture, full internationalization (English/Khmer), and CI/CD automation. This file is a structured, plain-text representation of his portfolio (https://hulsambath.github.io) for AI agents and LLMs.
+> Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 2 years 9 months of hands-on experience designing, building, and shipping production software — primarily cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. He has built 8 apps across enterprise travel, media voting, agricultural tech, and healthcare AI, 6 of them released on the Google Play Store and Apple App Store, and works with an MVVM + Repository architecture, full internationalization (English/Khmer), and CI/CD automation. This file is a structured, plain-text representation of his portfolio (https://hulsambath.me) for AI agents and LLMs.
 
 - Name: Sambath HUL
 - Title: Software Engineer
 - Location: Phnom Penh, Cambodia
 - Email: hulsambath14@gmail.com
 - Phone: +855 88 708 5187, +855 76 708 5187
-- Website: https://hulsambath.github.io
+- Website: https://hulsambath.me
 - GitHub: https://github.com/hulsambath
 - LinkedIn: https://www.linkedin.com/in/hulsambath/
 - X (Twitter): https://x.com/hul_sambath
 
 ## Summary
-Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 3 years of hands-on experience designing, building, and shipping production software — primarily cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. He has built and shipped 8 apps across enterprise travel, media voting, agricultural tech, and healthcare AI, releasing to the Google Play Store and Apple App Store, and works with an MVVM + Repository architecture, full internationalization (English/Khmer), and CI/CD automation.
+Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 2 years 9 months of hands-on experience designing, building, and shipping production software — primarily cross-platform mobile apps with Flutter and Firebase, plus web apps and developer tooling. He has built 8 apps across enterprise travel, media voting, agricultural tech, and healthcare AI, 6 of them released on the Google Play Store and Apple App Store, and works with an MVVM + Repository architecture, full internationalization (English/Khmer), and CI/CD automation.
 
 ## Highlights
-- 3 Years Experience
-- 8 Apps Built & Shipped
-- 6 Platform Targets
+- 2 yrs 9 mo Experience
+- 8 Apps Built
+- 6 Apps on the Stores
 
 ## Education
 - Bachelor of Computer Science (Software Engineering)
@@ -28,22 +28,22 @@ Sambath HUL is a Software Engineer based in Phnom Penh, Cambodia, with 3 years o
 
 ## Skills
 ### Mobile
-- Flutter — 3 yrs
-- Dart — 3 yrs
-- MVVM Architecture — 2 yrs
-- Firebase — 2 yrs
+- Flutter
+- Dart
+- MVVM Architecture
+- Firebase
 
 ### Web
-- React — 2 yrs
-- JavaScript — 3 yrs
-- Tailwind CSS — 1 yr
-- Vite — 1 yr
+- React
+- JavaScript
+- Tailwind CSS
+- Vite
 
 ### Tools
-- Git & GitHub — 3 yrs
-- CI/CD (GitHub Actions) — 2 yrs
-- Figma — 2 yrs
-- Testing & QA — 2 yrs
+- Git & GitHub
+- CI/CD (GitHub Actions)
+- Figma
+- Testing & QA
 
 ## Technologies
 - Languages: Dart, JavaScript, Java, Kotlin
@@ -62,26 +62,11 @@ June 2024 – Present
 - Architected observable, testable mobile code using MVVM + Repository pattern, push notifications, and store privacy-compliance flows
 - Created test cases, conducted QA, and managed production releases to the Google Play Store and Apple App Store
 
-### Lead Full-Stack & ML Mobile Engineer — VisionCareAI (School Project / CADT Capstone) (https://github.com/LengTech11/VisionCareAI-Detect-Consult)
-2024 – 2025
-- Architected an end-to-end AI healthcare mobile ecosystem combining Flutter 3.38+, Laravel 11 API, and a Python Flask ML microservice
-- Engineered a hybrid AI inference architecture (OnDeviceAiService) that queries cloud APIs when connected and falls back to on-device TFLite models for seamless offline diagnosis
-- Integrated a dual-stage vision pipeline featuring CLAHE (Contrast Limited Adaptive Histogram Equalization) preprocessing, binary eye verification, and 5-class DenseNet ophthalmic classification
-- Built a production-ready Laravel 11 RESTful backend featuring Sanctum bearer token auth, layered Service-Controller architecture, 18 database migrations, and localized Cambodian doctor/clinic seed data
-- Designed an iOS Cupertino-first mobile UI with bilingual Khmer/English i18n, zero-overflow typography, photo picker/camera workflows, and dynamic local network host auto-discovery
-
 ### Flutter Developer Intern — CamMob Co., Ltd. (https://www.cam-mob.com/)
 January 2024 – April 2024
 - Developed CAO Farm Book, an agricultural farm management mobile application in Flutter for field data logging, crop tracking, and livestock records
 - Worked with senior developers on state management, SQLite offline data caching, REST API integration, and responsive mobile UI improvements
 - Practiced collaborative Agile workflows, code reviews, and cross-functional team debugging
-
-### Software Engineer (Mobile & AI) — Personal Projects (Trovara & Netflix Clone)
-2023 – Present
-- Architected and shipped Trovara, an AI-powered cross-platform notes app with MVVM + Repository pattern, offline-first ObjectBox storage, and a full RAG semantic vector search pipeline
-- Built a Flutter Netflix Clone streaming interface integrating TMDb RESTful APIs, high-performance image caching, dynamic carousels, and trailer preview playback
-- Implemented bidirectional Google Drive sync with conflict resolution, knowledge graphs, and quiz generation from user notes
-- Integrated Google Play in-app purchases, bilingual Khmer/English i18n, Shorebird OTA updates, and automated CI/CD pipelines
 
 ## Projects
 ### HangMeas App — BookMeBus Co., Ltd.
@@ -141,12 +126,12 @@ AI-assisted development infrastructure: a Dockerized Node.js MCP (Model Context 
   - Tech: Node.js, Docker, MCP, VS Code Extension
 
 ### Portfolio Website
-Modern, responsive portfolio website built with React and Tailwind CSS. Features smooth animations, dark mode, mobile-first design, SEO optimization, and automated GitHub Pages deployment.
-  - Tech: React, Tailwind CSS, Vite, GitHub Actions
+Statically exported Next.js portfolio with light and dark themes, deployed to GitHub Pages by GitHub Actions. The same site hosts a live football-predictor portal and a QR code generator.
+  - Tech: Next.js, React, TypeScript, Tailwind CSS, GitHub Actions
   - Source: https://github.com/hulsambath/hulsambath.github.io
 
 ## Verified Credentials & Supporting Documents
-> Official submission dossier: https://hulsambath.github.io/Sambath_HUL_Supporting_Documents.pdf (4 pages, 1.0 MB PDF)
+> Official submission dossier: https://hulsambath.me/Sambath_HUL_Supporting_Documents.pdf (4 pages, 1.0 MB PDF)
 
 ### Bachelor of Computer Science (Software Engineering) — Cambodia Academy of Digital Technology (CADT)
 - Category: Academic Degree
